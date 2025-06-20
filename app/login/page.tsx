@@ -3,188 +3,154 @@
 import type React from "react"
 
 import { useState } from "react"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Eye, EyeOff, ArrowLeft } from "lucide-react"
+import { Eye, EyeOff, LogIn, AlertCircle } from "lucide-react"
 
 export default function LoginPage() {
+  const router = useRouter()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
 
-    // Simulate API call
+    // Simulate loading delay
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    // Authentication logic
-    if (formData.email === "admin@gmail.com" && formData.password === "12345678") {
+    // Check credentials
+    if (email === "admin@gmail.com" && password === "12345678") {
       // Admin login
       localStorage.setItem("userRole", "admin")
-      localStorage.setItem("userEmail", formData.email)
+      localStorage.setItem("userEmail", email)
       router.push("/dashboard/admin")
-    } else if (formData.email === "123@gmail.com" && formData.password === "12345678") {
+    } else if (email === "123@gmail.com" && password === "12345678") {
       // Recruiter login
       localStorage.setItem("userRole", "recruiter")
-      localStorage.setItem("userEmail", formData.email)
+      localStorage.setItem("userEmail", email)
       router.push("/dashboard/recruiter")
     } else {
-      setError("Invalid email or password")
+      setError("Invalid email or password. Please try again.")
     }
 
     setIsLoading(false)
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }))
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 flex items-center justify-center p-4">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[url('/placeholder.svg?height=100&width=100')] opacity-5"></div>
-
-      <div className="w-full max-w-md relative z-10">
-        {/* Back to Home Link */}
-        <Link
-          href="/"
-          className="inline-flex items-center text-white/70 hover:text-primary-500 transition-colors duration-300 mb-8 group"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform duration-300" />
-          <span className="text-sm uppercase tracking-widest">Back to Home</span>
-        </Link>
-
+      <div className="w-full max-w-md">
         <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20 shadow-2xl">
-          <CardHeader className="text-center space-y-4">
-            <div className="flex justify-center mb-4">
+          <CardHeader className="space-y-1 text-center">
+            <div className="flex items-center justify-center mb-4">
               <img src="/images/logo.webp" alt="Launchpad Kerala Logo" className="h-12 w-auto" />
             </div>
             <CardTitle className="text-2xl font-bold text-white">Welcome Back</CardTitle>
             <CardDescription className="text-gray-400">Sign in to your Launchpad Kerala account</CardDescription>
           </CardHeader>
-
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-white text-sm uppercase tracking-widest">
-                  Email Address
+                <Label htmlFor="email" className="text-white">
+                  Email
                 </Label>
                 <Input
                   id="email"
-                  name="email"
                   type="email"
                   placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleInputChange}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-secondary-700/50 border-primary-500/30 text-white placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500/20"
+                  className="bg-secondary-700/50 border-primary-500/30 text-white placeholder:text-gray-400 focus:border-primary-500"
                 />
               </div>
-
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-white text-sm uppercase tracking-widest">
+                <Label htmlFor="password" className="text-white">
                   Password
                 </Label>
                 <div className="relative">
                   <Input
                     id="password"
-                    name="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={handleInputChange}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="bg-secondary-700/50 border-primary-500/30 text-white placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500/20 pr-10"
+                    className="bg-secondary-700/50 border-primary-500/30 text-white placeholder:text-gray-400 focus:border-primary-500 pr-10"
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400" />
+                    )}
+                  </Button>
                 </div>
               </div>
 
               {error && (
-                <div className="text-red-400 text-sm text-center bg-red-900/20 border border-red-500/20 rounded p-2">
-                  {error}
+                <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-md">
+                  <AlertCircle className="h-4 w-4 text-red-400" />
+                  <span className="text-sm text-red-400">{error}</span>
                 </div>
               )}
 
-              <div className="flex items-center justify-between">
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-primary-500 hover:text-primary-400 transition-colors duration-300"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-
               <Button
                 type="submit"
+                className="w-full bg-primary-500 hover:bg-primary-600 text-white"
                 disabled={isLoading}
-                className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 text-sm uppercase tracking-widest transition-all duration-300 disabled:opacity-50"
               >
-                {isLoading ? "Signing In..." : "Sign In"}
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Signing in...
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <LogIn className="w-4 h-4" />
+                    Sign In
+                  </div>
+                )}
               </Button>
             </form>
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-primary-500/20" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-secondary-800 px-2 text-gray-400 tracking-widest">Demo Credentials</span>
-              </div>
-            </div>
-
-            <div className="space-y-2 text-xs text-gray-400">
-              <div className="bg-secondary-700/30 p-3 rounded border border-primary-500/10">
-                <p className="font-medium text-primary-400 mb-1">Admin Access:</p>
-                <p>Email: admin@gmail.com</p>
-                <p>Password: 12345678</p>
-              </div>
-              <div className="bg-secondary-700/30 p-3 rounded border border-primary-500/10">
-                <p className="font-medium text-primary-400 mb-1">Recruiter Access:</p>
-                <p>Email: 123@gmail.com</p>
-                <p>Password: 12345678</p>
-              </div>
-            </div>
-
-            <div className="text-center">
-              <p className="text-gray-400 text-sm">
-                {"Don't have an account? "}
-                <Link
-                  href="/register"
-                  className="text-primary-500 hover:text-primary-400 transition-colors duration-300 font-medium"
-                >
-                  Sign up here
+            <div className="text-center space-y-2">
+              <p className="text-sm text-gray-400">
+                Don't have an account?{" "}
+                <Link href="/register" className="text-primary-500 hover:text-primary-400 transition-colors">
+                  Register here
                 </Link>
               </p>
             </div>
+
+            {/* Demo Credentials */}
+            <div className="mt-6 p-4 bg-secondary-700/30 rounded-lg border border-primary-500/20">
+              <h4 className="text-sm font-medium text-white mb-2">Demo Credentials:</h4>
+              <div className="space-y-1 text-xs text-gray-400">
+                <p>
+                  <strong className="text-primary-400">Admin:</strong> admin@gmail.com / 12345678
+                </p>
+                <p>
+                  <strong className="text-blue-400">Recruiter:</strong> 123@gmail.com / 12345678
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
-
-        {/* Additional Info */}
-        <div className="mt-8 text-center">
-          <p className="text-gray-500 text-xs uppercase tracking-widest">Secure Login • Protected by SSL</p>
-        </div>
       </div>
     </div>
   )

@@ -101,9 +101,12 @@ export default function RecruiterDashboard() {
   }, [router])
 
   const handleLogout = () => {
+    // Clear all authentication data
     localStorage.removeItem("userRole")
     localStorage.removeItem("userEmail")
-    router.push("/login")
+
+    // Force a page reload to clear any cached state
+    window.location.href = "/login"
   }
 
   const filteredCandidates = mockCandidates.filter(
