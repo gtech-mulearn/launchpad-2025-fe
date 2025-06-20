@@ -37,7 +37,7 @@ export function NavBar() {
         <Link href="/" className="flex items-center space-x-2">
           <div className="relative overflow-hidden flex items-center space-x-3">
             <img src="/images/logo.webp" alt="Launchpad Kerala Logo" className="h-8 w-auto" />
-                     </div>
+          </div>
         </Link>
         <div className="hidden md:flex">
           <NavigationMenu>
@@ -99,13 +99,22 @@ export function NavBar() {
             </NavigationMenuList>
           </NavigationMenu>
         </div>
-        <div className="hidden md:block">
-          <Button
-            asChild
-            className="bg-transparent hover:bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
-          >
-            <Link href="/register">Register Now</Link>
-          </Button>
+        <div className="hidden md:block text-white border-dashed">
+          <div className="hidden md:flex items-center gap-4">
+            <Button
+              asChild
+              variant="ghost"
+              className="text-white hover:text-primary-500 px-4 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
+            >
+              <Link href="/login">Login</Link>
+            </Button>
+            <Button
+              asChild
+              className="bg-transparent hover:bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
+            >
+              <Link href="/register">Register Now</Link>
+            </Button>
+          </div>
         </div>
         <div className="md:hidden">
           <Sheet>
@@ -156,6 +165,12 @@ export function NavBar() {
                   className="text-sm uppercase tracking-widest font-medium text-white hover:text-primary-500 transition-colors duration-300"
                 >
                   Results
+                </Link>
+                <Link
+                  href="/login"
+                  className="text-sm uppercase tracking-widest font-medium text-white hover:text-primary-500 transition-colors duration-300"
+                >
+                  Login
                 </Link>
                 <Link
                   href="/register"
