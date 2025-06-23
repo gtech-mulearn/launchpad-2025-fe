@@ -104,13 +104,13 @@ export function NavBar() {
             <Button
               asChild
               variant="ghost"
-              className="text-white hover:text-primary-500 px-4 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
+              className="bg-transparent text-white hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
             >
               <Link href="/login">Login</Link>
             </Button>
             <Button
               asChild
-              className="bg-transparent hover:bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
+              className="bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
             >
               <Link href="/register">Register Now</Link>
             </Button>
@@ -122,7 +122,7 @@ export function NavBar() {
               <Button
                 variant="outline"
                 size="icon"
-                className="border-primary-500 text-white hover:bg-transparent transition-all duration-300"
+                className="bg-button-secondary-500 border-primary-500 text-white hover:bg-transparent transition-all duration-300"
               >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>

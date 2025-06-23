@@ -84,7 +84,7 @@ export function MagicalCursor() {
       {trail.map((point) => (
         <div
           key={point.id}
-          className="fixed pointer-events-none z-40"
+          className="fixed pointer-events-none z-[999]"
           style={{
             left: point.x,
             top: point.y,
@@ -98,7 +98,7 @@ export function MagicalCursor() {
 
       {/* Main cursor - removed transition-all for immediate positioning */}
       <div
-        className="fixed pointer-events-none z-50"
+        className="fixed pointer-events-none z-[999]"
         style={{
           left: mousePosition.x,
           top: mousePosition.y,
@@ -136,7 +136,7 @@ export function MagicalCursor() {
       {/* Click ripple effect - faster animation */}
       {isClicking && (
         <div
-          className="fixed pointer-events-none z-45"
+          className="fixed pointer-events-none z-[999]"
           style={{
             left: mousePosition.x,
             top: mousePosition.y,

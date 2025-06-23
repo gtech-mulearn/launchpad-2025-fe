@@ -15,9 +15,10 @@ export function useScrollAnimation({
   triggerOnce = true,
   delay = 0,
 }: UseScrollAnimationOptions = {}) {
+  
   const [isVisible, setIsVisible] = useState(false)
   const [hasTriggered, setHasTriggered] = useState(false)
-  const elementRef = useRef<HTMLElement>(null)
+  const elementRef = useRef(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
