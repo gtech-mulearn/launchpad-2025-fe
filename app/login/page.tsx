@@ -38,6 +38,11 @@ export default function LoginPage() {
       localStorage.setItem("userRole", "recruiter")
       localStorage.setItem("userEmail", email)
       router.push("/dashboard/recruiter")
+    } else if (email === "company@gmail.com" && password === "12345678") {
+      // Recruiter login
+      localStorage.setItem("userRole", "company")
+      localStorage.setItem("userEmail", email)
+      router.push("/dashboard/company")
     } else {
       setError("Invalid email or password. Please try again.")
     }
@@ -146,6 +151,9 @@ export default function LoginPage() {
                 </p>
                 <p>
                   <strong className="text-blue-400">Recruiter:</strong> 123@gmail.com / 12345678
+                </p>
+                <p>
+                  <strong className="text-blue-400">Company:</strong> company@gmail.com / 12345678
                 </p>
               </div>
             </div>

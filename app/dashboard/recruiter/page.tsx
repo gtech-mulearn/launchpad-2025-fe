@@ -128,7 +128,7 @@ export default function RecruiterDashboard() {
           <Button
             onClick={handleLogout}
             variant="outline"
-            className="border-primary-500/30 text-white hover:bg-primary-500/10"
+            className="bg-button-secondary-500/30 border-primary-500/30 text-white hover:bg-primary-500/10"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Logout
@@ -194,8 +194,8 @@ export default function RecruiterDashboard() {
                         className="pl-10 bg-secondary-700/50 border-primary-500/30 text-white"
                       />
                     </div>
-                    <Button variant="outline" className="border-primary-500/30 text-white">
-                      <Filter className="h-4 w-4 mr-2" />
+                    <Button size="sm" className="bg-primary-500 hover:bg-primary-600">
+                      <Filter className="h-4 w-4 mr-1" />
                       Filter
                     </Button>
                   </div>
@@ -249,7 +249,7 @@ export default function RecruiterDashboard() {
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
-                            <Button size="sm" variant="outline" className="border-primary-500/30 text-white">
+                            <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white">
                               <Eye className="h-4 w-4 mr-1" />
                               View
                             </Button>
@@ -308,7 +308,7 @@ export default function RecruiterDashboard() {
                         </TableCell>
                         <TableCell className="text-gray-300">{request.sentDate}</TableCell>
                         <TableCell>
-                          <Button size="sm" variant="outline" className="border-primary-500/30 text-white">
+                          <Button size="sm"  className="bg-primary-500 hover:bg-primary-600">
                             View Details
                           </Button>
                         </TableCell>
