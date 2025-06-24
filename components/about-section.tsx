@@ -20,13 +20,13 @@ export function AboutSection() {
                 What is <span className="text-primary-500">Launchpad</span> Kerala?
               </h2>
               <div className="space-y-4">
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <p className="text-gray-600 text-lg leading-relaxed text-justify">
                   Launchpad Kerala 2025 is a premier job fair that brings together talented individuals and innovative
                   companies in the technical and engineering fields. This collaboration between IEEE Kerala Section and
                   GTech MuLearn aims to create meaningful connections that drive progress and innovation in Kerala's job
                   market.
                 </p>
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <p className="text-gray-600 text-lg leading-relaxed text-justify">
                   Through a unique assessment approach, flexible interview locations, and a comprehensive talent pool,
                   Launchpad Kerala 2025 offers unparalleled opportunities for both candidates and companies.
                 </p>
