@@ -40,7 +40,7 @@ export function RecruitersSection() {
                 "toobler",
                 "Innoneur",
                 "open",
-                "software_incubator",
+                "software incubator",
                 "cabot",
                 "curate",
                 "equip",

@@ -34,12 +34,14 @@ export function NavBar() {
       )}
     >
       <div className="container flex h-20 items-center justify-between">
-        <Link href="/" className="flex items-center space-x-2">
-          <div className="relative overflow-hidden flex items-center space-x-3">
+        {/* Logo: fixed width, prevent shrinking */}
+        <Link href="/" className="flex items-center space-x-2 min-w-0">
+          <div className="relative overflow-hidden flex items-center space-x-3 w-32 sm:w-36 flex-shrink-0">
             <img src="/images/logo.webp" alt="Launchpad Kerala Logo" className="h-8 w-auto" />
           </div>
         </Link>
-        <div className="hidden md:flex">
+        {/* Desktop Nav: show only on lg and up */}
+        <div className="hidden lg:flex">
           <NavigationMenu>
             <NavigationMenuList className="gap-1">
               <NavigationMenuItem>
@@ -99,8 +101,9 @@ export function NavBar() {
             </NavigationMenuList>
           </NavigationMenu>
         </div>
-        <div className="hidden md:block text-white border-dashed">
-          <div className="hidden md:flex items-center gap-4">
+        {/* Desktop Buttons: show only on lg and up */}
+        <div className="hidden lg:block text-white border-dashed">
+          <div className="hidden lg:flex items-center gap-4">
             <Button
               asChild
               variant="ghost"
@@ -116,7 +119,8 @@ export function NavBar() {
             </Button>
           </div>
         </div>
-        <div className="md:hidden">
+        {/* Hamburger menu: show on < lg */}
+        <div className="lg:hidden">
           <Sheet>
             <SheetTrigger asChild>
               <Button

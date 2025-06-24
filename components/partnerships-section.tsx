@@ -14,11 +14,11 @@ export function PartnershipsSection() {
               Strategic <span className="text-primary-500">Partnerships</span>
             </h2>
             <div className="space-y-4">
-              <p className="text-gray-600 text-lg leading-relaxed">
+              <p className="text-gray-600 text-lg leading-relaxed text-justify">
                 The collaboration between IEEE Kerala Section and GTech MuLearn for Launchpad Kerala enhances its
                 impact, offering a premier job fair experience.
               </p>
-              <p className="text-gray-600 text-lg leading-relaxed">
+              <p className="text-gray-600 text-lg leading-relaxed text-justify">
                 This partnership ensures candidates undergo a thorough assessment, while companies gain access to top
                 talent and increased brand visibility. Together, these organizations bring their expertise and networks
                 to create a platform that benefits both job seekers and employers.
