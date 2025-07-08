@@ -1,38 +1,45 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CheckCircle, User, Mail, Lock, Phone, Briefcase, ArrowLeft } from "lucide-react"
+import { CheckCircle, Building, Mail, Lock, Phone, Globe, MapPin, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { LoadingSpinner } from "./loading-spinner"
 import { ScrollReveal } from "./scroll-reveal"
 
 interface FormData {
-  companyId: string
-  name: string
   email: string
-  phone: string
   password: string
   confirmPassword: string
-  role: string
+  companyName: string
+  contactPerson: string
+  phoneNumber: string
+  companyWebsite: string
+  headOfficeAddress: string
+  additionalInfo: string
 }
 
 interface FormErrors {
   [key: string]: string
 }
 
-export function RecruiterRegistration() {
+export function CompanyRegistration() {
   const [formData, setFormData] = useState<FormData>({
-    companyId: "",
-    name: "",
     email: "",
-    phone: "",
     password: "",
     confirmPassword: "",
-    role: "",
+    companyName: "",
+    contactPerson: "",
+    phoneNumber: "",
+    companyWebsite: "",
+    headOfficeAddress: "",
+    additionalInfo: "",
   })
 
   const [errors, setErrors] = useState<FormErrors>({})
@@ -42,34 +49,42 @@ export function RecruiterRegistration() {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
 
-    if (!formData.companyId) {
-      newErrors.companyId = "Company ID is required"
-    }
-    if (!formData.name) {
-      newErrors.name = "Name is required"
-    }
+    // Email validation
     if (!formData.email) {
       newErrors.email = "Email is required"
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Please enter a valid email address"
     }
-    if (!formData.phone) {
-      newErrors.phone = "Phone number is required"
-    } else if (!/^\+?[\d\s\-]{10,}$/.test(formData.phone)) {
-      newErrors.phone = "Please enter a valid phone number"
-    }
+
+    // Password validation
     if (!formData.password) {
       newErrors.password = "Password is required"
     } else if (formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters long"
     }
+
+    // Confirm password validation
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = "Please confirm your password"
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match"
     }
-    if (!formData.role) {
-      newErrors.role = "Role is required"
+
+    // Company name validation
+    if (!formData.companyName) {
+      newErrors.companyName = "Company name is required"
+    }
+
+    // Contact person validation
+    if (!formData.contactPerson) {
+      newErrors.contactPerson = "Contact person name is required"
+    }
+
+    // Phone number validation
+    if (!formData.phoneNumber) {
+      newErrors.phoneNumber = "Phone number is required"
+    } else if (!/^\+?[\d\s\-$$$$]{10,}$/.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = "Please enter a valid phone number"
     }
 
     setErrors(newErrors)
@@ -78,6 +93,7 @@ export function RecruiterRegistration() {
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+    // Clear error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }))
     }
@@ -85,8 +101,14 @@ export function RecruiterRegistration() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!validateForm()) return
+
+    if (!validateForm()) {
+      return
+    }
+
     setIsSubmitting(true)
+
+    // Simulate API call
     try {
       await new Promise((resolve) => setTimeout(resolve, 3000))
       setIsRegistered(true)
@@ -111,16 +133,20 @@ export function RecruiterRegistration() {
                     </div>
                   </div>
                 </ScrollReveal>
+
                 <ScrollReveal direction="up" delay={400}>
                   <h2 className="text-2xl font-bold text-secondary-900 mb-4 uppercase tracking-tight">
                     Registration Successful!
                   </h2>
                 </ScrollReveal>
+
                 <ScrollReveal direction="up" delay={600}>
                   <p className="text-gray-600 mb-6 leading-relaxed">
-                    Thank you for registering as a recruiter. Your application has been received and you have been added to our waiting list.
+                    Thank you for registering with Launchpad Kerala 2025. Your application has been received and you
+                    have been added to our waiting list.
                   </p>
                 </ScrollReveal>
+
                 <ScrollReveal direction="up" delay={800}>
                   <div className="bg-primary-500/10 border border-primary-500/20 rounded-lg p-4 mb-6">
                     <p className="text-primary-600 font-medium text-sm uppercase tracking-widest">
@@ -131,6 +157,7 @@ export function RecruiterRegistration() {
                     </p>
                   </div>
                 </ScrollReveal>
+
                 <ScrollReveal direction="up" delay={1000}>
                   <Button
                     asChild
@@ -157,16 +184,16 @@ export function RecruiterRegistration() {
         <ScrollReveal direction="down" duration={800}>
           <div className="text-center mb-8">
             <Link
-              href="/dashboard/company"
+              href="/"
               className="inline-flex items-center text-white hover:text-primary-500 transition-colors duration-300 mb-6"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              <span className="text-sm uppercase tracking-widest">Back</span>
+              <span className="text-sm uppercase tracking-widest">Back to Home</span>
             </Link>
             <h1 className="text-4xl md:text-5xl font-bold text-white uppercase tracking-tighter mb-4">
-              Recruiter <span className="text-primary-500">Registration</span>
+              company <span className="text-primary-500">Registration</span>
             </h1>
-            <p className="text-gray-400 text-lg">Register a Recruiter</p>
+            <p className="text-gray-400 text-lg">Join Launchpad Kerala 2025 as a recruiting partner</p>
           </div>
         </ScrollReveal>
 
@@ -175,66 +202,17 @@ export function RecruiterRegistration() {
           <Card className="bg-white/5 border-primary-500/20 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="text-white text-xl uppercase tracking-tight">
-                Recruiter Registration Details
+                Company Registration Details
               </CardTitle>
             </CardHeader>
             <CardContent className="p-8">
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Recruiter Details Section */}
+                {/* Login Credentials Section */}
                 <ScrollReveal direction="up" delay={500}>
                   <div className="space-y-4">
                     <div className="flex items-center space-x-2 mb-4">
-                      <Briefcase className="w-5 h-5 text-primary-500" />
-                      <h3 className="text-white font-medium uppercase tracking-widest text-sm">Recruiter Details</h3>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="companyId" className="text-white text-sm uppercase tracking-widest">
-                        Company ID *
-                      </Label>
-                      <Input
-                        id="companyId"
-                        type="text"
-                        value={formData.companyId}
-                        onChange={(e) => handleInputChange("companyId", e.target.value)}
-                        className="mt-1 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
-                        placeholder="Enter your Company UUID"
-                      />
-                      {errors.companyId && <p className="text-red-400 text-xs mt-1">{errors.companyId}</p>}
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="name" className="text-white text-sm uppercase tracking-widest">
-                          Name *
-                        </Label>
-                        <div className="relative mt-1">
-                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                          <Input
-                            id="name"
-                            type="text"
-                            value={formData.name}
-                            onChange={(e) => handleInputChange("name", e.target.value)}
-                            className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
-                            placeholder="Full Name"
-                          />
-                        </div>
-                        {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
-                      </div>
-                      <div>
-                        <Label htmlFor="role" className="text-white text-sm uppercase tracking-widest">
-                          Role *
-                        </Label>
-                        <Input
-                          id="role"
-                          type="text"
-                          value={formData.role}
-                          onChange={(e) => handleInputChange("role", e.target.value)}
-                          className="mt-1 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
-                          placeholder="e.g. Human Resources"
-                        />
-                        {errors.role && <p className="text-red-400 text-xs mt-1">{errors.role}</p>}
-                      </div>
+                      <Lock className="w-5 h-5 text-primary-500" />
+                      <h3 className="text-white font-medium uppercase tracking-widest text-sm">Login Credentials</h3>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
@@ -250,40 +228,12 @@ export function RecruiterRegistration() {
                             value={formData.email}
                             onChange={(e) => handleInputChange("email", e.target.value)}
                             className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
-                            placeholder="recruiter@example.com"
+                            placeholder="company@example.com"
                           />
                         </div>
                         {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
                       </div>
-                      <div>
-                        <Label htmlFor="phone" className="text-white text-sm uppercase tracking-widest">
-                          Phone Number *
-                        </Label>
-                        <div className="relative mt-1">
-                          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                          <Input
-                            id="phone"
-                            type="tel"
-                            value={formData.phone}
-                            onChange={(e) => handleInputChange("phone", e.target.value)}
-                            className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
-                            placeholder="+91 9876543210"
-                          />
-                        </div>
-                        {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
-                      </div>
-                    </div>
-                  </div>
-                </ScrollReveal>
 
-                {/* Login Credentials Section */}
-                <ScrollReveal direction="up" delay={700}>
-                  <div className="space-y-4 pt-6 border-t border-primary-500/20">
-                    <div className="flex items-center space-x-2 mb-4">
-                      <Lock className="w-5 h-5 text-primary-500" />
-                      <h3 className="text-white font-medium uppercase tracking-widest text-sm">Login Credentials</h3>
-                    </div>
-                    <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="password" className="text-white text-sm uppercase tracking-widest">
                           Password *
@@ -301,23 +251,130 @@ export function RecruiterRegistration() {
                         </div>
                         {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password}</p>}
                       </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="confirmPassword" className="text-white text-sm uppercase tracking-widest">
+                        Confirm Password *
+                      </Label>
+                      <div className="relative mt-1">
+                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Input
+                          id="confirmPassword"
+                          type="password"
+                          value={formData.confirmPassword}
+                          onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                          className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
+                          placeholder="Re-enter your password"
+                        />
+                      </div>
+                      {errors.confirmPassword && <p className="text-red-400 text-xs mt-1">{errors.confirmPassword}</p>}
+                    </div>
+                  </div>
+                </ScrollReveal>
+
+                {/* Company Details Section */}
+                <ScrollReveal direction="up" delay={700}>
+                  <div className="space-y-4 pt-6 border-t border-primary-500/20">
+                    <div className="flex items-center space-x-2 mb-4">
+                      <Building className="w-5 h-5 text-primary-500" />
+                      <h3 className="text-white font-medium uppercase tracking-widest text-sm">Company Details</h3>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="companyName" className="text-white text-sm uppercase tracking-widest">
+                        Company Name *
+                      </Label>
+                      <Input
+                        id="companyName"
+                        type="text"
+                        value={formData.companyName}
+                        onChange={(e) => handleInputChange("companyName", e.target.value)}
+                        className="mt-1 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
+                        placeholder="Your Company Name"
+                      />
+                      {errors.companyName && <p className="text-red-400 text-xs mt-1">{errors.companyName}</p>}
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="confirmPassword" className="text-white text-sm uppercase tracking-widest">
-                          Confirm Password *
+                        <Label htmlFor="contactPerson" className="text-white text-sm uppercase tracking-widest">
+                          Contact Person *
+                        </Label>
+                        <Input
+                          id="contactPerson"
+                          type="text"
+                          value={formData.contactPerson}
+                          onChange={(e) => handleInputChange("contactPerson", e.target.value)}
+                          className="mt-1 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
+                          placeholder="Full Name"
+                        />
+                        {errors.contactPerson && <p className="text-red-400 text-xs mt-1">{errors.contactPerson}</p>}
+                      </div>
+
+                      <div>
+                        <Label htmlFor="phoneNumber" className="text-white text-sm uppercase tracking-widest">
+                          Phone Number *
                         </Label>
                         <div className="relative mt-1">
-                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                           <Input
-                            id="confirmPassword"
-                            type="password"
-                            value={formData.confirmPassword}
-                            onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                            id="phoneNumber"
+                            type="tel"
+                            value={formData.phoneNumber}
+                            onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
                             className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
-                            placeholder="Re-enter your password"
+                            placeholder="+91 9876543210"
                           />
                         </div>
-                        {errors.confirmPassword && <p className="text-red-400 text-xs mt-1">{errors.confirmPassword}</p>}
+                        {errors.phoneNumber && <p className="text-red-400 text-xs mt-1">{errors.phoneNumber}</p>}
                       </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="companyWebsite" className="text-white text-sm uppercase tracking-widest">
+                        Company Website <span className="text-gray-400">(Optional)</span>
+                      </Label>
+                      <div className="relative mt-1">
+                        <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Input
+                          id="companyWebsite"
+                          type="url"
+                          value={formData.companyWebsite}
+                          onChange={(e) => handleInputChange("companyWebsite", e.target.value)}
+                          className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
+                          placeholder="https://www.yourcompany.com"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="headOfficeAddress" className="text-white text-sm uppercase tracking-widest">
+                        Head Office Address <span className="text-gray-400">(Optional)</span>
+                      </Label>
+                      <div className="relative mt-1">
+                        <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                        <Textarea
+                          id="headOfficeAddress"
+                          value={formData.headOfficeAddress}
+                          onChange={(e) => handleInputChange("headOfficeAddress", e.target.value)}
+                          className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400 min-h-[80px]"
+                          placeholder="Complete address with city, state, and postal code"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="additionalInfo" className="text-white text-sm uppercase tracking-widest">
+                        Additional Information <span className="text-gray-400">(Optional)</span>
+                      </Label>
+                      <Textarea
+                        id="additionalInfo"
+                        value={formData.additionalInfo}
+                        onChange={(e) => handleInputChange("additionalInfo", e.target.value)}
+                        className="mt-1 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400 min-h-[100px]"
+                        placeholder="Any additional information about your company or recruitment requirements"
+                      />
                     </div>
                   </div>
                 </ScrollReveal>
@@ -337,6 +394,8 @@ export function RecruiterRegistration() {
                       )}
                     </Button>
                   </div>
+
+                  {/* Terms */}
                   <p className="text-gray-400 text-xs text-center leading-relaxed mt-4">
                     By submitting this form, you agree to our terms and conditions. We will review your application and
                     contact you with further details about the recruitment process.

@@ -134,11 +134,19 @@ export default function CompanyDashboard() {
         </div>
 
         <Tabs defaultValue="approved" className="space-y-4">
-          <TabsList className="bg-secondary-800/50 backdrop-blur-sm border border-primary-500/20">
-            <TabsTrigger value="approved" className="text-white data-[state=active]:bg-primary-500">
-              Approved Candidates
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex items-center justify-between mb-4">
+    <TabsList className="bg-secondary-800/50 backdrop-blur-sm border border-primary-500/20">
+      <TabsTrigger value="approved" className="text-white data-[state=active]:bg-primary-500">
+        Approved Candidates
+      </TabsTrigger>
+    </TabsList>
+    <Button
+      asChild
+      className="bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300 ml-4"
+    >
+      <a href="/register/recruiter">Register</a>
+    </Button>
+  </div>
 
           <TabsContent value="approved" className="space-y-4">
             <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20">

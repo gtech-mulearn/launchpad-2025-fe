@@ -6,6 +6,7 @@ import { GlitchText } from "./glitch-text"
 import { ScrollReveal } from "./scroll-reveal"
 import { StaggerContainer } from "./stagger-container"
 
+
 export function HeroSection() {
   return (
     <section className="w-full min-h-screen flex items-center justify-center bg-secondary-900 relative overflow-hidden">
@@ -61,14 +62,13 @@ export function HeroSection() {
           </div>
 
           <ScrollReveal direction="scale" delay={600} duration={1000}>
-            {/* Responsive geometric/stat container */}
+            
             <div className="w-full max-w-lg mx-auto relative">
-              {/* Desktop: absolute border and stats */}
-              <div className="hidden sm:block aspect-square w-full relative">
-                {/* Geometric elements */}
+              
+              <div className="hidden lg:block aspect-square w-full relative">
+
                 <div className="absolute top-0 left-0 w-2/3 h-2/3 border-l-2 border-t-2 border-primary-500 animate-pulse"></div>
-                <div className="absolute bottom-100 right-0 w-2/3 h-2/3 border-r-2 border-b-2 border-primary-500 animate-pulse"></div>
-                {/* Stats */}
+                <div className="absolute bottom-0 right-0 w-2/3 h-2/3 border-r-2 border-b-2 border-primary-500 animate-pulse"></div>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <StaggerContainer staggerDelay={150}>
                     <div className="bg-secondary-800 border border-primary-500/20 p-6 transition-all duration-300 hover:border-primary-500 hover:scale-105 group w-64 text-center">
@@ -90,15 +90,15 @@ export function HeroSection() {
                   </StaggerContainer>
                 </div>
               </div>
-              {/* Mobile: stacked border and stats */}
-              <div className="block sm:hidden w-full">
+              
+              <div className="block lg:hidden w-full">
                 <div className="relative w-full flex flex-col items-center">
-                  {/* Geometric border as a background */}
+                 
                   <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
                     <div className="absolute top-0 left-0 w-2/3 h-2/3 border-l-2 border-t-2 border-primary-500 animate-pulse"></div>
                     <div className="absolute bottom-0 right-0 w-2/3 h-2/3 border-r-2 border-b-2 border-primary-500 animate-pulse"></div>
                   </div>
-                  {/* Stats */}
+                 
                   <div className="relative w-full flex flex-col items-center justify-center py-8 gap-4">
                     <StaggerContainer staggerDelay={150}>
                       <div className="bg-secondary-800 border border-primary-500/20 p-6 w-full max-w-xs mx-auto transition-all duration-300 hover:border-primary-500 hover:scale-105 group text-center">
