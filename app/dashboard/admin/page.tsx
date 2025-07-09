@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import Link from "next/link"
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -23,7 +23,6 @@ import {
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 
 // Mock data for demonstration
 const mockStats = {
@@ -164,28 +163,20 @@ export default function AdminDashboard() {
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                   <Button className="bg-primary-500 hover:bg-primary-600 text-white">
-                    <Link href="/dashboard/admin/manage-user" className="flex items-center">
-                      <Users className="w-4 h-4 mr-2" />
-                      Manage Users
-                    </Link>
+                    <Users className="w-4 h-4 mr-2" />
+                    Manage Users
                   </Button>
                   <Button className="bg-blue-500 hover:bg-blue-600 text-white">
-                    <Link href="/components/verify-companies" className="flex items-center">
-                      <Building2 className="w-4 h-4 mr-2" />
-                      Verify Companies
-                    </Link>
+                    <Building2 className="w-4 h-4 mr-2" />
+                    Verify Companies
                   </Button>
                   <Button className="bg-green-500 hover:bg-green-600 text-white">
-                    <Link href="/components/review-job-offers" className="flex items-center">
-                      <Briefcase className="w-4 h-4 mr-2" />
-                      Review Job Offers
-                    </Link>
+                    <Briefcase className="w-4 h-4 mr-2" />
+                    Review Job Offers
                   </Button>
                   <Button className="bg-purple-500 hover:bg-purple-600 text-white">
-                    <Link href="/components/approve-tasks" className="flex items-center">
-                      <FileText className="w-4 h-4 mr-2" />
-                      Approve Tasks
-                    </Link>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Approve Tasks
                   </Button>
                 </div>
               </CardContent>

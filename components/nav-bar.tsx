@@ -177,7 +177,7 @@ export function NavBar() {
                   Login
                 </Link>
                 <Link
-                  href="/register/company"
+                  href="/register"
                   className="text-sm uppercase tracking-widest font-medium text-white hover:text-primary-500 transition-colors duration-300"
                 >
                   Registration
@@ -186,7 +186,7 @@ export function NavBar() {
                   className="mt-4 bg-transparent hover:bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
                   asChild
                 >
-                  <Link href="/register/company">Register Now</Link>
+                  <Link href="/register">Register Now</Link>
                 </Button>
               </nav>
             </SheetContent>
