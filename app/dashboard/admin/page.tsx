@@ -23,6 +23,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 // Mock data for demonstration
 const mockStats = {
@@ -163,20 +164,40 @@ export default function AdminDashboard() {
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                   <Button className="bg-primary-500 hover:bg-primary-600 text-white">
-                    <Users className="w-4 h-4 mr-2" />
-                    Manage Users
+                    <Link
+                      href="/dashboard/admin/manage-user"
+                      className="flex items-center"
+                    >
+                      <Users className="w-4 h-4 mr-2" />
+                      Manage Users
+                    </Link>
                   </Button>
                   <Button className="bg-blue-500 hover:bg-blue-600 text-white">
-                    <Building2 className="w-4 h-4 mr-2" />
-                    Verify Companies
+                    <Link
+                      href="/components/verify-companies"
+                      className="flex items-center"
+                    >
+                      <Building2 className="w-4 h-4 mr-2" />
+                      Verify Companies
+                    </Link>
                   </Button>
                   <Button className="bg-green-500 hover:bg-green-600 text-white">
-                    <Briefcase className="w-4 h-4 mr-2" />
-                    Review Job Offers
+                    <Link
+                      href="/components/review-job-offers"
+                      className="flex items-center"
+                    >
+                      <Briefcase className="w-4 h-4 mr-2" />
+                      Review Job Offers
+                    </Link>
                   </Button>
                   <Button className="bg-purple-500 hover:bg-purple-600 text-white">
-                    <FileText className="w-4 h-4 mr-2" />
-                    Approve Tasks
+                    <Link
+                      href="/components/approve-tasks"
+                      className="flex items-center"
+                    >
+                      <FileText className="w-4 h-4 mr-2" />
+                      Approve Tasks
+                    </Link>
                   </Button>
                 </div>
               </CardContent>

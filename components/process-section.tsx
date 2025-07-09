@@ -1,5 +1,6 @@
-import { ScrollReveal } from "./scroll-reveal"
-import { StaggerContainer } from "./stagger-container"
+import Link from "next/link";
+import { ScrollReveal } from "./scroll-reveal";
+import { StaggerContainer } from "./stagger-container";
 
 export function ProcessSection() {
   const processSteps = [
@@ -67,10 +68,13 @@ export function ProcessSection() {
       icon: "🤝",
       color: "from-teal-500 to-teal-600",
     },
-  ]
+  ];
 
   return (
-    <section id="process" className="w-full py-24 md:py-32 bg-white relative overflow-hidden">
+    <section
+      id="process"
+      className="w-full py-24 md:py-32 bg-white relative overflow-hidden"
+    >
       {/* Grid overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-40"></div>
 
@@ -78,13 +82,17 @@ export function ProcessSection() {
         <ScrollReveal direction="up" duration={800}>
           <div className="text-center mb-16">
             <div className="inline-flex items-center space-x-2 border border-primary-500 px-3 py-1 mx-auto mb-6">
-              <span className="text-xs uppercase tracking-widest text-primary-500 font-medium">Process</span>
+              <span className="text-xs uppercase tracking-widest text-primary-500 font-medium">
+                Process
+              </span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-secondary-900 uppercase tracking-tighter mb-4">
-              Launchpad Kerala 2025 <span className="text-primary-500">Process</span>
+              Launchpad Kerala 2025{" "}
+              <span className="text-primary-500">Process</span>
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              A comprehensive step-by-step guide to our innovative recruitment process
+              A comprehensive step-by-step guide to our innovative recruitment
+              process
             </p>
           </div>
         </ScrollReveal>
@@ -104,24 +112,30 @@ export function ProcessSection() {
                 )}
 
                 {/* Step Number Circle */}
-                <div className="relative z-10 flex md:absolute md:left-1/2 md:transform md:-translate-x-1/2 items-center mb-6 md:mb-0">
-                  
-                </div>
+                <div className="relative z-10 flex md:absolute md:left-1/2 md:transform md:-translate-x-1/2 items-center mb-6 md:mb-0"></div>
 
                 {/* Content Card */}
-                <div className={`flex-1 ${index % 2 === 0 ? "md:pr-8" : "md:pl-8"} md:w-5/12`}>
+                <div
+                  className={`flex-1 ${
+                    index % 2 === 0 ? "md:pr-8" : "md:pl-8"
+                  } md:w-5/12`}
+                >
                   <div className="bg-white border border-primary-500/20 rounded-xl p-6 shadow-lg hover:shadow-xl hover:border-primary-500/40 transition-all duration-300 group-hover:transform group-hover:-translate-y-2">
                     {/* Icon and Title */}
                     <div className="flex items-center space-x-4 mb-4">
                       <div className="text-3xl">{item.icon}</div>
                       <div>
-                        <h3 className="text-xl font-bold text-secondary-900 uppercase tracking-tight">{item.title}</h3>
+                        <h3 className="text-xl font-bold text-secondary-900 uppercase tracking-tight">
+                          {item.title}
+                        </h3>
                         <div className="w-12 h-1 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full mt-2"></div>
                       </div>
                     </div>
 
                     {/* Description */}
-                    <p className="text-gray-600 leading-relaxed">{item.description}</p>
+                    <p className="text-gray-600 leading-relaxed">
+                      {item.description}
+                    </p>
 
                     {/* Progress Indicator */}
                     <div className="mt-4 flex items-center justify-between">
@@ -129,14 +143,16 @@ export function ProcessSection() {
                         Step {item.step} of {processSteps.length}
                       </span>
                       <div className="flex space-x-1">
-                        {Array.from({ length: processSteps.length }).map((_, i) => (
-                          <div
-                            key={i}
-                            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                              i < item.step ? "bg-primary-500" : "bg-gray-200"
-                            }`}
-                          />
-                        ))}
+                        {Array.from({ length: processSteps.length }).map(
+                          (_, i) => (
+                            <div
+                              key={i}
+                              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                                i < item.step ? "bg-primary-500" : "bg-gray-200"
+                              }`}
+                            />
+                          )
+                        )}
                       </div>
                     </div>
                   </div>
@@ -157,14 +173,15 @@ export function ProcessSection() {
                 Ready to Begin Your Journey?
               </h3>
               <p className="text-gray-600 mb-6">
-                Join thousands of talented individuals and innovative companies in Launchpad Kerala 2025
+                Join thousands of talented individuals and innovative companies
+                in Launchpad Kerala 2025
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-lg font-medium uppercase tracking-widest text-sm transition-all duration-300 hover:scale-105">
                   Register as Candidate
                 </button>
                 <button className="bg-transparent hover:bg-primary-500/10 text-primary-500 border border-primary-500 px-8 py-3 rounded-lg font-medium uppercase tracking-widest text-sm transition-all duration-300 hover:scale-105">
-                  Register as Company
+                  <Link href="/register/company">Register as Company</Link>
                 </button>
               </div>
             </div>
@@ -172,5 +189,5 @@ export function ProcessSection() {
         </ScrollReveal>
       </div>
     </section>
-  )
+  );
 }
