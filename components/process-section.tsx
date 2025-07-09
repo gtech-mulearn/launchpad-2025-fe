@@ -1,3 +1,5 @@
+import Link from "next/link"
+import React from "react"
 import { ScrollReveal } from "./scroll-reveal"
 import { StaggerContainer } from "./stagger-container"
 
@@ -163,8 +165,10 @@ export function ProcessSection() {
                 <button className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-lg font-medium uppercase tracking-widest text-sm transition-all duration-300 hover:scale-105">
                   Register as Candidate
                 </button>
-                <button className="bg-transparent hover:bg-primary-500/10 text-primary-500 border border-primary-500 px-8 py-3 rounded-lg font-medium uppercase tracking-widest text-sm transition-all duration-300 hover:scale-105">
-                  Register as Company
+                <button 
+                className="bg-transparent hover:bg-primary-500/10 text-primary-500 border border-primary-500 px-8 py-3 rounded-lg font-medium uppercase tracking-widest text-sm transition-all duration-300 hover:scale-105"
+                >
+                  <Link href="/register/company">Register as Company</Link>
                 </button>
               </div>
             </div>
