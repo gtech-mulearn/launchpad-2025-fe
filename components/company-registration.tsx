@@ -1,32 +1,43 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CheckCircle, Building, Mail, Lock, Phone, Globe, MapPin, ArrowLeft } from "lucide-react"
-import Link from "next/link"
-import { LoadingSpinner } from "./loading-spinner"
-import { ScrollReveal } from "./scroll-reveal"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  CheckCircle,
+  Building,
+  Mail,
+  Lock,
+  Phone,
+  Globe,
+  MapPin,
+  ArrowLeft,
+} from "lucide-react";
+import Link from "next/link";
+import { LoadingSpinner } from "./loading-spinner";
+import { ScrollReveal } from "./scroll-reveal";
+import { useLocalStorage } from "@/hooks/misc";
+import { useSignupCompany } from "@/hooks/auth";
 
 interface FormData {
-  email: string
-  password: string
-  confirmPassword: string
-  companyName: string
-  contactPerson: string
-  phoneNumber: string
-  companyWebsite: string
-  headOfficeAddress: string
-  additionalInfo: string
+  email: string;
+  password: string;
+  confirmPassword: string;
+  companyName: string;
+  contactPerson: string;
+  phoneNumber: string;
+  companyWebsite: string;
+  headOfficeAddress: string;
+  additionalInfo: string;
 }
 
 interface FormErrors {
-  [key: string]: string
+  [key: string]: string;
 }
 
 export function CompanyRegistration() {
@@ -40,84 +51,92 @@ export function CompanyRegistration() {
     companyWebsite: "",
     headOfficeAddress: "",
     additionalInfo: "",
-  })
+  });
 
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isRegistered, setIsRegistered] = useState(false)
-
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
+  const signUp = useSignupCompany();
   const validateForm = (): boolean => {
-    const newErrors: FormErrors = {}
+    const newErrors: FormErrors = {};
 
     // Email validation
     if (!formData.email) {
-      newErrors.email = "Email is required"
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address"
+      newErrors.email = "Please enter a valid email address";
     }
 
     // Password validation
     if (!formData.password) {
-      newErrors.password = "Password is required"
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters long"
+      newErrors.password = "Password must be at least 8 characters long";
     }
 
     // Confirm password validation
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password"
+      newErrors.confirmPassword = "Please confirm your password";
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match"
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
     // Company name validation
     if (!formData.companyName) {
-      newErrors.companyName = "Company name is required"
+      newErrors.companyName = "Company name is required";
     }
 
     // Contact person validation
     if (!formData.contactPerson) {
-      newErrors.contactPerson = "Contact person name is required"
+      newErrors.contactPerson = "Contact person name is required";
     }
 
     // Phone number validation
     if (!formData.phoneNumber) {
-      newErrors.phoneNumber = "Phone number is required"
+      newErrors.phoneNumber = "Phone number is required";
     } else if (!/^\+?[\d\s\-$$$$]{10,}$/.test(formData.phoneNumber)) {
-      newErrors.phoneNumber = "Please enter a valid phone number"
+      newErrors.phoneNumber = "Please enter a valid phone number";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }))
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     // Simulate API call
     try {
-      await new Promise((resolve) => setTimeout(resolve, 3000))
-      setIsRegistered(true)
+      await signUp.mutateAsync({
+        name: formData.companyName,
+        username: formData.email,
+        password: formData.password,
+        poc_name: formData.contactPerson,
+        poc_role: "Recruiter",
+        poc_email: formData.email,
+        poc_phone: formData.phoneNumber,
+      });
+      setIsRegistered(true);
     } catch (error) {
-      console.error("Registration failed:", error)
+      console.error("Registration failed:", error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   if (isRegistered) {
     return (
@@ -142,8 +161,9 @@ export function CompanyRegistration() {
 
                 <ScrollReveal direction="up" delay={600}>
                   <p className="text-gray-600 mb-6 leading-relaxed">
-                    Thank you for registering with Launchpad Kerala 2025. Your application has been received and you
-                    have been added to our waiting list.
+                    Thank you for registering with Launchpad Kerala 2025. Your
+                    application has been received and you have been added to our
+                    waiting list.
                   </p>
                 </ScrollReveal>
 
@@ -153,7 +173,8 @@ export function CompanyRegistration() {
                       Status: Waiting List
                     </p>
                     <p className="text-gray-600 text-sm mt-1">
-                      We will contact you soon with further details about the recruitment process.
+                      We will contact you soon with further details about the
+                      recruitment process.
                     </p>
                   </div>
                 </ScrollReveal>
@@ -171,7 +192,7 @@ export function CompanyRegistration() {
           </ScrollReveal>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -188,12 +209,16 @@ export function CompanyRegistration() {
               className="inline-flex items-center text-white hover:text-primary-500 transition-colors duration-300 mb-6"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              <span className="text-sm uppercase tracking-widest">Back to Home</span>
+              <span className="text-sm uppercase tracking-widest">
+                Back to Home
+              </span>
             </Link>
             <h1 className="text-4xl md:text-5xl font-bold text-white uppercase tracking-tighter mb-4">
               company <span className="text-primary-500">Registration</span>
             </h1>
-            <p className="text-gray-400 text-lg">Join Launchpad Kerala 2025 as a recruiting partner</p>
+            <p className="text-gray-400 text-lg">
+              Join Launchpad Kerala 2025 as a recruiting partner
+            </p>
           </div>
         </ScrollReveal>
 
@@ -212,12 +237,17 @@ export function CompanyRegistration() {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-2 mb-4">
                       <Lock className="w-5 h-5 text-primary-500" />
-                      <h3 className="text-white font-medium uppercase tracking-widest text-sm">Login Credentials</h3>
+                      <h3 className="text-white font-medium uppercase tracking-widest text-sm">
+                        Login Credentials
+                      </h3>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="email" className="text-white text-sm uppercase tracking-widest">
+                        <Label
+                          htmlFor="email"
+                          className="text-white text-sm uppercase tracking-widest"
+                        >
                           Email Address *
                         </Label>
                         <div className="relative mt-1">
@@ -226,16 +256,25 @@ export function CompanyRegistration() {
                             id="email"
                             type="email"
                             value={formData.email}
-                            onChange={(e) => handleInputChange("email", e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("email", e.target.value)
+                            }
                             className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
                             placeholder="company@example.com"
                           />
                         </div>
-                        {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
+                        {errors.email && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {errors.email}
+                          </p>
+                        )}
                       </div>
 
                       <div>
-                        <Label htmlFor="password" className="text-white text-sm uppercase tracking-widest">
+                        <Label
+                          htmlFor="password"
+                          className="text-white text-sm uppercase tracking-widest"
+                        >
                           Password *
                         </Label>
                         <div className="relative mt-1">
@@ -244,17 +283,26 @@ export function CompanyRegistration() {
                             id="password"
                             type="password"
                             value={formData.password}
-                            onChange={(e) => handleInputChange("password", e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("password", e.target.value)
+                            }
                             className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
                             placeholder="Minimum 8 characters"
                           />
                         </div>
-                        {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password}</p>}
+                        {errors.password && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {errors.password}
+                          </p>
+                        )}
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="confirmPassword" className="text-white text-sm uppercase tracking-widest">
+                      <Label
+                        htmlFor="confirmPassword"
+                        className="text-white text-sm uppercase tracking-widest"
+                      >
                         Confirm Password *
                       </Label>
                       <div className="relative mt-1">
@@ -263,12 +311,18 @@ export function CompanyRegistration() {
                           id="confirmPassword"
                           type="password"
                           value={formData.confirmPassword}
-                          onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("confirmPassword", e.target.value)
+                          }
                           className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
                           placeholder="Re-enter your password"
                         />
                       </div>
-                      {errors.confirmPassword && <p className="text-red-400 text-xs mt-1">{errors.confirmPassword}</p>}
+                      {errors.confirmPassword && (
+                        <p className="text-red-400 text-xs mt-1">
+                          {errors.confirmPassword}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </ScrollReveal>
@@ -278,42 +332,65 @@ export function CompanyRegistration() {
                   <div className="space-y-4 pt-6 border-t border-primary-500/20">
                     <div className="flex items-center space-x-2 mb-4">
                       <Building className="w-5 h-5 text-primary-500" />
-                      <h3 className="text-white font-medium uppercase tracking-widest text-sm">Company Details</h3>
+                      <h3 className="text-white font-medium uppercase tracking-widest text-sm">
+                        Company Details
+                      </h3>
                     </div>
 
                     <div>
-                      <Label htmlFor="companyName" className="text-white text-sm uppercase tracking-widest">
+                      <Label
+                        htmlFor="companyName"
+                        className="text-white text-sm uppercase tracking-widest"
+                      >
                         Company Name *
                       </Label>
                       <Input
                         id="companyName"
                         type="text"
                         value={formData.companyName}
-                        onChange={(e) => handleInputChange("companyName", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("companyName", e.target.value)
+                        }
                         className="mt-1 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
                         placeholder="Your Company Name"
                       />
-                      {errors.companyName && <p className="text-red-400 text-xs mt-1">{errors.companyName}</p>}
+                      {errors.companyName && (
+                        <p className="text-red-400 text-xs mt-1">
+                          {errors.companyName}
+                        </p>
+                      )}
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="contactPerson" className="text-white text-sm uppercase tracking-widest">
+                        <Label
+                          htmlFor="contactPerson"
+                          className="text-white text-sm uppercase tracking-widest"
+                        >
                           Contact Person *
                         </Label>
                         <Input
                           id="contactPerson"
                           type="text"
                           value={formData.contactPerson}
-                          onChange={(e) => handleInputChange("contactPerson", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("contactPerson", e.target.value)
+                          }
                           className="mt-1 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
                           placeholder="Full Name"
                         />
-                        {errors.contactPerson && <p className="text-red-400 text-xs mt-1">{errors.contactPerson}</p>}
+                        {errors.contactPerson && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {errors.contactPerson}
+                          </p>
+                        )}
                       </div>
 
                       <div>
-                        <Label htmlFor="phoneNumber" className="text-white text-sm uppercase tracking-widest">
+                        <Label
+                          htmlFor="phoneNumber"
+                          className="text-white text-sm uppercase tracking-widest"
+                        >
                           Phone Number *
                         </Label>
                         <div className="relative mt-1">
@@ -322,18 +399,28 @@ export function CompanyRegistration() {
                             id="phoneNumber"
                             type="tel"
                             value={formData.phoneNumber}
-                            onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("phoneNumber", e.target.value)
+                            }
                             className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
                             placeholder="+91 9876543210"
                           />
                         </div>
-                        {errors.phoneNumber && <p className="text-red-400 text-xs mt-1">{errors.phoneNumber}</p>}
+                        {errors.phoneNumber && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {errors.phoneNumber}
+                          </p>
+                        )}
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="companyWebsite" className="text-white text-sm uppercase tracking-widest">
-                        Company Website <span className="text-gray-400">(Optional)</span>
+                      <Label
+                        htmlFor="companyWebsite"
+                        className="text-white text-sm uppercase tracking-widest"
+                      >
+                        Company Website{" "}
+                        <span className="text-gray-400">(Optional)</span>
                       </Label>
                       <div className="relative mt-1">
                         <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -341,7 +428,9 @@ export function CompanyRegistration() {
                           id="companyWebsite"
                           type="url"
                           value={formData.companyWebsite}
-                          onChange={(e) => handleInputChange("companyWebsite", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("companyWebsite", e.target.value)
+                          }
                           className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
                           placeholder="https://www.yourcompany.com"
                         />
@@ -349,15 +438,24 @@ export function CompanyRegistration() {
                     </div>
 
                     <div>
-                      <Label htmlFor="headOfficeAddress" className="text-white text-sm uppercase tracking-widest">
-                        Head Office Address <span className="text-gray-400">(Optional)</span>
+                      <Label
+                        htmlFor="headOfficeAddress"
+                        className="text-white text-sm uppercase tracking-widest"
+                      >
+                        Head Office Address{" "}
+                        <span className="text-gray-400">(Optional)</span>
                       </Label>
                       <div className="relative mt-1">
                         <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                         <Textarea
                           id="headOfficeAddress"
                           value={formData.headOfficeAddress}
-                          onChange={(e) => handleInputChange("headOfficeAddress", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange(
+                              "headOfficeAddress",
+                              e.target.value
+                            )
+                          }
                           className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400 min-h-[80px]"
                           placeholder="Complete address with city, state, and postal code"
                         />
@@ -365,13 +463,19 @@ export function CompanyRegistration() {
                     </div>
 
                     <div>
-                      <Label htmlFor="additionalInfo" className="text-white text-sm uppercase tracking-widest">
-                        Additional Information <span className="text-gray-400">(Optional)</span>
+                      <Label
+                        htmlFor="additionalInfo"
+                        className="text-white text-sm uppercase tracking-widest"
+                      >
+                        Additional Information{" "}
+                        <span className="text-gray-400">(Optional)</span>
                       </Label>
                       <Textarea
                         id="additionalInfo"
                         value={formData.additionalInfo}
-                        onChange={(e) => handleInputChange("additionalInfo", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("additionalInfo", e.target.value)
+                        }
                         className="mt-1 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400 min-h-[100px]"
                         placeholder="Any additional information about your company or recruitment requirements"
                       />
@@ -388,7 +492,10 @@ export function CompanyRegistration() {
                       className="w-full bg-primary-500 hover:bg-primary-600 text-white py-3 text-sm uppercase tracking-widest font-medium transition-all duration-300 hover:scale-105 disabled:hover:scale-100"
                     >
                       {isSubmitting ? (
-                        <LoadingSpinner size="sm" text="Submitting Registration" />
+                        <LoadingSpinner
+                          size="sm"
+                          text="Submitting Registration"
+                        />
                       ) : (
                         "Submit Registration"
                       )}
@@ -397,8 +504,9 @@ export function CompanyRegistration() {
 
                   {/* Terms */}
                   <p className="text-gray-400 text-xs text-center leading-relaxed mt-4">
-                    By submitting this form, you agree to our terms and conditions. We will review your application and
-                    contact you with further details about the recruitment process.
+                    By submitting this form, you agree to our terms and
+                    conditions. We will review your application and contact you
+                    with further details about the recruitment process.
                   </p>
                 </ScrollReveal>
               </form>
@@ -407,5 +515,5 @@ export function CompanyRegistration() {
         </ScrollReveal>
       </div>
     </div>
-  )
+  );
 }

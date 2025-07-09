@@ -1,13 +1,26 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 import {
   Users,
@@ -17,14 +30,16 @@ import {
   Search,
   Eye,
   MessageSquare,
-} from "lucide-react"
+} from "lucide-react";
+import { useLocalStorage } from "@/hooks/misc";
+import { useGetCompany } from "@/hooks/auth";
 
 // Mock data for demonstration
 const mockRecruiters = [
   { id: "1", name: "Alice Recruiter" },
   { id: "2", name: "Bob Recruiter" },
   { id: "3", name: "Charlie Recruiter" },
-]
+];
 
 const mockApprovedCandidates = [
   {
@@ -54,43 +69,40 @@ const mockApprovedCandidates = [
     status: "Hired",
     availability: "Busy",
   },
-]
+];
 
-const hiringRate = mockApprovedCandidates.length > 0
-  ? Math.round((mockApprovedCandidates.length / 10) * 100) // Assume 10 total candidates for demo
-  : 0
+const hiringRate =
+  mockApprovedCandidates.length > 0
+    ? Math.round((mockApprovedCandidates.length / 10) * 100) // Assume 10 total candidates for demo
+    : 0;
 
 export default function CompanyDashboard() {
-    const router = useRouter()
-    const [userEmail, setUserEmail] = useState("")
-    const [searchQuery, setSearchQuery] = useState("")
-  useEffect(() => {
-      const role = localStorage.getItem("userRole")
-      const email = localStorage.getItem("userEmail")
-  
-      if (role !== "company") {
-        router.push("/login")
-        return
-      }
-  
-      setUserEmail(email || "")
-    }, [router])
-    const handleLogout = () => {
+  const router = useRouter();
+  const [userEmail, setUserEmail] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [accessToken, setAccessToken] = useLocalStorage("accessToken", "");
+  const [userId, setUserId] = useLocalStorage("userId", "");
+  const company = useGetCompany(userId, accessToken);
+  if (!company.data) {
+    return <div>Loading...</div>;
+  }
+  const handleLogout = () => {
     // Clear all authentication data
-    localStorage.removeItem("userRole")
-    localStorage.removeItem("userEmail")
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("userId");
 
     // Force a page reload to clear any cached state
-    window.location.href = "/login"
-  }
-
+    window.location.href = "/login";
+  };
 
   const filteredCandidates = mockApprovedCandidates.filter(
     (candidate) =>
       candidate.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       candidate.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      candidate.skills.some((skill) => skill.toLowerCase().includes(searchQuery.toLowerCase())),
-  )
+      candidate.skills.some((skill) =>
+        skill.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 p-6">
@@ -98,17 +110,19 @@ export default function CompanyDashboard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-white">Company Dashboard</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-white">
+              Company Dashboard
+            </h1>
             <p className="text-gray-400">Welcome back</p>
           </div>
           <Button
-                      onClick={handleLogout}
-                      variant="outline"
-                      className="bg-button-secondary-500/30 border-primary-500/30 text-white hover:bg-primary-500/10"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Logout
-                    </Button>
+            onClick={handleLogout}
+            variant="outline"
+            className="bg-button-secondary-500/30 border-primary-500/30 text-white hover:bg-primary-500/10"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Logout
+          </Button>
         </div>
 
         {/* Stats Cards */}
@@ -135,26 +149,33 @@ export default function CompanyDashboard() {
 
         <Tabs defaultValue="approved" className="space-y-4">
           <div className="flex items-center justify-between mb-4">
-    <TabsList className="bg-secondary-800/50 backdrop-blur-sm border border-primary-500/20">
-      <TabsTrigger value="approved" className="text-white data-[state=active]:bg-primary-500">
-        Approved Candidates
-      </TabsTrigger>
-    </TabsList>
-    <Button
-      asChild
-      className="bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300 ml-4"
-    >
-      <a href="/register/recruiter">Register</a>
-    </Button>
-  </div>
+            <TabsList className="bg-secondary-800/50 backdrop-blur-sm border border-primary-500/20">
+              <TabsTrigger
+                value="approved"
+                className="text-white data-[state=active]:bg-primary-500"
+              >
+                Approved Candidates
+              </TabsTrigger>
+            </TabsList>
+            <Button
+              asChild
+              className="bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300 ml-4"
+            >
+              <a href="/register/recruiter">Register Recruiters</a>
+            </Button>
+          </div>
 
           <TabsContent value="approved" className="space-y-4">
             <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-white">Approved Candidates</CardTitle>
-                    <CardDescription className="text-gray-400">List of candidates approved by your company</CardDescription>
+                    <CardTitle className="text-white">
+                      Approved Candidates
+                    </CardTitle>
+                    <CardDescription className="text-gray-400">
+                      List of candidates approved by your company
+                    </CardDescription>
                   </div>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -173,8 +194,12 @@ export default function CompanyDashboard() {
                     <TableRow className="border-gray-700">
                       <TableHead className="text-gray-300">Candidate</TableHead>
                       <TableHead className="text-gray-300">Skills</TableHead>
-                      <TableHead className="text-gray-300">Experience</TableHead>
-                      <TableHead className="text-gray-300">Availability</TableHead>
+                      <TableHead className="text-gray-300">
+                        Experience
+                      </TableHead>
+                      <TableHead className="text-gray-300">
+                        Availability
+                      </TableHead>
                       <TableHead className="text-gray-300">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -183,8 +208,12 @@ export default function CompanyDashboard() {
                       <TableRow key={candidate.id} className="border-gray-700">
                         <TableCell>
                           <div>
-                            <div className="font-medium text-white">{candidate.name}</div>
-                            <div className="text-sm text-gray-400">{candidate.email}</div>
+                            <div className="font-medium text-white">
+                              {candidate.name}
+                            </div>
+                            <div className="text-sm text-gray-400">
+                              {candidate.email}
+                            </div>
                           </div>
                         </TableCell>
                         <TableCell>
@@ -200,7 +229,9 @@ export default function CompanyDashboard() {
                             ))}
                           </div>
                         </TableCell>
-                        <TableCell className="text-gray-300">{candidate.experience}</TableCell>
+                        <TableCell className="text-gray-300">
+                          {candidate.experience}
+                        </TableCell>
                         <TableCell>
                           <Badge
                             variant="outline"
@@ -215,11 +246,18 @@ export default function CompanyDashboard() {
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
-                            <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="bg-button-secondary-500/30 border-primary-500/30 text-white"
+                            >
                               <Eye className="h-4 w-4 mr-1" />
                               View
                             </Button>
-                            <Button size="sm" className="bg-primary-500 hover:bg-primary-600">
+                            <Button
+                              size="sm"
+                              className="bg-primary-500 hover:bg-primary-600"
+                            >
                               <MessageSquare className="h-4 w-4 mr-1" />
                               Contact
                             </Button>
@@ -235,7 +273,7 @@ export default function CompanyDashboard() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }
 
 function StatCard({
@@ -243,16 +281,25 @@ function StatCard({
   value,
   icon,
   color,
-}: { title: string; value: number | string; icon: React.ReactNode; color: string }) {
+}: {
+  title: string;
+  value: number | string;
+  icon: React.ReactNode;
+  color: string;
+}) {
   return (
     <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-      <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${color}`}>
-        <CardTitle className="text-sm font-medium text-white">{title}</CardTitle>
+      <CardHeader
+        className={`flex flex-row items-center justify-between space-y-0 pb-2 ${color}`}
+      >
+        <CardTitle className="text-sm font-medium text-white">
+          {title}
+        </CardTitle>
         <div className="rounded-full p-2">{icon}</div>
       </CardHeader>
       <CardContent className="pt-6">
         <div className="text-3xl font-bold text-white">{value}</div>
       </CardContent>
     </Card>
-  )
+  );
 }

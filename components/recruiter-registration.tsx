@@ -1,151 +1,117 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CheckCircle, User, Mail, Lock, Phone, Briefcase, ArrowLeft } from "lucide-react"
-import Link from "next/link"
-import { LoadingSpinner } from "./loading-spinner"
-import { ScrollReveal } from "./scroll-reveal"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  CheckCircle,
+  User,
+  Mail,
+  Lock,
+  Phone,
+  Briefcase,
+  ArrowLeft,
+} from "lucide-react";
+import Link from "next/link";
+import { LoadingSpinner } from "./loading-spinner";
+import { ScrollReveal } from "./scroll-reveal";
+import { apiHandler } from "@/lib/axios";
+import { useLocalStorage } from "@/hooks/misc";
+import { useRouter } from "next/navigation";
 
 interface FormData {
-  companyId: string
-  name: string
-  email: string
-  phone: string
-  password: string
-  confirmPassword: string
-  role: string
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+  role: string;
 }
 
 interface FormErrors {
-  [key: string]: string
+  [key: string]: string;
 }
 
 export function RecruiterRegistration() {
+  const { push } = useRouter();
   const [formData, setFormData] = useState<FormData>({
-    companyId: "",
     name: "",
     email: "",
     phone: "",
     password: "",
     confirmPassword: "",
     role: "",
-  })
+  });
 
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isRegistered, setIsRegistered] = useState(false)
-
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [company_id, setCompanyId] = useLocalStorage("userId", "");
+  const [accessToken, setAccessToken] = useLocalStorage("accessToken", "");
   const validateForm = (): boolean => {
-    const newErrors: FormErrors = {}
+    const newErrors: FormErrors = {};
 
-    if (!formData.companyId) {
-      newErrors.companyId = "Company ID is required"
-    }
     if (!formData.name) {
-      newErrors.name = "Name is required"
+      newErrors.name = "Name is required";
     }
     if (!formData.email) {
-      newErrors.email = "Email is required"
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address"
+      newErrors.email = "Please enter a valid email address";
     }
     if (!formData.phone) {
-      newErrors.phone = "Phone number is required"
+      newErrors.phone = "Phone number is required";
     } else if (!/^\+?[\d\s\-]{10,}$/.test(formData.phone)) {
-      newErrors.phone = "Please enter a valid phone number"
+      newErrors.phone = "Please enter a valid phone number";
     }
     if (!formData.password) {
-      newErrors.password = "Password is required"
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters long"
+      newErrors.password = "Password must be at least 8 characters long";
     }
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password"
+      newErrors.confirmPassword = "Please confirm your password";
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match"
+      newErrors.confirmPassword = "Passwords do not match";
     }
     if (!formData.role) {
-      newErrors.role = "Role is required"
+      newErrors.role = "Role is required";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }))
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!validateForm()) return
-    setIsSubmitting(true)
+    e.preventDefault();
+    if (!validateForm()) return;
+    setIsSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 3000))
-      setIsRegistered(true)
+      await apiHandler.post(
+        "/launchpad/register-recruiter/",
+        { company_id: company_id, ...formData },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      push("/dashboard/company");
     } catch (error) {
-      console.error("Registration failed:", error)
+      console.error("Registration failed:", error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
-
-  if (isRegistered) {
-    return (
-      <div className="min-h-screen bg-secondary-900 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <ScrollReveal direction="scale" duration={800}>
-            <Card className="bg-white border-primary-500/20">
-              <CardContent className="p-8 text-center">
-                <ScrollReveal direction="scale" delay={200}>
-                  <div className="flex justify-center mb-6">
-                    <div className="w-16 h-16 bg-primary-500/10 rounded-full flex items-center justify-center">
-                      <CheckCircle className="w-8 h-8 text-primary-500" />
-                    </div>
-                  </div>
-                </ScrollReveal>
-                <ScrollReveal direction="up" delay={400}>
-                  <h2 className="text-2xl font-bold text-secondary-900 mb-4 uppercase tracking-tight">
-                    Registration Successful!
-                  </h2>
-                </ScrollReveal>
-                <ScrollReveal direction="up" delay={600}>
-                  <p className="text-gray-600 mb-6 leading-relaxed">
-                    Thank you for registering as a recruiter. Your application has been received and you have been added to our waiting list.
-                  </p>
-                </ScrollReveal>
-                <ScrollReveal direction="up" delay={800}>
-                  <div className="bg-primary-500/10 border border-primary-500/20 rounded-lg p-4 mb-6">
-                    <p className="text-primary-600 font-medium text-sm uppercase tracking-widest">
-                      Status: Waiting List
-                    </p>
-                    <p className="text-gray-600 text-sm mt-1">
-                      We will contact you soon with further details about the recruitment process.
-                    </p>
-                  </div>
-                </ScrollReveal>
-                <ScrollReveal direction="up" delay={1000}>
-                  <Button
-                    asChild
-                    className="w-full bg-primary-500 hover:bg-primary-600 text-white uppercase tracking-widest text-sm font-medium"
-                  >
-                    <Link href="/">Return to Home</Link>
-                  </Button>
-                </ScrollReveal>
-              </CardContent>
-            </Card>
-          </ScrollReveal>
-        </div>
-      </div>
-    )
-  }
+  };
 
   return (
     <div className="min-h-screen bg-secondary-900 py-12 px-4">
@@ -185,27 +151,17 @@ export function RecruiterRegistration() {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-2 mb-4">
                       <Briefcase className="w-5 h-5 text-primary-500" />
-                      <h3 className="text-white font-medium uppercase tracking-widest text-sm">Recruiter Details</h3>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="companyId" className="text-white text-sm uppercase tracking-widest">
-                        Company ID *
-                      </Label>
-                      <Input
-                        id="companyId"
-                        type="text"
-                        value={formData.companyId}
-                        onChange={(e) => handleInputChange("companyId", e.target.value)}
-                        className="mt-1 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
-                        placeholder="Enter your Company UUID"
-                      />
-                      {errors.companyId && <p className="text-red-400 text-xs mt-1">{errors.companyId}</p>}
+                      <h3 className="text-white font-medium uppercase tracking-widest text-sm">
+                        Recruiter Details
+                      </h3>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="name" className="text-white text-sm uppercase tracking-widest">
+                        <Label
+                          htmlFor="name"
+                          className="text-white text-sm uppercase tracking-widest"
+                        >
                           Name *
                         </Label>
                         <div className="relative mt-1">
@@ -214,32 +170,50 @@ export function RecruiterRegistration() {
                             id="name"
                             type="text"
                             value={formData.name}
-                            onChange={(e) => handleInputChange("name", e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("name", e.target.value)
+                            }
                             className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
                             placeholder="Full Name"
                           />
                         </div>
-                        {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
+                        {errors.name && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {errors.name}
+                          </p>
+                        )}
                       </div>
                       <div>
-                        <Label htmlFor="role" className="text-white text-sm uppercase tracking-widest">
+                        <Label
+                          htmlFor="role"
+                          className="text-white text-sm uppercase tracking-widest"
+                        >
                           Role *
                         </Label>
                         <Input
                           id="role"
                           type="text"
                           value={formData.role}
-                          onChange={(e) => handleInputChange("role", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("role", e.target.value)
+                          }
                           className="mt-1 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
                           placeholder="e.g. Human Resources"
                         />
-                        {errors.role && <p className="text-red-400 text-xs mt-1">{errors.role}</p>}
+                        {errors.role && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {errors.role}
+                          </p>
+                        )}
                       </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="email" className="text-white text-sm uppercase tracking-widest">
+                        <Label
+                          htmlFor="email"
+                          className="text-white text-sm uppercase tracking-widest"
+                        >
                           Email Address *
                         </Label>
                         <div className="relative mt-1">
@@ -248,15 +222,24 @@ export function RecruiterRegistration() {
                             id="email"
                             type="email"
                             value={formData.email}
-                            onChange={(e) => handleInputChange("email", e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("email", e.target.value)
+                            }
                             className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
                             placeholder="recruiter@example.com"
                           />
                         </div>
-                        {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
+                        {errors.email && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {errors.email}
+                          </p>
+                        )}
                       </div>
                       <div>
-                        <Label htmlFor="phone" className="text-white text-sm uppercase tracking-widest">
+                        <Label
+                          htmlFor="phone"
+                          className="text-white text-sm uppercase tracking-widest"
+                        >
                           Phone Number *
                         </Label>
                         <div className="relative mt-1">
@@ -265,12 +248,18 @@ export function RecruiterRegistration() {
                             id="phone"
                             type="tel"
                             value={formData.phone}
-                            onChange={(e) => handleInputChange("phone", e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("phone", e.target.value)
+                            }
                             className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
                             placeholder="+91 9876543210"
                           />
                         </div>
-                        {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
+                        {errors.phone && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {errors.phone}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -281,11 +270,16 @@ export function RecruiterRegistration() {
                   <div className="space-y-4 pt-6 border-t border-primary-500/20">
                     <div className="flex items-center space-x-2 mb-4">
                       <Lock className="w-5 h-5 text-primary-500" />
-                      <h3 className="text-white font-medium uppercase tracking-widest text-sm">Login Credentials</h3>
+                      <h3 className="text-white font-medium uppercase tracking-widest text-sm">
+                        Login Credentials
+                      </h3>
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="password" className="text-white text-sm uppercase tracking-widest">
+                        <Label
+                          htmlFor="password"
+                          className="text-white text-sm uppercase tracking-widest"
+                        >
                           Password *
                         </Label>
                         <div className="relative mt-1">
@@ -294,15 +288,24 @@ export function RecruiterRegistration() {
                             id="password"
                             type="password"
                             value={formData.password}
-                            onChange={(e) => handleInputChange("password", e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("password", e.target.value)
+                            }
                             className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
                             placeholder="Minimum 8 characters"
                           />
                         </div>
-                        {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password}</p>}
+                        {errors.password && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {errors.password}
+                          </p>
+                        )}
                       </div>
                       <div>
-                        <Label htmlFor="confirmPassword" className="text-white text-sm uppercase tracking-widest">
+                        <Label
+                          htmlFor="confirmPassword"
+                          className="text-white text-sm uppercase tracking-widest"
+                        >
                           Confirm Password *
                         </Label>
                         <div className="relative mt-1">
@@ -311,12 +314,21 @@ export function RecruiterRegistration() {
                             id="confirmPassword"
                             type="password"
                             value={formData.confirmPassword}
-                            onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange(
+                                "confirmPassword",
+                                e.target.value
+                              )
+                            }
                             className="pl-10 bg-white/10 border-primary-500/20 text-white placeholder:text-gray-400"
                             placeholder="Re-enter your password"
                           />
                         </div>
-                        {errors.confirmPassword && <p className="text-red-400 text-xs mt-1">{errors.confirmPassword}</p>}
+                        {errors.confirmPassword && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {errors.confirmPassword}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -331,15 +343,19 @@ export function RecruiterRegistration() {
                       className="w-full bg-primary-500 hover:bg-primary-600 text-white py-3 text-sm uppercase tracking-widest font-medium transition-all duration-300 hover:scale-105 disabled:hover:scale-100"
                     >
                       {isSubmitting ? (
-                        <LoadingSpinner size="sm" text="Submitting Registration" />
+                        <LoadingSpinner
+                          size="sm"
+                          text="Submitting Registration"
+                        />
                       ) : (
                         "Submit Registration"
                       )}
                     </Button>
                   </div>
                   <p className="text-gray-400 text-xs text-center leading-relaxed mt-4">
-                    By submitting this form, you agree to our terms and conditions. We will review your application and
-                    contact you with further details about the recruitment process.
+                    By submitting this form, you agree to our terms and
+                    conditions. We will review your application and contact you
+                    with further details about the recruitment process.
                   </p>
                 </ScrollReveal>
               </form>
@@ -348,5 +364,5 @@ export function RecruiterRegistration() {
         </ScrollReveal>
       </div>
     </div>
-  )
+  );
 }

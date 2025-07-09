@@ -1,13 +1,28 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Activity, Building2, Clock, FileCheck, FileText, Users, Briefcase, LogOut } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Activity,
+  Building2,
+  Clock,
+  FileCheck,
+  FileText,
+  Users,
+  Briefcase,
+  LogOut,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Mock data for demonstration
 const mockStats = {
@@ -19,42 +34,44 @@ const mockStats = {
   pendingCompanyVerifications: 12,
   pendingJobOffers: 23,
   pendingTasks: 18,
-}
+};
 
 export default function AdminDashboard() {
-  const router = useRouter()
-  const [userEmail, setUserEmail] = useState("")
+  const router = useRouter();
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
-    const role = localStorage.getItem("userRole")
-    const email = localStorage.getItem("userEmail")
+    const role = localStorage.getItem("userRole");
+    const email = localStorage.getItem("userEmail");
 
     if (role !== "admin") {
-      router.push("/login")
-      return
+      router.push("/login");
+      return;
     }
 
-    setUserEmail(email || "")
-  }, [router])
+    setUserEmail(email || "");
+  }, [router]);
 
   const handleLogout = () => {
     // Clear all authentication data
-    localStorage.removeItem("userRole")
-    localStorage.removeItem("userEmail")
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userEmail");
 
     // Force a page reload to clear any cached state
-    window.location.href = "/login"
-  }
+    window.location.href = "/login";
+  };
 
-  const stats = mockStats
-
+  const stats = mockStats;
+  return <></>;
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-white">Admin Dashboard</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-white">
+              Admin Dashboard
+            </h1>
             <p className="text-gray-400">Welcome back, {userEmail}</p>
           </div>
           <Button
@@ -69,10 +86,16 @@ export default function AdminDashboard() {
 
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList className="bg-secondary-800/50 backdrop-blur-sm border border-primary-500/20">
-            <TabsTrigger value="overview" className="text-white data-[state=active]:bg-primary-500">
+            <TabsTrigger
+              value="overview"
+              className="text-white data-[state=active]:bg-primary-500"
+            >
               Overview
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="text-white data-[state=active]:bg-primary-500">
+            <TabsTrigger
+              value="analytics"
+              className="text-white data-[state=active]:bg-primary-500"
+            >
               Analytics
             </TabsTrigger>
           </TabsList>
@@ -133,7 +156,9 @@ export default function AdminDashboard() {
             <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20">
               <CardHeader>
                 <CardTitle className="text-white">Quick Actions</CardTitle>
-                <CardDescription className="text-gray-400">Manage platform operations</CardDescription>
+                <CardDescription className="text-gray-400">
+                  Manage platform operations
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -169,7 +194,9 @@ export default function AdminDashboard() {
               <CardContent className="h-[300px] flex items-center justify-center">
                 <div className="text-center">
                   <Activity className="h-12 w-12 text-primary-500 mx-auto mb-4" />
-                  <p className="text-gray-400">Advanced analytics will be available in a future update</p>
+                  <p className="text-gray-400">
+                    Advanced analytics will be available in a future update
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -177,7 +204,7 @@ export default function AdminDashboard() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }
 
 function StatCard({
@@ -185,18 +212,29 @@ function StatCard({
   value,
   icon,
   color,
-}: { title: string; value: number; icon: React.ReactNode; color: string }) {
+}: {
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  color: string;
+}) {
   return (
     <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-      <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${color}`}>
-        <CardTitle className="text-sm font-medium text-white">{title}</CardTitle>
+      <CardHeader
+        className={`flex flex-row items-center justify-between space-y-0 pb-2 ${color}`}
+      >
+        <CardTitle className="text-sm font-medium text-white">
+          {title}
+        </CardTitle>
         <div className="rounded-full p-2">{icon}</div>
       </CardHeader>
       <CardContent className="pt-6">
-        <div className="text-3xl font-bold text-white">{value.toLocaleString()}</div>
+        <div className="text-3xl font-bold text-white">
+          {value.toLocaleString()}
+        </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 function PendingCard({
@@ -206,22 +244,26 @@ function PendingCard({
   color,
   description,
 }: {
-  title: string
-  value: number
-  icon: React.ReactNode
-  color: string
-  description: string
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  color: string;
+  description: string;
 }) {
   return (
     <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-white">{title}</CardTitle>
+        <CardTitle className="text-sm font-medium text-white">
+          {title}
+        </CardTitle>
         <div className={`rounded-full p-2 ${color}`}>{icon}</div>
       </CardHeader>
       <CardContent className="pt-6">
-        <div className={`text-3xl font-bold ${color}`}>{value.toLocaleString()}</div>
+        <div className={`text-3xl font-bold ${color}`}>
+          {value.toLocaleString()}
+        </div>
         <p className="text-xs text-gray-400 mt-2">{description}</p>
       </CardContent>
     </Card>
-  )
+  );
 }
