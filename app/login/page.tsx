@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
+import { ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -52,8 +53,16 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20 shadow-2xl">
+      <div className="w-full max-w-md relative flex flex-col items-center">
+        {/* Back to Home Button */}
+        <Link
+          href="/"
+          className="mb-6 inline-flex items-center text-white hover:text-primary-500 transition-colors duration-300 z-20"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          <span className="text-sm uppercase tracking-widest">Back to Home</span>
+        </Link>
+        <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20 shadow-2xl w-full">
           <CardHeader className="space-y-1 text-center">
             <div className="flex items-center justify-center mb-4">
               <img src="/images/logo.webp" alt="Launchpad Kerala Logo" className="h-12 w-auto" />
@@ -136,7 +145,7 @@ export default function LoginPage() {
             <div className="text-center space-y-2">
               <p className="text-sm text-gray-400">
                 Don't have an account?{" "}
-                <Link href="/register" className="text-primary-500 hover:text-primary-400 transition-colors">
+                <Link href="/register/company" className="text-primary-500 hover:text-primary-400 transition-colors">
                   Register here
                 </Link>
               </p>
