@@ -1,15 +1,28 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Users,
   Briefcase,
@@ -23,7 +36,9 @@ import {
   CheckCircle,
   Clock,
   XCircle,
-} from "lucide-react"
+} from "lucide-react";
+import { useLocalStorage } from "@/hooks/misc";
+import { useGetRecruiter } from "@/hooks/auth";
 
 // Mock data for demonstration
 const mockCandidates = [
@@ -54,7 +69,7 @@ const mockCandidates = [
     availability: "Busy",
     status: "Active",
   },
-]
+];
 
 const mockHireRequests = [
   {
@@ -81,40 +96,37 @@ const mockHireRequests = [
     sentDate: "2024-01-13",
     company: "Tech Corp",
   },
-]
+];
 
 export default function RecruiterDashboard() {
-  const router = useRouter()
-  const [userEmail, setUserEmail] = useState("")
-  const [searchQuery, setSearchQuery] = useState("")
+  const router = useRouter();
+  const [userEmail, setUserEmail] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [accessToken] = useLocalStorage("accessToken", "");
+  const [userId] = useLocalStorage("userId", "");
+  const recruiter = useGetRecruiter(accessToken, userId);
 
-  useEffect(() => {
-    const role = localStorage.getItem("userRole")
-    const email = localStorage.getItem("userEmail")
-
-    if (role !== "recruiter") {
-      router.push("/login")
-      return
-    }
-
-    setUserEmail(email || "")
-  }, [router])
-
+  if (!recruiter.data) {
+    router.push("/login");
+    return null;
+  }
   const handleLogout = () => {
     // Clear all authentication data
-    localStorage.removeItem("userRole")
-    localStorage.removeItem("userEmail")
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userEmail");
 
     // Force a page reload to clear any cached state
-    window.location.href = "/login"
-  }
+    window.location.href = "/login";
+  };
 
   const filteredCandidates = mockCandidates.filter(
     (candidate) =>
       candidate.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       candidate.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      candidate.skills.some((skill) => skill.toLowerCase().includes(searchQuery.toLowerCase())),
-  )
+      candidate.skills.some((skill) =>
+        skill.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 p-6">
@@ -122,7 +134,9 @@ export default function RecruiterDashboard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-white">Recruiter Dashboard</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-white">
+              Recruiter Dashboard
+            </h1>
             <p className="text-gray-400">Welcome back, {userEmail}</p>
           </div>
           <Button
@@ -165,13 +179,22 @@ export default function RecruiterDashboard() {
 
         <Tabs defaultValue="candidates" className="space-y-4">
           <TabsList className="bg-secondary-800/50 backdrop-blur-sm border border-primary-500/20">
-            <TabsTrigger value="candidates" className="text-white data-[state=active]:bg-primary-500">
+            <TabsTrigger
+              value="candidates"
+              className="text-white data-[state=active]:bg-primary-500"
+            >
               Candidates
             </TabsTrigger>
-            <TabsTrigger value="requests" className="text-white data-[state=active]:bg-primary-500">
+            <TabsTrigger
+              value="requests"
+              className="text-white data-[state=active]:bg-primary-500"
+            >
               Hire Requests
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="text-white data-[state=active]:bg-primary-500">
+            <TabsTrigger
+              value="analytics"
+              className="text-white data-[state=active]:bg-primary-500"
+            >
               Analytics
             </TabsTrigger>
           </TabsList>
@@ -181,8 +204,12 @@ export default function RecruiterDashboard() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-white">Candidate Database</CardTitle>
-                    <CardDescription className="text-gray-400">Browse and filter available candidates</CardDescription>
+                    <CardTitle className="text-white">
+                      Candidate Database
+                    </CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Browse and filter available candidates
+                    </CardDescription>
                   </div>
                   <div className="flex gap-2">
                     <div className="relative">
@@ -194,7 +221,10 @@ export default function RecruiterDashboard() {
                         className="pl-10 bg-secondary-700/50 border-primary-500/30 text-white"
                       />
                     </div>
-                    <Button size="sm" className="bg-primary-500 hover:bg-primary-600">
+                    <Button
+                      size="sm"
+                      className="bg-primary-500 hover:bg-primary-600"
+                    >
                       <Filter className="h-4 w-4 mr-1" />
                       Filter
                     </Button>
@@ -207,8 +237,12 @@ export default function RecruiterDashboard() {
                     <TableRow className="border-gray-700">
                       <TableHead className="text-gray-300">Candidate</TableHead>
                       <TableHead className="text-gray-300">Skills</TableHead>
-                      <TableHead className="text-gray-300">Experience</TableHead>
-                      <TableHead className="text-gray-300">Availability</TableHead>
+                      <TableHead className="text-gray-300">
+                        Experience
+                      </TableHead>
+                      <TableHead className="text-gray-300">
+                        Availability
+                      </TableHead>
                       <TableHead className="text-gray-300">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -217,8 +251,12 @@ export default function RecruiterDashboard() {
                       <TableRow key={candidate.id} className="border-gray-700">
                         <TableCell>
                           <div>
-                            <div className="font-medium text-white">{candidate.name}</div>
-                            <div className="text-sm text-gray-400">{candidate.email}</div>
+                            <div className="font-medium text-white">
+                              {candidate.name}
+                            </div>
+                            <div className="text-sm text-gray-400">
+                              {candidate.email}
+                            </div>
                           </div>
                         </TableCell>
                         <TableCell>
@@ -234,7 +272,9 @@ export default function RecruiterDashboard() {
                             ))}
                           </div>
                         </TableCell>
-                        <TableCell className="text-gray-300">{candidate.experience}</TableCell>
+                        <TableCell className="text-gray-300">
+                          {candidate.experience}
+                        </TableCell>
                         <TableCell>
                           <Badge
                             variant="outline"
@@ -249,11 +289,18 @@ export default function RecruiterDashboard() {
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
-                            <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="bg-button-secondary-500/30 border-primary-500/30 text-white"
+                            >
                               <Eye className="h-4 w-4 mr-1" />
                               View
                             </Button>
-                            <Button size="sm" className="bg-primary-500 hover:bg-primary-600">
+                            <Button
+                              size="sm"
+                              className="bg-primary-500 hover:bg-primary-600"
+                            >
                               <MessageSquare className="h-4 w-4 mr-1" />
                               Contact
                             </Button>
@@ -271,7 +318,9 @@ export default function RecruiterDashboard() {
             <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20">
               <CardHeader>
                 <CardTitle className="text-white">Hire Requests</CardTitle>
-                <CardDescription className="text-gray-400">Track your hiring requests and their status</CardDescription>
+                <CardDescription className="text-gray-400">
+                  Track your hiring requests and their status
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -287,8 +336,12 @@ export default function RecruiterDashboard() {
                   <TableBody>
                     {mockHireRequests.map((request) => (
                       <TableRow key={request.id} className="border-gray-700">
-                        <TableCell className="text-white font-medium">{request.candidateName}</TableCell>
-                        <TableCell className="text-gray-300">{request.position}</TableCell>
+                        <TableCell className="text-white font-medium">
+                          {request.candidateName}
+                        </TableCell>
+                        <TableCell className="text-gray-300">
+                          {request.position}
+                        </TableCell>
                         <TableCell>
                           <Badge
                             variant="outline"
@@ -296,19 +349,30 @@ export default function RecruiterDashboard() {
                               request.status === "Accepted"
                                 ? "border-green-500/30 text-green-400"
                                 : request.status === "Rejected"
-                                  ? "border-red-500/30 text-red-400"
-                                  : "border-yellow-500/30 text-yellow-400"
+                                ? "border-red-500/30 text-red-400"
+                                : "border-yellow-500/30 text-yellow-400"
                             }
                           >
-                            {request.status === "Accepted" && <CheckCircle className="h-3 w-3 mr-1" />}
-                            {request.status === "Pending" && <Clock className="h-3 w-3 mr-1" />}
-                            {request.status === "Rejected" && <XCircle className="h-3 w-3 mr-1" />}
+                            {request.status === "Accepted" && (
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                            )}
+                            {request.status === "Pending" && (
+                              <Clock className="h-3 w-3 mr-1" />
+                            )}
+                            {request.status === "Rejected" && (
+                              <XCircle className="h-3 w-3 mr-1" />
+                            )}
                             {request.status}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-gray-300">{request.sentDate}</TableCell>
+                        <TableCell className="text-gray-300">
+                          {request.sentDate}
+                        </TableCell>
                         <TableCell>
-                          <Button size="sm"  className="bg-primary-500 hover:bg-primary-600">
+                          <Button
+                            size="sm"
+                            className="bg-primary-500 hover:bg-primary-600"
+                          >
                             View Details
                           </Button>
                         </TableCell>
@@ -323,13 +387,19 @@ export default function RecruiterDashboard() {
           <TabsContent value="analytics" className="space-y-4">
             <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20">
               <CardHeader>
-                <CardTitle className="text-white">Recruitment Analytics</CardTitle>
-                <CardDescription className="text-gray-400">Track your recruitment performance</CardDescription>
+                <CardTitle className="text-white">
+                  Recruitment Analytics
+                </CardTitle>
+                <CardDescription className="text-gray-400">
+                  Track your recruitment performance
+                </CardDescription>
               </CardHeader>
               <CardContent className="h-[300px] flex items-center justify-center">
                 <div className="text-center">
                   <TrendingUp className="h-12 w-12 text-primary-500 mx-auto mb-4" />
-                  <p className="text-gray-400">Analytics dashboard coming soon</p>
+                  <p className="text-gray-400">
+                    Analytics dashboard coming soon
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -337,7 +407,7 @@ export default function RecruiterDashboard() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }
 
 function StatCard({
@@ -345,16 +415,25 @@ function StatCard({
   value,
   icon,
   color,
-}: { title: string; value: number | string; icon: React.ReactNode; color: string }) {
+}: {
+  title: string;
+  value: number | string;
+  icon: React.ReactNode;
+  color: string;
+}) {
   return (
     <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-      <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${color}`}>
-        <CardTitle className="text-sm font-medium text-white">{title}</CardTitle>
+      <CardHeader
+        className={`flex flex-row items-center justify-between space-y-0 pb-2 ${color}`}
+      >
+        <CardTitle className="text-sm font-medium text-white">
+          {title}
+        </CardTitle>
         <div className="rounded-full p-2">{icon}</div>
       </CardHeader>
       <CardContent className="pt-6">
         <div className="text-3xl font-bold text-white">{value}</div>
       </CardContent>
     </Card>
-  )
+  );
 }
