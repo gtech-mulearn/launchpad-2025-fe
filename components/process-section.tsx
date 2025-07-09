@@ -181,7 +181,7 @@ export function ProcessSection() {
                   Register as Candidate
                 </button>
                 <button className="bg-transparent hover:bg-primary-500/10 text-primary-500 border border-primary-500 px-8 py-3 rounded-lg font-medium uppercase tracking-widest text-sm transition-all duration-300 hover:scale-105">
-                  <Link href="/register/company">Register as Company</Link>
+                  <Link href="/register">Register as Company</Link>
                 </button>
               </div>
             </div>
