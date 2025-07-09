@@ -2,7 +2,6 @@
 
 import type React from "react";
 
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -94,16 +93,8 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-md relative flex flex-col items-center">
-        {/* Back to Home Button */}
-        <Link
-          href="/"
-          className="mb-6 inline-flex items-center text-white hover:text-primary-500 transition-colors duration-300 z-20"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          <span className="text-sm uppercase tracking-widest">Back to Home</span>
-        </Link>
-        <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20 shadow-2xl w-full">
+      <div className="w-full max-w-md">
+        <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20 shadow-2xl">
           <CardHeader className="space-y-1 text-center">
             <div className="flex items-center justify-center mb-4">
               <img
@@ -213,7 +204,7 @@ export default function LoginPage() {
               <p className="text-sm text-gray-400">
                 Don't have an account?{" "}
                 <Link
-                  href="/register"
+                  href="/register/company"
                   className="text-primary-500 hover:text-primary-400 transition-colors"
                 >
                   Register here
