@@ -104,8 +104,8 @@ export default function RecruiterDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [accessToken] = useLocalStorage("accessToken", "");
   const [userId] = useLocalStorage("userId", "");
-  const recruiter = useGetRecruiter(accessToken, userId);
-
+  const recruiter = useGetRecruiter(userId, accessToken);
+  if (recruiter.isLoading) return null;
   if (!recruiter.data) {
     router.push("/login");
     return null;
