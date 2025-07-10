@@ -41,7 +41,7 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [userEmail, setUserEmail] = useState("");
 
-  useEffect(() => {
+   useEffect(() => {
     const role = localStorage.getItem("userRole");
     const email = localStorage.getItem("userEmail");
 
@@ -52,6 +52,7 @@ export default function AdminDashboard() {
 
     setUserEmail(email || "");
   }, [router]);
+  
 
   const handleLogout = () => {
     // Clear all authentication data
@@ -174,7 +175,7 @@ export default function AdminDashboard() {
                   </Button>
                   <Button className="bg-blue-500 hover:bg-blue-600 text-white">
                     <Link
-                      href="/components/verify-companies"
+                      href="/dashboard/admin/company"
                       className="flex items-center"
                     >
                       <Building2 className="w-4 h-4 mr-2" />
@@ -183,7 +184,7 @@ export default function AdminDashboard() {
                   </Button>
                   <Button className="bg-green-500 hover:bg-green-600 text-white">
                     <Link
-                      href="/components/review-job-offers"
+                      href="/dashboard/admin/job-offers"
                       className="flex items-center"
                     >
                       <Briefcase className="w-4 h-4 mr-2" />
@@ -192,7 +193,7 @@ export default function AdminDashboard() {
                   </Button>
                   <Button className="bg-purple-500 hover:bg-purple-600 text-white">
                     <Link
-                      href="/components/approve-tasks"
+                      href="/dashboard/admin/task"
                       className="flex items-center"
                     >
                       <FileText className="w-4 h-4 mr-2" />
