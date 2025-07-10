@@ -92,7 +92,7 @@ export function NavBar() {
                     <ListItem href="#results" title="Results">
                       Check the latest results
                     </ListItem>
-                    <ListItem href="/register/company" title="Registration">
+                    <ListItem href="/register" title="Registration">
                       Register as a company
                     </ListItem>
                   </ul>
@@ -115,7 +115,7 @@ export function NavBar() {
               asChild
               className="bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
             >
-              <Link href="/register/company">Register Now</Link>
+              <Link href="/register">Register Now</Link>
             </Button>
           </div>
         </div>
