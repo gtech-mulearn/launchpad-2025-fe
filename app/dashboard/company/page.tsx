@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { useLocalStorage } from "@/hooks/misc";
 import { useGetCompany } from "@/hooks/auth";
+import { VerificationPending } from "@/components/verification-pending";
 
 // Mock data for demonstration
 const mockRecruiters = [
@@ -103,7 +104,7 @@ export default function CompanyDashboard() {
         skill.toLowerCase().includes(searchQuery.toLowerCase())
       )
   );
-
+  return <VerificationPending />;
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 p-6">
       <div className="max-w-7xl mx-auto">
