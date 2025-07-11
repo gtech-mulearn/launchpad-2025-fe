@@ -23,7 +23,7 @@ export function AboutSection() {
                 <p className="text-gray-600 text-lg leading-relaxed text-justify">
                   Launchpad Kerala 2025 is a premier job fair that brings together talented individuals and innovative
                   companies in the technical and engineering fields. This collaboration between IEEE Kerala Section and
-                  GTech MuLearn aims to create meaningful connections that drive progress and innovation in Kerala's job
+                  MuLearn Foundation aims to create meaningful connections that drive progress and innovation in Kerala's job
                   market.
                 </p>
                 <p className="text-gray-600 text-lg leading-relaxed text-justify">
@@ -47,7 +47,7 @@ export function AboutSection() {
                   </div>
                   <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
                     <p className="text-xs uppercase tracking-widest text-primary-400">In collaboration with</p>
-                    <p className="font-bold text-white mt-1">GTech MuLearn</p>
+                    <p className="font-bold text-white mt-1">MuLearn Foundation</p>
                   </div>
                   <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
                     <p className="text-xs uppercase tracking-widest text-primary-400">Supported by</p>

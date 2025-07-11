@@ -30,7 +30,7 @@ export function PartnershipsSection() {
             {[
               { name: "IEEE Kerala Section", abbr: "IEEE" },
               { name: "IEEE LINK", abbr: "LINK" },
-              { name: "GTech MuLearn", abbr: "GTech" },
+              { name: "MuLearn Foundation", abbr: "Mulearn" },
               { name: "Kerala Knowledge Economy Mission", abbr: "KKEM" },
             ].map((partner, index) => (
               <div
