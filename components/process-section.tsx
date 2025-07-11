@@ -8,7 +8,7 @@ export function ProcessSection() {
       step: 1,
       title: "Participant Registration",
       description:
-        "Students and recent graduates register for the event through the official website, providing their educational background, skills, and career interests.",
+        "Students and recent graduates register for the event through the Mulearn official website, providing their educational background, skills, and career interests.",
       icon: "👥",
       color: "from-blue-500 to-blue-600",
     },
@@ -22,51 +22,43 @@ export function ProcessSection() {
     },
     {
       step: 3,
-      title: "Challenge Start",
+      title: "Challenges for Earning Karma Points",
       description:
-        "Registered participants begin the technical challenge phase, working on real-world problems to demonstrate their skills and problem-solving abilities.",
+        "Registered participants begin completing various tasks and challenges to earn Karma Points, which will enhance their visibility and ranking in the selection process.",
       icon: "⚡",
       color: "from-yellow-500 to-yellow-600",
     },
     {
       step: 4,
-      title: "Online Exam",
-      description:
-        "Participants take an online assessment that evaluates their technical knowledge, aptitude, and problem-solving skills relevant to their field of interest.",
-      icon: "📝",
-      color: "from-purple-500 to-purple-600",
-    },
-    {
-      step: 5,
       title: "Consolidated Rank List",
       description:
-        "Based on the challenge and online exam results, a consolidated rank list is prepared, identifying the top performers who will proceed to the next stage.",
+        "Based on the task completions and karma points, a consolidated rank list is prepared, and will be visible for companies.",
       icon: "📊",
       color: "from-red-500 to-red-600",
     },
     {
-      step: 6,
-      title: "Option Selection",
+      step: 5,
+      title: "Candidate Selection",
       description:
-        "Shortlisted candidates select their preferred companies and interview locations (Trivandrum, Kochi, or Kozhikode) based on their interests and convenience.",
+        "Companies review the rank list and select candidates based on their skills, interests, and Karma Points.",
       icon: "🎯",
       color: "from-indigo-500 to-indigo-600",
+    },
+    {
+      step: 6,
+      title: "Interviews",
+      description:
+      "Companies sends interview requests to selected candidates, who can then schedule interviews based on their availability.",
+      icon: "🤝",
+      color: "from-teal-500 to-teal-600",
     },
     {
       step: 7,
       title: "Confirmed Mail to Selected Participants",
       description:
-        "Selected candidates receive confirmation emails with details about their interview schedule, location, and any preparation materials or instructions.",
+        "Selected candidates receive confirmation emails with details about their job offers, including roles, responsibilities, and next steps.",
       icon: "✉️",
       color: "from-pink-500 to-pink-600",
-    },
-    {
-      step: 8,
-      title: "Interviews",
-      description:
-        "Candidates attend interviews with their chosen companies at their selected locations, where they have the opportunity to showcase their skills and learn more about potential employers.",
-      icon: "🤝",
-      color: "from-teal-500 to-teal-600",
     },
   ];
 
