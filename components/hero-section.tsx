@@ -1,11 +1,10 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
-import { CursiveAnimation } from "./cursive-animation"
-import { GlitchText } from "./glitch-text"
-import { ScrollReveal } from "./scroll-reveal"
-import { StaggerContainer } from "./stagger-container"
-
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import { CursiveAnimation } from "./cursive-animation";
+import { GlitchText } from "./glitch-text";
+import { ScrollReveal } from "./scroll-reveal";
+import { StaggerContainer } from "./stagger-container";
 
 export function HeroSection() {
   return (
@@ -28,14 +27,23 @@ export function HeroSection() {
               </div>
 
               <h1 className="text-5xl sm:text-7xl font-bold text-white uppercase tracking-tighter leading-none">
-                <GlitchText text="Launch" className="text-white" triggerOnHover />
+                <GlitchText
+                  text="Launch"
+                  className="text-white"
+                  triggerOnHover
+                />
                 <span className="text-primary-500">pad</span> <br />
-                <CursiveAnimation text="Kerala" className="text-6xl sm:text-8xl" speed={150} /> 2025
+                <CursiveAnimation
+                  text="Kerala"
+                  className="text-6xl sm:text-8xl"
+                  speed={150}
+                />{" "}
+                2025
               </h1>
 
               <p className="text-gray-400 text-lg max-w-md leading-relaxed">
-                A premier job fair connecting talented individuals with innovative companies in the technical and
-                engineering fields.
+                A premier job fair connecting talented individuals with
+                innovative companies in the technical and engineering fields.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -62,60 +70,72 @@ export function HeroSection() {
           </div>
 
           <ScrollReveal direction="scale" delay={600} duration={1000}>
-            
             <div className="w-full max-w-lg mx-auto relative">
-              
               <div className="hidden lg:block aspect-square w-full relative">
-
                 <div className="absolute top-0 left-0 w-2/3 h-2/3 border-l-2 border-t-2 border-primary-500 animate-pulse"></div>
                 <div className="absolute bottom-0 right-0 w-2/3 h-2/3 border-r-2 border-b-2 border-primary-500 animate-pulse"></div>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <StaggerContainer staggerDelay={150}>
                     <div className="bg-secondary-800 border border-primary-500/20 p-6 transition-all duration-300 hover:border-primary-500 hover:scale-105 group w-64 text-center">
-                      <p className="text-5xl font-bold text-primary-500 group-hover:animate-pulse">30+</p>
-                      <p className="text-xs uppercase tracking-widest text-white mt-2">Companies</p>
+                      <p className="text-5xl font-bold text-primary-500 group-hover:animate-pulse">
+                        100+
+                      </p>
+                      <p className="text-xs uppercase tracking-widest text-white mt-2">
+                        Companies
+                      </p>
                     </div>
                     <div className="bg-secondary-800 border border-primary-500/20 p-6 transition-all duration-300 hover:border-primary-500 hover:scale-105 group w-64 text-center">
-                      <p className="text-5xl font-bold text-primary-500 group-hover:animate-pulse">100+</p>
-                      <p className="text-xs uppercase tracking-widest text-white mt-2">Opportunities</p>
+                      <p className="text-5xl font-bold text-primary-500 group-hover:animate-pulse">
+                        1000+
+                      </p>
+                      <p className="text-xs uppercase tracking-widest text-white mt-2">
+                        Opportunities
+                      </p>
                     </div>
                     <div className="bg-secondary-800 border border-primary-500/20 p-6 transition-all duration-300 hover:border-primary-500 hover:scale-105 group w-64 text-center">
-                      <p className="text-5xl font-bold text-primary-500 group-hover:animate-pulse">1000+</p>
-                      <p className="text-xs uppercase tracking-widest text-white mt-2">Candidates</p>
-                    </div>
-                    <div className="bg-secondary-800 border border-primary-500/20 p-6 transition-all duration-300 hover:border-primary-500 hover:scale-105 group w-64 text-center">
-                      <p className="text-5xl font-bold text-primary-500 group-hover:animate-pulse">3</p>
-                      <p className="text-xs uppercase tracking-widest text-white mt-2">Locations</p>
+                      <p className="text-5xl font-bold text-primary-500 group-hover:animate-pulse">
+                        10000+
+                      </p>
+                      <p className="text-xs uppercase tracking-widest text-white mt-2">
+                        Candidates
+                      </p>
                     </div>
                   </StaggerContainer>
                 </div>
               </div>
-              
+
               <div className="block lg:hidden w-full">
                 <div className="relative w-full flex flex-col items-center">
-                 
                   <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
                     <div className="absolute top-0 left-0 w-2/3 h-2/3 border-l-2 border-t-2 border-primary-500 animate-pulse"></div>
                     <div className="absolute bottom-0 right-0 w-2/3 h-2/3 border-r-2 border-b-2 border-primary-500 animate-pulse"></div>
                   </div>
-                 
+
                   <div className="relative w-full flex flex-col items-center justify-center py-8 gap-4">
                     <StaggerContainer staggerDelay={150}>
                       <div className="bg-secondary-800 border border-primary-500/20 p-6 w-full max-w-xs mx-auto transition-all duration-300 hover:border-primary-500 hover:scale-105 group text-center">
-                        <p className="text-4xl font-bold text-primary-500 group-hover:animate-pulse">30+</p>
-                        <p className="text-xs uppercase tracking-widest text-white mt-2">Companies</p>
+                        <p className="text-4xl font-bold text-primary-500 group-hover:animate-pulse">
+                          100+
+                        </p>
+                        <p className="text-xs uppercase tracking-widest text-white mt-2">
+                          Companies
+                        </p>
                       </div>
                       <div className="bg-secondary-800 border border-primary-500/20 p-6 w-full max-w-xs mx-auto transition-all duration-300 hover:border-primary-500 hover:scale-105 group text-center">
-                        <p className="text-4xl font-bold text-primary-500 group-hover:animate-pulse">100+</p>
-                        <p className="text-xs uppercase tracking-widest text-white mt-2">Opportunities</p>
+                        <p className="text-4xl font-bold text-primary-500 group-hover:animate-pulse">
+                          1000+
+                        </p>
+                        <p className="text-xs uppercase tracking-widest text-white mt-2">
+                          Opportunities
+                        </p>
                       </div>
                       <div className="bg-secondary-800 border border-primary-500/20 p-6 w-full max-w-xs mx-auto transition-all duration-300 hover:border-primary-500 hover:scale-105 group text-center">
-                        <p className="text-4xl font-bold text-primary-500 group-hover:animate-pulse">1000+</p>
-                        <p className="text-xs uppercase tracking-widest text-white mt-2">Candidates</p>
-                      </div>
-                      <div className="bg-secondary-800 border border-primary-500/20 p-6 w-full max-w-xs mx-auto transition-all duration-300 hover:border-primary-500 hover:scale-105 group text-center">
-                        <p className="text-4xl font-bold text-primary-500 group-hover:animate-pulse">3</p>
-                        <p className="text-xs uppercase tracking-widest text-white mt-2">Locations</p>
+                        <p className="text-4xl font-bold text-primary-500 group-hover:animate-pulse">
+                          10000+
+                        </p>
+                        <p className="text-xs uppercase tracking-widest text-white mt-2">
+                          Candidates
+                        </p>
                       </div>
                     </StaggerContainer>
                   </div>
@@ -126,5 +146,5 @@ export function HeroSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
