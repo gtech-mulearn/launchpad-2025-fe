@@ -15,7 +15,7 @@ export function PartnershipsSection() {
             </h2>
             <div className="space-y-4">
               <p className="text-gray-600 text-lg leading-relaxed text-justify">
-                The collaboration between IEEE Kerala Section and GTech MuLearn for Launchpad Kerala enhances its
+                These collaborations for Launchpad Kerala enhances its
                 impact, offering a premier job fair experience.
               </p>
               <p className="text-gray-600 text-lg leading-relaxed text-justify">
@@ -28,8 +28,6 @@ export function PartnershipsSection() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 animate-scale-in delay-300">
             {[
-              { name: "IEEE Kerala Section", abbr: "IEEE" },
-              { name: "IEEE LINK", abbr: "LINK" },
               { name: "MuLearn Foundation", abbr: "Mulearn" },
               { name: "Kerala Knowledge Economy Mission", abbr: "KKEM" },
             ].map((partner, index) => (
@@ -38,15 +36,19 @@ export function PartnershipsSection() {
                 className="aspect-square flex flex-col items-center justify-center border border-primary-500/20 hover:border-primary-500 transition-all duration-300 p-4"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="w-16 h-16 flex items-center justify-center border-2 border-primary-500 mb-4">
-                  <span className="text-xl font-bold text-primary-500">{partner.abbr}</span>
+                <div className="w-fit h-16 flex items-center justify-center border-2 border-primary-500 mb-4">
+                  <span className="text-xl font-bold text-primary-500">
+                    {partner.abbr}
+                  </span>
                 </div>
-                <p className="text-sm text-center text-secondary-900">{partner.name}</p>
+                <p className="text-sm text-center text-secondary-900">
+                  {partner.name}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
