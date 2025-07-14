@@ -28,19 +28,19 @@ export function VerificationPending() {
               <ScrollReveal direction="up" delay={600}>
                 <p className="text-gray-600 mb-6 leading-relaxed">
                   Thank you for registering with Launchpad Kerala 2025. Your
-                  application has been received and you have been added to our
-                  waiting list.
+                  application has been received.
                 </p>
               </ScrollReveal>
 
               <ScrollReveal direction="up" delay={800}>
                 <div className="bg-primary-500/10 border border-primary-500/20 rounded-lg p-4 mb-6">
                   <p className="text-primary-600 font-medium text-sm uppercase tracking-widest">
-                    Status: Waiting List
+                    Status: Verification Pending
                   </p>
                   <p className="text-gray-600 text-sm mt-1">
                     We will contact you soon with further details about the
-                    recruitment process.
+                    recruitment process. After verification, you can login to
+                    dashboard using credentials.
                   </p>
                 </div>
               </ScrollReveal>
