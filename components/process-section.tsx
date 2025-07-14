@@ -6,61 +6,54 @@ export function ProcessSection() {
   const processSteps = [
     {
       step: 1,
-      title: "Participant Registration",
+      title: "Company Registration",
       description:
-        "Students and recent graduates register for the event through the Mulearn official website, providing their educational background, skills, and career interests.",
-      icon: "👥",
+        "Companies sign up on the Launchpad dashboard and onboard their recruitment teams for a seamless hiring experience.",
+      icon: "🏢",
       color: "from-blue-500 to-blue-600",
     },
     {
       step: 2,
-      title: "Company Registration Close",
+      title: "Post Job Offers",
       description:
-        "Companies finalize their participation and submit their job requirements and specifications for the positions they're looking to fill.",
-      icon: "🏢",
+        "Create job openings using challenge-based formats or eligibility criteria such as interest groups, Karma Points, and skill sets.",
+      icon: "📝",
       color: "from-green-500 to-green-600",
     },
     {
       step: 3,
-      title: "Challenges for Earning Karma Points",
+      title: "Get Eligible MuLearners",
       description:
-        "Registered participants begin completing various tasks and challenges to earn Karma Points, which will enhance their visibility and ranking in the selection process.",
-      icon: "⚡",
+        "Launchpad auto-generates a curated list of μLearners who match your job criteria based on interest areas, Karma Points, and experience.",
+      icon: "📋",
       color: "from-yellow-500 to-yellow-600",
     },
     {
       step: 4,
-      title: "Consolidated Rank List",
+      title: "Send Job Invites",
       description:
-        "Based on the task completions and karma points, a consolidated rank list is prepared, and will be visible for companies.",
-      icon: "📊",
-      color: "from-red-500 to-red-600",
-    },
-    {
-      step: 5,
-      title: "Candidate Selection",
-      description:
-        "Companies review the rank list and select candidates based on their skills, interests, and Karma Points.",
-      icon: "🎯",
+        "Invite your shortlisted candidates. μLearners receive these directly on their μLearn dashboard and can accept them in one click.",
+      icon: "📨",
       color: "from-indigo-500 to-indigo-600",
     },
     {
-      step: 6,
-      title: "Interviews",
+      step: 5,
+      title: "Interviews & Assessments",
       description:
-      "Companies sends interview requests to selected candidates, who can then schedule interviews based on their availability.",
+        "Engage with accepted candidates through interviews or additional tasks. Candidates schedule interviews based on availability.",
       icon: "🤝",
-      color: "from-teal-500 to-teal-600",
+      color: "from-red-500 to-red-600",
     },
     {
-      step: 7,
-      title: "Confirmed Mail to Selected Participants",
+      step: 6,
+      title: "Get Hired",
       description:
-        "Selected candidates receive confirmation emails with details about their job offers, including roles, responsibilities, and next steps.",
-      icon: "✉️",
-      color: "from-pink-500 to-pink-600",
+        "Final candidates receive confirmation and offer details — including roles, expectations, and onboarding steps.",
+      icon: "✅",
+      color: "from-teal-500 to-teal-600",
     },
   ];
+
 
   return (
     <section
@@ -94,9 +87,8 @@ export function ProcessSection() {
             {processSteps.map((item, index) => (
               <div
                 key={item.step}
-                className={`relative mb-12 ${
-                  index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-                } flex flex-col md:flex md:items-center md:justify-between group`}
+                className={`relative mb-12 ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
+                  } flex flex-col md:flex md:items-center md:justify-between group`}
               >
                 {/* Connection Line */}
                 {index < processSteps.length - 1 && (
@@ -108,9 +100,8 @@ export function ProcessSection() {
 
                 {/* Content Card */}
                 <div
-                  className={`flex-1 ${
-                    index % 2 === 0 ? "md:pr-8" : "md:pl-8"
-                  } md:w-5/12`}
+                  className={`flex-1 ${index % 2 === 0 ? "md:pr-8" : "md:pl-8"
+                    } md:w-5/12`}
                 >
                   <div className="bg-white border border-primary-500/20 rounded-xl p-6 shadow-lg hover:shadow-xl hover:border-primary-500/40 transition-all duration-300 group-hover:transform group-hover:-translate-y-2">
                     {/* Icon and Title */}
@@ -139,9 +130,8 @@ export function ProcessSection() {
                           (_, i) => (
                             <div
                               key={i}
-                              className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                                i < item.step ? "bg-primary-500" : "bg-gray-200"
-                              }`}
+                              className={`w-2 h-2 rounded-full transition-all duration-300 ${i < item.step ? "bg-primary-500" : "bg-gray-200"
+                                }`}
                             />
                           )
                         )}

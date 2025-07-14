@@ -30,6 +30,7 @@ export function PartnershipsSection() {
             {[
               { name: "MuLearn Foundation", abbr: "Mulearn" },
               { name: "Kerala Knowledge Economy Mission", abbr: "KKEM" },
+              {name: "IEEE", abbr: "IEEE"},
             ].map((partner, index) => (
               <div
                 key={index}

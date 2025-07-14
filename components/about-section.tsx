@@ -42,9 +42,11 @@ export function AboutSection() {
                 <div className="grid grid-cols-2 gap-4 w-full">
                   <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
                     <p className="text-xs uppercase tracking-widest text-primary-400">Organized by</p>
+                    <p className="font-bold text-white mt-1">MuLearn Foundation</p>
                   </div>
                   <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
-                    <p className="font-bold text-white mt-1">MuLearn Foundation</p>
+                    <p className="text-xs uppercase tracking-widest text-primary-400">In Association with</p>
+                    <p className="font-bold text-white mt-1">GTech & IEEE</p>
                   </div>
                   <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
                     <p className="text-xs uppercase tracking-widest text-primary-400">Supported by</p>
