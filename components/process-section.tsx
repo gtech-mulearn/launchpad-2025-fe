@@ -6,53 +6,54 @@ export function ProcessSection() {
   const processSteps = [
     {
       step: 1,
-      title: "Company Registration",
+      title: "Register",
       description:
-        "Companies sign up on the Launchpad dashboard and onboard their recruitment teams for a seamless hiring experience.",
-      icon: "🏢",
+        "Sign up on the Launchpad dashboard and onboard your recruiters to manage all hiring activities in one place.",
+      icon: "📝",
       color: "from-blue-500 to-blue-600",
     },
     {
       step: 2,
-      title: "Post Job Offers",
+      title: "Post Roles",
       description:
-        "Create job openings using challenge-based formats or eligibility criteria such as interest groups, Karma Points, and skill sets.",
-      icon: "📝",
+        "Create job openings in two flexible formats:\n\n• Challenge-Based: Use tasks or real-world problem statements to assess skills.\n• Criteria-Based: Filter by interest groups (Web Dev, AI/ML, UI/UX), karma points, academics, location, skills, and more.",
+      icon: "📌",
       color: "from-green-500 to-green-600",
     },
     {
       step: 3,
-      title: "Get Eligible MuLearners",
+      title: "Discover Talent",
       description:
-        "Launchpad auto-generates a curated list of μLearners who match your job criteria based on interest areas, Karma Points, and experience.",
-      icon: "📋",
+        "Launchpad matches your roles with eligible μLearners, giving you a refined shortlist of qualified candidates.",
+      icon: "🔍",
       color: "from-yellow-500 to-yellow-600",
     },
     {
       step: 4,
-      title: "Send Job Invites",
+      title: "Send Invites",
       description:
-        "Invite your shortlisted candidates. μLearners receive these directly on their μLearn dashboard and can accept them in one click.",
-      icon: "📨",
+        "Invite shortlisted candidates directly through the platform. μLearners get notified instantly and can accept or decline.",
+      icon: "✉️",
       color: "from-indigo-500 to-indigo-600",
     },
     {
       step: 5,
-      title: "Interviews & Assessments",
+      title: "Schedule Interviews",
       description:
-        "Engage with accepted candidates through interviews or additional tasks. Candidates schedule interviews based on availability.",
-      icon: "🤝",
+        "Once a candidate accepts, coordinate interviews at your convenience.",
+      icon: "📅",
       color: "from-red-500 to-red-600",
     },
     {
       step: 6,
-      title: "Get Hired",
+      title: "Hire",
       description:
-        "Final candidates receive confirmation and offer details — including roles, expectations, and onboarding steps.",
+        "Selected candidates receive an official offer email with role details and next steps — fast, transparent, and community-driven.",
       icon: "✅",
       color: "from-teal-500 to-teal-600",
     },
   ];
+
 
 
   return (
