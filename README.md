@@ -1,4 +1,4 @@
-# Lanunchpad-2025-Kerala
+# Launchpad-2025
 
 A modern web application built with TypeScript for the Kerala Launchpad 2025 initiative. This project aims to provide a robust platform with a focus on scalability, maintainability, and an excellent user experience.
 
@@ -20,8 +20,8 @@ A modern web application built with TypeScript for the Kerala Launchpad 2025 ini
 ### Installation
 
 \`\`\`bash
-git clone https://github.com/kevinmathew47/Lanunchpad-2025-Kerala.git
-cd Lanunchpad-2025-Kerala
+git clone https://github.com/gtech-mulearn/launchpad-2025.git
+cd Launchpad-2025
 npm install
 # or
 yarn install
