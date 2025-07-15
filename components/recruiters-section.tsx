@@ -19,7 +19,7 @@ export function RecruitersSection() {
               Last Year's <span className="text-primary-500">Recruiters</span>
             </h2>
             <p className="text-gray-400 text-lg">
-              Meet the companies participating in Launchpad Kerala 2025
+              Meet the companies who participated in Launchpad Kerala 2024
             </p>
           </div>
 

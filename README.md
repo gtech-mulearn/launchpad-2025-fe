@@ -19,29 +19,29 @@ A modern web application built with TypeScript for the Kerala Launchpad 2025 ini
 
 ### Installation
 
-\`\`\`bash
+```bash
 git clone https://github.com/gtech-mulearn/launchpad-2025.git
 cd Launchpad-2025
 npm install
 # or
 yarn install
-\`\`\`
+```
 
 ### Running the Project
 
-\`\`\`bash
+```bash
 npm start
 # or
 yarn start
-\`\`\`
+```
 
 ### Building for Production
 
-\`\`\`bash
+```bash
 npm run build
 # or
 yarn build
-\`\`\`
+```
 
 ## Project Structure
 

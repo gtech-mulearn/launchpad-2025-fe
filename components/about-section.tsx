@@ -29,14 +29,19 @@ export function AboutSection() {
                 <p className="text-gray-600 text-lg leading-relaxed text-justify">
                   Launchpad Kerala 2025 is a premier job fair that connects
                   skilled individuals with leading companies seeking verified,
-                  work-ready talent.Organised by the μLearn Foundation in
-                  collaboration with IEEE Kerala Section Launchpad, KDISC and
-                  GTech, Launchpad bridges the gap between industry needs and
-                  capable professionals — creating pathways for growth and
-                  innovation in Kerala’s job market. With its skills-first
-                  approach, flexible interviews, and a wide talent pool,
-                  Launchpad Kerala 2025 offers unmatched opportunities for both
-                  candidates and employers.
+                  work-ready talent.
+                </p>
+                <p className="text-gray-600 text-lg leading-relaxed text-justify">
+                  Organised by the μLearn Foundation in collaboration with IEEE
+                  Kerala Section, KDISC, KKEM, and GTech, Launchpad bridges the
+                  gap between industry needs and capable professionals —
+                  creating pathways for growth and innovation in Kerala’s job
+                  market.
+                </p>
+                <p className="text-gray-600 text-lg leading-relaxed text-justify">
+                  With its skills-first approach, flexible interviews, and a
+                  wide talent pool, Launchpad Kerala 2025 offers unmatched
+                  opportunities for both candidates and employers.
                 </p>
               </div>
             </div>
