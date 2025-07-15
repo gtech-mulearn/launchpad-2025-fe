@@ -42,8 +42,7 @@ export function HeroSection() {
               </h1>
 
               <p className="text-gray-400 text-lg max-w-md leading-relaxed">
-                A premier job fair connecting talented individuals with
-                innovative companies in the technical and engineering fields.
+               A premier job fair connecting talent in software, creative and management with leading companies across diverse industries.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">

@@ -8,20 +8,28 @@ export function PartnershipsSection() {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8 animate-fade-in">
             <div className="inline-flex items-center space-x-2 border border-primary-500 px-3 py-1">
-              <span className="text-xs uppercase tracking-widest text-primary-500 font-medium">Partnerships</span>
+              <span className="text-xs uppercase tracking-widest text-primary-500 font-medium">
+                Partnerships
+              </span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-secondary-900 uppercase tracking-tighter leading-tight">
               Strategic <span className="text-primary-500">Partnerships</span>
             </h2>
             <div className="space-y-4">
               <p className="text-gray-600 text-lg leading-relaxed text-justify">
-                These collaborations for Launchpad Kerala enhances its
-                impact, offering a premier job fair experience.
+                Launchpad Kerala 2025 is powered by a strong network of partners
+                — the μLearn Foundation, IEEE Kerala Section, GTech, the Kerala
+                Development and Innovation Strategic Council and the Kerala
+                Knowledge Economy Mission — working together to connect skilled
+                youth with real opportunities.
               </p>
               <p className="text-gray-600 text-lg leading-relaxed text-justify">
-                This partnership ensures candidates undergo a thorough assessment, while companies gain access to top
-                talent and increased brand visibility. Together, these organizations bring their expertise and networks
-                to create a platform that benefits both job seekers and employers.
+                This collaboration combines industry expertise, academic reach,
+                and community-driven talent development to help companies find
+                job-ready candidates and help candidates showcase verified
+                skills. Together, these partners ensure Launchpad stays
+                skills-first, inclusive, and impactful for both employers and
+                job seekers.
               </p>
             </div>
           </div>

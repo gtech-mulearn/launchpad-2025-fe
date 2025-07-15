@@ -1,8 +1,11 @@
-import { ScrollReveal } from "./scroll-reveal"
+import { ScrollReveal } from "./scroll-reveal";
 
 export function AboutSection() {
   return (
-    <section id="about" className="w-full py-24 md:py-32 bg-white relative overflow-hidden">
+    <section
+      id="about"
+      className="w-full py-24 md:py-32 bg-white relative overflow-hidden"
+    >
       {/* Grid overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-40"></div>
 
@@ -14,20 +17,26 @@ export function AboutSection() {
           <ScrollReveal direction="left" duration={800}>
             <div className="space-y-8">
               <div className="inline-flex items-center space-x-2 border border-primary-500 px-3 py-1">
-                <span className="text-xs uppercase tracking-widest text-primary-500 font-medium">About</span>
+                <span className="text-xs uppercase tracking-widest text-primary-500 font-medium">
+                  About
+                </span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-secondary-900 uppercase tracking-tighter leading-tight">
-                What is <span className="text-primary-500">Launchpad</span> Kerala?
+                What is <span className="text-primary-500">Launchpad</span>{" "}
+                Kerala?
               </h2>
               <div className="space-y-4">
                 <p className="text-gray-600 text-lg leading-relaxed text-justify">
-                  Launchpad Kerala 2025 is a premier job fair that brings together talented individuals and innovative
-                  companies in the technical and engineering fields. MuLearn Foundation aims to create meaningful connections that drive progress and innovation in Kerala's job
-                  market.
-                </p>
-                <p className="text-gray-600 text-lg leading-relaxed text-justify">
-                  Through a unique assessment approach, flexible interview locations, and a comprehensive talent pool,
-                  Launchpad Kerala 2025 offers unparalleled opportunities for both candidates and companies.
+                  Launchpad Kerala 2025 is a premier job fair that connects
+                  skilled individuals with leading companies seeking verified,
+                  work-ready talent.Organised by the μLearn Foundation in
+                  collaboration with IEEE Kerala Section Launchpad, KDISC and
+                  GTech, Launchpad bridges the gap between industry needs and
+                  capable professionals — creating pathways for growth and
+                  innovation in Kerala’s job market. With its skills-first
+                  approach, flexible interviews, and a wide talent pool,
+                  Launchpad Kerala 2025 offers unmatched opportunities for both
+                  candidates and employers.
                 </p>
               </div>
             </div>
@@ -41,20 +50,39 @@ export function AboutSection() {
               <div className="absolute inset-0 bg-secondary-900 flex items-center justify-center p-8">
                 <div className="grid grid-cols-2 gap-4 w-full">
                   <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
+<<<<<<< Updated upstream
                     <p className="text-xs uppercase tracking-widest text-primary-400">Organized by</p>
                     <p className="font-bold text-white mt-1">MuLearn Foundation</p>
                   </div>
                   <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
                     <p className="text-xs uppercase tracking-widest text-primary-400">In Association with</p>
                     <p className="font-bold text-white mt-1">GTech & IEEE</p>
+=======
+                    <p className="text-xs uppercase tracking-widest text-primary-400">
+                      Organized by
+                    </p>
                   </div>
                   <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
-                    <p className="text-xs uppercase tracking-widest text-primary-400">Supported by</p>
-                    <p className="font-bold text-white mt-1">Kerala Knowledge Economy Mission</p>
+                    <p className="font-bold text-white mt-1">
+                      MuLearn Foundation
+                    </p>
+>>>>>>> Stashed changes
                   </div>
                   <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
-                    <p className="text-xs uppercase tracking-widest text-primary-400">For</p>
-                    <p className="font-bold text-white mt-1">Students & Graduates</p>
+                    <p className="text-xs uppercase tracking-widest text-primary-400">
+                      Supported by
+                    </p>
+                    <p className="font-bold text-white mt-1">
+                      Kerala Knowledge Economy Mission
+                    </p>
+                  </div>
+                  <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
+                    <p className="text-xs uppercase tracking-widest text-primary-400">
+                      For
+                    </p>
+                    <p className="font-bold text-white mt-1">
+                      Students & Graduates
+                    </p>
                   </div>
                 </div>
               </div>
@@ -63,5 +91,5 @@ export function AboutSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
