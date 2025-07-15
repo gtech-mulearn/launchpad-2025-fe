@@ -50,14 +50,6 @@ export function AboutSection() {
               <div className="absolute inset-0 bg-secondary-900 flex items-center justify-center p-8">
                 <div className="grid grid-cols-2 gap-4 w-full">
                   <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
-<<<<<<< Updated upstream
-                    <p className="text-xs uppercase tracking-widest text-primary-400">Organized by</p>
-                    <p className="font-bold text-white mt-1">MuLearn Foundation</p>
-                  </div>
-                  <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
-                    <p className="text-xs uppercase tracking-widest text-primary-400">In Association with</p>
-                    <p className="font-bold text-white mt-1">GTech & IEEE</p>
-=======
                     <p className="text-xs uppercase tracking-widest text-primary-400">
                       Organized by
                     </p>
@@ -66,7 +58,6 @@ export function AboutSection() {
                     <p className="font-bold text-white mt-1">
                       MuLearn Foundation
                     </p>
->>>>>>> Stashed changes
                   </div>
                   <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
                     <p className="text-xs uppercase tracking-widest text-primary-400">
