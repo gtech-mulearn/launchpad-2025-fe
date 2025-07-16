@@ -25,7 +25,6 @@ import {
 import { Eye, EyeOff, LogIn, AlertCircle } from "lucide-react";
 import { useLoginCompany, useLoginRecruiter } from "@/hooks/auth";
 import { useLocalStorageQuery } from "@/hooks/misc";
-import { set } from "react-hook-form";
 
 export default function LoginPage() {
   const router = useRouter();
