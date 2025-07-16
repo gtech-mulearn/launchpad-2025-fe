@@ -51,7 +51,7 @@ export function HeroSection() {
                   size="lg"
                   className="bg-primary-500 hover:bg-primary-600 text-white border-0 transition-all duration-300 group uppercase tracking-widest text-sm font-medium hover:scale-105"
                 >
-                  <Link href="/register">
+                  <Link href={process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" || "/register"}>
                     Register Now
                     <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                   </Link>

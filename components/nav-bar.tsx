@@ -92,7 +92,7 @@ export function NavBar() {
                     <ListItem href="#results" title="Results">
                       Check the latest results
                     </ListItem>
-                    <ListItem href="/register" title="Registration">
+                    <ListItem href={process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" || "/register"} title="Registration">
                       Register as a company
                     </ListItem>
                   </ul>
@@ -109,13 +109,13 @@ export function NavBar() {
               variant="ghost"
               className="bg-transparent text-white hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
             >
-              <Link href="/login">Login</Link>
+              <Link href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "/login"}>Login</Link>
             </Button>
             <Button
               asChild
               className="bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
             >
-              <Link href="/register">Register Now</Link>
+              <Link href={process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" || "/register"}>Register Now</Link>
             </Button>
           </div>
         </div>
@@ -171,13 +171,13 @@ export function NavBar() {
                   Results
                 </Link>
                 <Link
-                  href="/login"
+                  href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "/login"}
                   className="text-sm uppercase tracking-widest font-medium text-white hover:text-primary-500 transition-colors duration-300"
                 >
                   Login
                 </Link>
                 <Link
-                  href="/register"
+                  href={process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" || "/register"}
                   className="text-sm uppercase tracking-widest font-medium text-white hover:text-primary-500 transition-colors duration-300"
                 >
                   Registration
@@ -186,7 +186,7 @@ export function NavBar() {
                   className="mt-4 bg-transparent hover:bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
                   asChild
                 >
-                  <Link href="/register">Register Now</Link>
+                  <Link href={process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" || "/register"}>Register Now</Link>
                 </Button>
               </nav>
             </SheetContent>
