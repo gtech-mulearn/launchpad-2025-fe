@@ -1,6 +1,6 @@
 # Launchpad-2025
 
-A modern web application built with TypeScript for the Kerala Launchpad 2025 initiative. This project aims to provide a robust platform with a focus on scalability, maintainability, and an excellent user experience.
+A modern web application built with TypeScript for the Launchpad 2025 initiative. This project aims to provide a robust platform with a focus on scalability, maintainability, and an excellent user experience.
 
 ## Features
 
