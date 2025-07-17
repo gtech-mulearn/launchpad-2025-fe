@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Header } from "@/components/recruiter/Header";
-import { StatCard } from "@/components/recruiter/Statcard";
+import { StatCard } from "@/components/recruiter/StatCard";
 import { TabsNavigation } from "@/components/recruiter/TabsNavigation";
 import { CandidatesTab } from "@/components/recruiter/CandidatesTab";
 import { JobOffersTab } from "@/components/recruiter/JobOffersTab";
@@ -16,8 +16,18 @@ import { ScheduleInterviewModal } from "@/components/recruiter/ScheduleInterview
 import { Users, Briefcase, Calendar, TrendingUp } from "lucide-react";
 import { useLocalStorage } from "@/hooks/misc";
 import { useGetRecruiter } from "@/hooks/auth";
-import { useAddJob, useListJobOffers, useListEligibleCandidates } from "@/hooks/recuiter";
-import { JobOffer, JobInvite, Candidate, InterviewDetails, InterestGroup } from "@/types/recruiter";
+import {
+  useAddJob,
+  useListJobOffers,
+  useListEligibleCandidates,
+} from "@/hooks/recuiter";
+import {
+  JobOffer,
+  JobInvite,
+  Candidate,
+  InterviewDetails,
+  InterestGroup,
+} from "@/types/recruiter";
 
 // Mock data for candidates (for candidates tab)
 const mockCandidates: Candidate[] = [
@@ -30,7 +40,10 @@ const mockCandidates: Candidate[] = [
     karma: 600,
     level: "lvl1",
     college_name: "Example University",
-    interest_groups: [{ id: "1", name: "Web Development" }, { id: "2", name: "Mobile Development" }],
+    interest_groups: [
+      { id: "1", name: "Web Development" },
+      { id: "2", name: "Mobile Development" },
+    ],
     roles: ["Student", "Code Explorer"],
     rank: 10,
     karma_distribution: [{ task_type: "Contribution", karma: 600 }],
@@ -44,7 +57,10 @@ const mockCandidates: Candidate[] = [
     karma: 800,
     level: "lvl2",
     college_name: "Tech Institute",
-    interest_groups: [{ id: "3", name: "Cloud And Devops" }, { id: "4", name: "Data Science" }],
+    interest_groups: [
+      { id: "3", name: "Cloud And Devops" },
+      { id: "4", name: "Data Science" },
+    ],
     roles: ["Student", "Code Master"],
     rank: 5,
     karma_distribution: [{ task_type: "Collaboration", karma: 800 }],
@@ -58,7 +74,10 @@ const mockCandidates: Candidate[] = [
     karma: 550,
     level: "lvl1",
     college_name: "State College",
-    interest_groups: [{ id: "5", name: "Cyber Security" }, { id: "6", name: "Blockchain" }],
+    interest_groups: [
+      { id: "5", name: "Cyber Security" },
+      { id: "6", name: "Blockchain" },
+    ],
     roles: ["Student", "Intern"],
     rank: 15,
     karma_distribution: [{ task_type: "Participation", karma: 550 }],
@@ -143,10 +162,13 @@ export default function RecruiterDashboard() {
   const [activeTab, setActiveTab] = useState("candidates");
   const [accessToken] = useLocalStorage("accessToken", "");
   const [userId] = useLocalStorage("userId", "");
-  const [hireRequests, setHireRequests] = useState<JobInvite[]>(mockHireRequests);
+  const [hireRequests, setHireRequests] =
+    useState<JobInvite[]>(mockHireRequests);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [selectedJobOffer, setSelectedJobOffer] = useState<JobOffer | null>(null);
+  const [selectedJobOffer, setSelectedJobOffer] = useState<JobOffer | null>(
+    null
+  );
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [scheduleInviteId, setScheduleInviteId] = useState<number | null>(null);
   const [newJobOffer, setNewJobOffer] = useState<JobOffer>({
@@ -164,19 +186,34 @@ export default function RecruiterDashboard() {
     task_description: null,
     task_hashtag: null,
     task_verified: null,
-    createdAt: new Date().toISOString().split('T')[0],
+    createdAt: new Date().toISOString().split("T")[0],
     openingType: null,
   });
 
   const recruiter = useGetRecruiter(userId, accessToken);
   const addJobMutation = useAddJob(accessToken);
-  const { interestGroups, isLoading: isInterestGroupsLoading, error: interestGroupsError } = useGetInterestGroups(accessToken);
-  const { data: jobOffers, isLoading: isJobOffersLoading, error: jobOffersError } = useListJobOffers(recruiter.data?.company_id || "", accessToken);
-  const { data: eligibleCandidatesData, isLoading: isEligibleCandidatesLoading, error: eligibleCandidatesError } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
+  const {
+    interestGroups,
+    isLoading: isInterestGroupsLoading,
+    error: interestGroupsError,
+  } = useGetInterestGroups(accessToken);
+  const {
+    data: jobOffers,
+    isLoading: isJobOffersLoading,
+    error: jobOffersError,
+  } = useListJobOffers(recruiter.data?.company_id || "", accessToken);
+  const {
+    data: eligibleCandidatesData,
+    isLoading: isEligibleCandidatesLoading,
+    error: eligibleCandidatesError,
+  } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
 
   useEffect(() => {
     if (recruiter.data?.company_id) {
-      setNewJobOffer(prev => ({ ...prev, company_id: recruiter.data!.company_id }));
+      setNewJobOffer((prev) => ({
+        ...prev,
+        company_id: recruiter.data!.company_id,
+      }));
     }
   }, [recruiter.data]);
 
@@ -190,7 +227,11 @@ export default function RecruiterDashboard() {
   }
 
   if (jobOffersError) {
-    return <div className="text-red-400">Error loading job offers: {jobOffersError.message}</div>;
+    return (
+      <div className="text-red-400">
+        Error loading job offers: {jobOffersError.message}
+      </div>
+    );
   }
 
   const handleLogout = () => {
@@ -200,13 +241,19 @@ export default function RecruiterDashboard() {
   };
 
   const handleInviteSent = (newInvite: JobInvite) => {
-    setHireRequests(prev => [...prev, newInvite]);
+    setHireRequests((prev) => [...prev, newInvite]);
   };
 
   const handleAcceptInvite = (inviteId: number) => {
-    setHireRequests(prev =>
-      prev.map(invite =>
-        invite.id === inviteId ? { ...invite, status: "accepted", updatedAt: new Date().toISOString().split('T')[0] } : invite
+    setHireRequests((prev) =>
+      prev.map((invite) =>
+        invite.id === inviteId
+          ? {
+              ...invite,
+              status: "accepted",
+              updatedAt: new Date().toISOString().split("T")[0],
+            }
+          : invite
       )
     );
   };
@@ -218,8 +265,8 @@ export default function RecruiterDashboard() {
 
   const handleScheduleSubmit = (details: InterviewDetails) => {
     if (scheduleInviteId !== null) {
-      setHireRequests(prev =>
-        prev.map(invite =>
+      setHireRequests((prev) =>
+        prev.map((invite) =>
           invite.id === scheduleInviteId
             ? {
                 ...invite,
@@ -228,7 +275,7 @@ export default function RecruiterDashboard() {
                 interviewTime: details.interviewTime,
                 interviewPlatform: details.interviewPlatform,
                 interviewLink: details.interviewLink,
-                updatedAt: new Date().toISOString().split('T')[0],
+                updatedAt: new Date().toISOString().split("T")[0],
               }
             : invite
         )
@@ -239,9 +286,15 @@ export default function RecruiterDashboard() {
   };
 
   const handleHireCandidate = (inviteId: number) => {
-    setHireRequests(prev =>
-      prev.map(invite =>
-        invite.id === inviteId ? { ...invite, status: "hired", updatedAt: new Date().toISOString().split('T')[0] } : invite
+    setHireRequests((prev) =>
+      prev.map((invite) =>
+        invite.id === inviteId
+          ? {
+              ...invite,
+              status: "hired",
+              updatedAt: new Date().toISOString().split("T")[0],
+            }
+          : invite
       )
     );
   };
@@ -265,7 +318,9 @@ export default function RecruiterDashboard() {
           />
           <StatCard
             title="Interviews Scheduled"
-            value={hireRequests.filter(req => req.status === 'interview').length}
+            value={
+              hireRequests.filter((req) => req.status === "interview").length
+            }
             icon={<Calendar className="h-5 w-5 text-green-400" />}
             color="bg-green-500/10"
           />
@@ -278,7 +333,9 @@ export default function RecruiterDashboard() {
         </div>
         <TabsNavigation activeTab={activeTab} onTabChange={setActiveTab} />
         <div className="mt-4">
-          {activeTab === "candidates" && <CandidatesTab candidates={mockCandidates} />}
+          {activeTab === "candidates" && (
+            <CandidatesTab candidates={mockCandidates} />
+          )}
           {activeTab === "job-offers" && (
             <JobOffersTab
               jobOffers={jobOffers}
@@ -286,13 +343,15 @@ export default function RecruiterDashboard() {
               error={jobOffersError}
               onCreateJobOffer={() => setIsCreateModalOpen(true)}
               onViewDetails={(offer) => {
-                console.log('Selected Job Offer:', offer);
+                console.log("Selected Job Offer:", offer);
                 setSelectedJobOffer(offer);
                 setIsDetailsModalOpen(true);
               }}
             />
           )}
-          {activeTab === "requests" && <HireRequestsTab hireRequests={hireRequests} />}
+          {activeTab === "requests" && (
+            <HireRequestsTab hireRequests={hireRequests} />
+          )}
           {activeTab === "analytics" && <AnalyticsTab />}
         </div>
         <CreateJobOfferModal
@@ -341,22 +400,25 @@ const useGetInterestGroups = (accessToken: string) => {
   useEffect(() => {
     const fetchInterestGroups = async () => {
       try {
-        const response = await fetch('https://mulearn.org/api/v1/dashboard/ig/list/', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const response = await fetch(
+          "https://mulearn.org/api/v1/dashboard/ig/list/",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
         if (!response.ok) {
-          throw new Error('Failed to fetch interest groups');
+          throw new Error("Failed to fetch interest groups");
         }
         const data = await response.json();
         if (data.hasError) {
-          throw new Error(data.message || 'Error fetching interest groups');
+          throw new Error(data.message || "Error fetching interest groups");
         }
         setInterestGroups(data.response.interestGroup);
         setIsLoading(false);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
+        setError(err instanceof Error ? err.message : "Unknown error");
         setIsLoading(false);
       }
     };

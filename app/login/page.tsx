@@ -25,6 +25,7 @@ import {
 import { Eye, EyeOff, LogIn, AlertCircle } from "lucide-react";
 import { useLoginCompany, useLoginRecruiter } from "@/hooks/auth";
 import { useLocalStorageQuery } from "@/hooks/misc";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -40,29 +41,40 @@ export default function LoginPage() {
   const rlogin = useLoginRecruiter();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const t = toast.loading("Logging in...");
     setIsLoading(true);
 
+    const onSuccess = (data: any) => {
+      //console.log("Login successful:", data);
+      toast.success("Login successful", {
+        id: t,
+      });
+      setAccessToken(data?.accessToken || "");
+      setUserId(data?.id || "");
+      router.push(`dashboard/${role}/`);
+    };
+    const onError = (err: any) => {
+      toast.error("Login failed", { id: t });
+      //setError(err.response?.data?.detail || "Login failed");
+      setIsLoading(false);
+    };
     if (!email || !password) {
-      setError("Email and password are required");
+      //setError("Email and password are required");
+      toast.error("Email and password are required", {
+        id: t,
+      });
       setIsLoading(false);
       return;
     }
-    console.log("Role:", role);
+    //console.log("Role:", role);
     if (role === "admin") {
+      toast.error("Login Failed", { id: t });
     } else if (role === "recruiter") {
       await rlogin.mutateAsync(
         { email, pass: password },
         {
-          onSuccess: (data) => {
-            console.log("Login successful:", data);
-            setAccessToken(data?.accessToken || "");
-            setUserId(data?.id || "");
-            router.push("dashboard/recruiter/");
-          },
-          onError: (err: any) => {
-            setError(err.response?.data?.detail || "Login failed");
-            setIsLoading(false);
-          },
+          onSuccess: onSuccess,
+          onError: onError,
         }
       );
     } else if (role === "company") {
@@ -72,17 +84,8 @@ export default function LoginPage() {
           pass: password,
         },
         {
-          onSuccess: (data) => {
-            console.log("Company login successful:", data);
-            setAccessToken(data?.accessToken || "");
-
-            setUserId(data?.id || "");
-            router.push("dashboard/company/");
-          },
-          onError: (err: any) => {
-            setError(err.response?.data?.detail || "Login failed");
-            setIsLoading(false);
-          },
+          onSuccess: onSuccess,
+          onError: onError,
         }
       );
     }
@@ -106,7 +109,7 @@ export default function LoginPage() {
               Welcome Back
             </CardTitle>
             <CardDescription className="text-gray-400">
-              Sign in to your Mucareers account
+              Log in to your Mucareers account
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -188,12 +191,12 @@ export default function LoginPage() {
                 {isLoading ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Signing in...
+                    Logging in...
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
                     <LogIn className="w-4 h-4" />
-                    Sign In
+                    Log In
                   </div>
                 )}
               </Button>
