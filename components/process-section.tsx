@@ -161,7 +161,7 @@ export function ProcessSection() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button className="bg-transparent hover:bg-primary-500/10 text-primary-500 border border-primary-500 px-8 py-3 rounded-lg font-medium uppercase tracking-widest text-sm transition-all duration-300 hover:scale-105">
-                  <Link href="/register">Register as Company</Link>
+                  <Link href={process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" || "/register"}>Register as Company</Link>
                 </button>
               </div>
             </div>

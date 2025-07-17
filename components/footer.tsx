@@ -109,7 +109,7 @@ export function Footer() {
                 asChild
                 className="bg-transparent hover:bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-xs uppercase tracking-widest font-medium transition-all duration-300"
               >
-                <Link href="#register">Register Now</Link>
+                <Link href={process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" || "/register"}>Register Now</Link>
               </Button>
             </div>
           </div>
