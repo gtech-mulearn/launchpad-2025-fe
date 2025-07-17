@@ -106,7 +106,7 @@ export default function LoginPage() {
               Welcome Back
             </CardTitle>
             <CardDescription className="text-gray-400">
-              Sign in to your Launchpad Kerala account
+              Sign in to your Mucareers account
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

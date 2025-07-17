@@ -1,155 +1,255 @@
 "use client";
 
-import type React from "react";
-
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Users,
-  Briefcase,
-  Calendar,
-  TrendingUp,
-  LogOut,
-  Search,
-  Filter,
-  Eye,
-  MessageSquare,
-  CheckCircle,
-  Clock,
-  XCircle,
-} from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { Header } from "@/components/recruiter/Header";
+import { StatCard } from "@/components/recruiter/Statcard";
+import { TabsNavigation } from "@/components/recruiter/TabsNavigation";
+import { CandidatesTab } from "@/components/recruiter/CandidatesTab";
+import { JobOffersTab } from "@/components/recruiter/JobOffersTab";
+import { HireRequestsTab } from "@/components/recruiter/HireRequestsTab";
+import { AnalyticsTab } from "@/components/recruiter/AnalyticsTab";
+import { CreateJobOfferModal } from "@/components/recruiter/CreateJobOfferModal";
+import { JobOfferDetailsModal } from "@/components/recruiter/JobOfferDetailsModal";
+import { ScheduleInterviewModal } from "@/components/recruiter/ScheduleInterviewModal";
+import { Users, Briefcase, Calendar, TrendingUp } from "lucide-react";
 import { useLocalStorage } from "@/hooks/misc";
 import { useGetRecruiter } from "@/hooks/auth";
+import { useAddJob, useListJobOffers, useListEligibleCandidates } from "@/hooks/recuiter";
+import { JobOffer, JobInvite, Candidate, InterviewDetails, InterestGroup } from "@/types/recruiter";
 
-// Mock data for demonstration
-const mockCandidates = [
+// Mock data for candidates (for candidates tab)
+const mockCandidates: Candidate[] = [
   {
     id: "1",
-    name: "John Doe",
+    full_name: "John Doe",
     email: "john@example.com",
-    skills: ["React", "Node.js", "TypeScript"],
-    experience: "3 years",
-    availability: "Available",
-    status: "Active",
+    muid: "john_doe@mulearn",
+    profile_pic: null,
+    karma: 600,
+    level: "lvl1",
+    college_name: "Example University",
+    interest_groups: [{ id: "1", name: "Web Development" }, { id: "2", name: "Mobile Development" }],
+    roles: ["Student", "Code Explorer"],
+    rank: 10,
+    karma_distribution: [{ task_type: "Contribution", karma: 600 }],
   },
   {
     id: "2",
-    name: "Jane Smith",
+    full_name: "Jane Smith",
     email: "jane@example.com",
-    skills: ["Python", "Django", "PostgreSQL"],
-    experience: "5 years",
-    availability: "Available",
-    status: "Active",
+    muid: "jane_smith@mulearn",
+    profile_pic: null,
+    karma: 800,
+    level: "lvl2",
+    college_name: "Tech Institute",
+    interest_groups: [{ id: "3", name: "Cloud And Devops" }, { id: "4", name: "Data Science" }],
+    roles: ["Student", "Code Master"],
+    rank: 5,
+    karma_distribution: [{ task_type: "Collaboration", karma: 800 }],
   },
   {
     id: "3",
-    name: "Mike Johnson",
+    full_name: "Mike Johnson",
     email: "mike@example.com",
-    skills: ["Java", "Spring Boot", "AWS"],
-    experience: "4 years",
-    availability: "Busy",
-    status: "Active",
+    muid: "mike_johnson@mulearn",
+    profile_pic: null,
+    karma: 550,
+    level: "lvl1",
+    college_name: "State College",
+    interest_groups: [{ id: "5", name: "Cyber Security" }, { id: "6", name: "Blockchain" }],
+    roles: ["Student", "Intern"],
+    rank: 15,
+    karma_distribution: [{ task_type: "Participation", karma: 550 }],
   },
 ];
 
-const mockHireRequests = [
+// Mock data for hire requests
+const mockHireRequests: JobInvite[] = [
   {
-    id: "1",
-    candidateName: "John Doe",
-    position: "Frontend Developer",
-    status: "Pending",
+    id: 1,
+    candidateName: "Sreenandan K M",
+    title: "FullStack dev",
+    company_id: "e34fb4f2-cff2-4be1-8444-a02967e09020",
+    salaryRange: "$80,000 - $120,000",
+    location: "Remote",
+    experience: "3-5 years",
+    skills: "Join our team to build cutting-edge React applications...",
+    jobType: "Full-time",
+    status: "pending",
+    interestGroups: "Web Development",
+    minKarma: 500,
+    task_id: null,
+    task_description: null,
+    task_hashtag: null,
+    task_verified: null,
     sentDate: "2024-01-15",
-    company: "Tech Corp",
+    updatedAt: "2024-01-20",
+    openingType: "General",
   },
   {
-    id: "2",
-    candidateName: "Jane Smith",
-    position: "Backend Developer",
-    status: "Accepted",
+    id: 2,
+    candidateName: "Aryan C",
+    title: "Backend Developer",
+    company_id: "e34fb4f2-cff2-4be1-8444-a02967e09020",
+    salaryRange: "$90,000 - $140,000",
+    location: "New York",
+    experience: "5-7 years",
+    skills: "Lead backend development for our platform...",
+    jobType: "Full-time",
+    status: "accepted",
+    interestGroups: "Cloud And Devops",
+    minKarma: 750,
+    task_id: null,
+    task_description: null,
+    task_hashtag: null,
+    task_verified: null,
     sentDate: "2024-01-14",
-    company: "Tech Corp",
+    updatedAt: "2024-01-18",
+    openingType: "Task",
   },
   {
-    id: "3",
-    candidateName: "Mike Johnson",
-    position: "Full Stack Developer",
-    status: "Rejected",
+    id: 3,
+    candidateName: "AKSHAY KRISHNA",
+    title: "test task type",
+    company_id: "56c8a2ce-e3e2-4611-ba71-5b780a944180",
+    salaryRange: "$8000 - $90000",
+    location: "kochu",
+    experience: "8",
+    skills: "enter job skills and description",
+    jobType: "Part-time",
+    status: "interview",
+    interestGroups: "Ar Vr Mr",
+    minKarma: 855,
+    task_id: "77ea2701-c17c-48b9-a739-e2377f9e0ada",
+    task_description: "some desc",
+    task_hashtag: null,
+    task_verified: false,
     sentDate: "2024-01-13",
-    company: "Tech Corp",
+    updatedAt: "2024-01-19",
+    interviewDate: "2024-01-25",
+    interviewTime: "10:00 AM",
+    interviewPlatform: "Zoom",
+    interviewLink: "https://zoom.us/j/123456789",
+    openingType: "Task",
   },
 ];
 
 export default function RecruiterDashboard() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [userEmail, setUserEmail] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("candidates");
   const [accessToken] = useLocalStorage("accessToken", "");
   const [userId] = useLocalStorage("userId", "");
+  const [hireRequests, setHireRequests] = useState<JobInvite[]>(mockHireRequests);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [selectedJobOffer, setSelectedJobOffer] = useState<JobOffer | null>(null);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [scheduleInviteId, setScheduleInviteId] = useState<number | null>(null);
+  const [newJobOffer, setNewJobOffer] = useState<JobOffer>({
+    id: "",
+    title: "",
+    company_id: "",
+    salaryRange: null,
+    location: null,
+    experience: null,
+    skills: null,
+    jobType: null,
+    interestGroups: "",
+    minKarma: 0,
+    task_id: null,
+    task_description: null,
+    task_hashtag: null,
+    task_verified: null,
+    createdAt: new Date().toISOString().split('T')[0],
+    openingType: null,
+  });
+
   const recruiter = useGetRecruiter(userId, accessToken);
-  if (recruiter.isLoading) return null;
+  const addJobMutation = useAddJob(accessToken);
+  const { interestGroups, isLoading: isInterestGroupsLoading, error: interestGroupsError } = useGetInterestGroups(accessToken);
+  const { data: jobOffers, isLoading: isJobOffersLoading, error: jobOffersError } = useListJobOffers(recruiter.data?.company_id || "", accessToken);
+  const { data: eligibleCandidatesData, isLoading: isEligibleCandidatesLoading, error: eligibleCandidatesError } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
+
+  useEffect(() => {
+    if (recruiter.data?.company_id) {
+      setNewJobOffer(prev => ({ ...prev, company_id: recruiter.data!.company_id }));
+    }
+  }, [recruiter.data]);
+
+  if (recruiter.isLoading || isJobOffersLoading) {
+    return <div className="text-white">Loading...</div>;
+  }
+
   if (!recruiter.data) {
     router.push("/login");
     return null;
   }
+
+  if (jobOffersError) {
+    return <div className="text-red-400">Error loading job offers: {jobOffersError.message}</div>;
+  }
+
   const handleLogout = () => {
-    // Clear all authentication data
     localStorage.removeItem("userRole");
     localStorage.removeItem("userEmail");
-
-    // Force a page reload to clear any cached state
     window.location.href = "/login";
   };
 
-  const filteredCandidates = mockCandidates.filter(
-    (candidate) =>
-      candidate.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      candidate.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      candidate.skills.some((skill) =>
-        skill.toLowerCase().includes(searchQuery.toLowerCase())
+  const handleInviteSent = (newInvite: JobInvite) => {
+    setHireRequests(prev => [...prev, newInvite]);
+  };
+
+  const handleAcceptInvite = (inviteId: number) => {
+    setHireRequests(prev =>
+      prev.map(invite =>
+        invite.id === inviteId ? { ...invite, status: "accepted", updatedAt: new Date().toISOString().split('T')[0] } : invite
       )
-  );
+    );
+  };
+
+  const handleScheduleInterview = (inviteId: number) => {
+    setScheduleInviteId(inviteId);
+    setIsScheduleModalOpen(true);
+  };
+
+  const handleScheduleSubmit = (details: InterviewDetails) => {
+    if (scheduleInviteId !== null) {
+      setHireRequests(prev =>
+        prev.map(invite =>
+          invite.id === scheduleInviteId
+            ? {
+                ...invite,
+                status: "interview",
+                interviewDate: details.interviewDate,
+                interviewTime: details.interviewTime,
+                interviewPlatform: details.interviewPlatform,
+                interviewLink: details.interviewLink,
+                updatedAt: new Date().toISOString().split('T')[0],
+              }
+            : invite
+        )
+      );
+    }
+    setIsScheduleModalOpen(false);
+    setScheduleInviteId(null);
+  };
+
+  const handleHireCandidate = (inviteId: number) => {
+    setHireRequests(prev =>
+      prev.map(invite =>
+        invite.id === inviteId ? { ...invite, status: "hired", updatedAt: new Date().toISOString().split('T')[0] } : invite
+      )
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-white">
-              Recruiter Dashboard
-            </h1>
-            <p className="text-gray-400">Welcome back, {userEmail}</p>
-          </div>
-          <Button
-            onClick={handleLogout}
-            variant="outline"
-            className="bg-button-secondary-500/30 border-primary-500/30 text-white hover:bg-primary-500/10"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
-        </div>
-
-        {/* Stats Cards */}
+        <Header userEmail={userEmail} onLogout={handleLogout} />
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
           <StatCard
             title="Total Candidates"
@@ -159,13 +259,13 @@ export default function RecruiterDashboard() {
           />
           <StatCard
             title="Hire Requests Sent"
-            value={mockHireRequests.length}
+            value={hireRequests.length}
             icon={<Briefcase className="h-5 w-5 text-blue-400" />}
             color="bg-blue-500/10"
           />
           <StatCard
             title="Interviews Scheduled"
-            value={1}
+            value={hireRequests.filter(req => req.status === 'interview').length}
             icon={<Calendar className="h-5 w-5 text-green-400" />}
             color="bg-green-500/10"
           />
@@ -176,264 +276,98 @@ export default function RecruiterDashboard() {
             color="bg-purple-500/10"
           />
         </div>
-
-        <Tabs defaultValue="candidates" className="space-y-4">
-          <TabsList className="bg-secondary-800/50 backdrop-blur-sm border border-primary-500/20">
-            <TabsTrigger
-              value="candidates"
-              className="text-white data-[state=active]:bg-primary-500"
-            >
-              Candidates
-            </TabsTrigger>
-            <TabsTrigger
-              value="requests"
-              className="text-white data-[state=active]:bg-primary-500"
-            >
-              Hire Requests
-            </TabsTrigger>
-            <TabsTrigger
-              value="analytics"
-              className="text-white data-[state=active]:bg-primary-500"
-            >
-              Analytics
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="candidates" className="space-y-4">
-            <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-white">
-                      Candidate Database
-                    </CardTitle>
-                    <CardDescription className="text-gray-400">
-                      Browse and filter available candidates
-                    </CardDescription>
-                  </div>
-                  <div className="flex gap-2">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                      <Input
-                        placeholder="Search candidates..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 bg-secondary-700/50 border-primary-500/30 text-white"
-                      />
-                    </div>
-                    <Button
-                      size="sm"
-                      className="bg-primary-500 hover:bg-primary-600"
-                    >
-                      <Filter className="h-4 w-4 mr-1" />
-                      Filter
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-gray-700">
-                      <TableHead className="text-gray-300">Candidate</TableHead>
-                      <TableHead className="text-gray-300">Skills</TableHead>
-                      <TableHead className="text-gray-300">
-                        Experience
-                      </TableHead>
-                      <TableHead className="text-gray-300">
-                        Availability
-                      </TableHead>
-                      <TableHead className="text-gray-300">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredCandidates.map((candidate) => (
-                      <TableRow key={candidate.id} className="border-gray-700">
-                        <TableCell>
-                          <div>
-                            <div className="font-medium text-white">
-                              {candidate.name}
-                            </div>
-                            <div className="text-sm text-gray-400">
-                              {candidate.email}
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {candidate.skills.map((skill, index) => (
-                              <Badge
-                                key={index}
-                                variant="outline"
-                                className="text-xs border-primary-500/30 text-primary-400"
-                              >
-                                {skill}
-                              </Badge>
-                            ))}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-gray-300">
-                          {candidate.experience}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="outline"
-                            className={
-                              candidate.availability === "Available"
-                                ? "border-green-500/30 text-green-400"
-                                : "border-yellow-500/30 text-yellow-400"
-                            }
-                          >
-                            {candidate.availability}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="bg-button-secondary-500/30 border-primary-500/30 text-white"
-                            >
-                              <Eye className="h-4 w-4 mr-1" />
-                              View
-                            </Button>
-                            <Button
-                              size="sm"
-                              className="bg-primary-500 hover:bg-primary-600"
-                            >
-                              <MessageSquare className="h-4 w-4 mr-1" />
-                              Contact
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="requests" className="space-y-4">
-            <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20">
-              <CardHeader>
-                <CardTitle className="text-white">Hire Requests</CardTitle>
-                <CardDescription className="text-gray-400">
-                  Track your hiring requests and their status
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-gray-700">
-                      <TableHead className="text-gray-300">Candidate</TableHead>
-                      <TableHead className="text-gray-300">Position</TableHead>
-                      <TableHead className="text-gray-300">Status</TableHead>
-                      <TableHead className="text-gray-300">Sent Date</TableHead>
-                      <TableHead className="text-gray-300">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockHireRequests.map((request) => (
-                      <TableRow key={request.id} className="border-gray-700">
-                        <TableCell className="text-white font-medium">
-                          {request.candidateName}
-                        </TableCell>
-                        <TableCell className="text-gray-300">
-                          {request.position}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="outline"
-                            className={
-                              request.status === "Accepted"
-                                ? "border-green-500/30 text-green-400"
-                                : request.status === "Rejected"
-                                ? "border-red-500/30 text-red-400"
-                                : "border-yellow-500/30 text-yellow-400"
-                            }
-                          >
-                            {request.status === "Accepted" && (
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                            )}
-                            {request.status === "Pending" && (
-                              <Clock className="h-3 w-3 mr-1" />
-                            )}
-                            {request.status === "Rejected" && (
-                              <XCircle className="h-3 w-3 mr-1" />
-                            )}
-                            {request.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-gray-300">
-                          {request.sentDate}
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            size="sm"
-                            className="bg-primary-500 hover:bg-primary-600"
-                          >
-                            View Details
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="analytics" className="space-y-4">
-            <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20">
-              <CardHeader>
-                <CardTitle className="text-white">
-                  Recruitment Analytics
-                </CardTitle>
-                <CardDescription className="text-gray-400">
-                  Track your recruitment performance
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="h-[300px] flex items-center justify-center">
-                <div className="text-center">
-                  <TrendingUp className="h-12 w-12 text-primary-500 mx-auto mb-4" />
-                  <p className="text-gray-400">
-                    Analytics dashboard coming soon
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+        <TabsNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+        <div className="mt-4">
+          {activeTab === "candidates" && <CandidatesTab candidates={mockCandidates} />}
+          {activeTab === "job-offers" && (
+            <JobOffersTab
+              jobOffers={jobOffers}
+              isLoading={isJobOffersLoading}
+              error={jobOffersError}
+              onCreateJobOffer={() => setIsCreateModalOpen(true)}
+              onViewDetails={(offer) => {
+                console.log('Selected Job Offer:', offer);
+                setSelectedJobOffer(offer);
+                setIsDetailsModalOpen(true);
+              }}
+            />
+          )}
+          {activeTab === "requests" && <HireRequestsTab hireRequests={hireRequests} />}
+          {activeTab === "analytics" && <AnalyticsTab />}
+        </div>
+        <CreateJobOfferModal
+          isOpen={isCreateModalOpen}
+          onOpenChange={setIsCreateModalOpen}
+          newJobOffer={newJobOffer}
+          setNewJobOffer={setNewJobOffer}
+          interestGroups={interestGroups}
+          isInterestGroupsLoading={isInterestGroupsLoading}
+          interestGroupsError={interestGroupsError}
+          addJobMutation={addJobMutation as any}
+          companyId={recruiter.data?.company_id}
+          userId={userId}
+          queryClient={queryClient}
+        />
+        <JobOfferDetailsModal
+          isOpen={isDetailsModalOpen}
+          onOpenChange={setIsDetailsModalOpen}
+          selectedJobOffer={selectedJobOffer}
+          eligibleCandidatesData={eligibleCandidatesData}
+          isEligibleCandidatesLoading={isEligibleCandidatesLoading}
+          eligibleCandidatesError={eligibleCandidatesError}
+          hireRequests={hireRequests}
+          accessToken={accessToken}
+          onAcceptInvite={handleAcceptInvite}
+          onScheduleInterview={handleScheduleInterview}
+          onHireCandidate={handleHireCandidate}
+          onInviteSent={handleInviteSent}
+        />
+        <ScheduleInterviewModal
+          isOpen={isScheduleModalOpen}
+          onOpenChange={setIsScheduleModalOpen}
+          onScheduleSubmit={handleScheduleSubmit}
+          accessToken={accessToken}
+          jobId={selectedJobOffer?.id || ""}
+          studentId={scheduleInviteId?.toString() || ""}
+        />
       </div>
     </div>
   );
 }
 
-function StatCard({
-  title,
-  value,
-  icon,
-  color,
-}: {
-  title: string;
-  value: number | string;
-  icon: React.ReactNode;
-  color: string;
-}) {
-  return (
-    <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-      <CardHeader
-        className={`flex flex-row items-center justify-between space-y-0 pb-2 ${color}`}
-      >
-        <CardTitle className="text-sm font-medium text-white">
-          {title}
-        </CardTitle>
-        <div className="rounded-full p-2">{icon}</div>
-      </CardHeader>
-      <CardContent className="pt-6">
-        <div className="text-3xl font-bold text-white">{value}</div>
-      </CardContent>
-    </Card>
-  );
-}
+// Custom hook to fetch interest groups (unchanged, included for completeness)
+const useGetInterestGroups = (accessToken: string) => {
+  const [interestGroups, setInterestGroups] = useState<InterestGroup[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchInterestGroups = async () => {
+      try {
+        const response = await fetch('https://mulearn.org/api/v1/dashboard/ig/list/', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch interest groups');
+        }
+        const data = await response.json();
+        if (data.hasError) {
+          throw new Error(data.message || 'Error fetching interest groups');
+        }
+        setInterestGroups(data.response.interestGroup);
+        setIsLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+        setIsLoading(false);
+      }
+    };
+
+    if (accessToken) {
+      fetchInterestGroups();
+    }
+  }, [accessToken]);
+
+  return { interestGroups, isLoading, error };
+};

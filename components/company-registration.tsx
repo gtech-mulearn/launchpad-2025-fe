@@ -165,7 +165,7 @@ export function CompanyRegistration() {
               company <span className="text-primary-500">Registration</span>
             </h1>
             <p className="text-gray-400 text-lg">
-              Join Launchpad Kerala 2025 as a recruiting partner
+              Join MuCareers as a recruiting partner
             </p>
           </div>
         </ScrollReveal>
