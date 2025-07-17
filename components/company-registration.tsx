@@ -21,9 +21,9 @@ import {
 import Link from "next/link";
 import { LoadingSpinner } from "./loading-spinner";
 import { ScrollReveal } from "./scroll-reveal";
-import { useLocalStorage } from "@/hooks/misc";
 import { useSignupCompany } from "@/hooks/auth";
 import { VerificationPending } from "./verification-pending";
+import { toast } from "sonner";
 
 interface FormData {
   email: string;
@@ -53,7 +53,6 @@ export function CompanyRegistration() {
     headOfficeAddress: "",
     additionalInfo: "",
   });
-
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -114,15 +113,17 @@ export function CompanyRegistration() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const t = toast.loading("Registering your company...");
+
     if (!validateForm()) {
+      toast.error("Please fix the errors in the form", { id: t });
       return;
     }
 
     setIsSubmitting(true);
 
-    // Simulate API call
-    try {
-      await signUp.mutateAsync({
+    await signUp.mutateAsync(
+      {
         name: formData.companyName,
         username: formData.email,
         password: formData.password,
@@ -130,13 +131,22 @@ export function CompanyRegistration() {
         poc_role: "Recruiter",
         poc_email: formData.email,
         poc_phone: formData.phoneNumber,
-      });
-      setIsRegistered(true);
-    } catch (error) {
-      console.error("Registration failed:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+      },
+      {
+        onSuccess: () => {
+          setIsRegistered(true);
+          toast.success(
+            "Registration successful! Please check your email for verification.",
+            { id: t }
+          );
+        },
+        onError: () => {
+          setIsSubmitting(false);
+          toast.error("Registration failed. Please try again.", { id: t });
+        },
+      }
+    );
+    setIsSubmitting(false);
   };
 
   if (isRegistered) {
