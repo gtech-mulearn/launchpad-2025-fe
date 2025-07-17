@@ -326,9 +326,6 @@ export default function RecruiterDashboard() {
           isOpen={isScheduleModalOpen}
           onOpenChange={setIsScheduleModalOpen}
           onScheduleSubmit={handleScheduleSubmit}
-          accessToken={accessToken}
-          jobId={selectedJobOffer?.id || ""}
-          studentId={scheduleInviteId?.toString() || ""}
         />
       </div>
     </div>
