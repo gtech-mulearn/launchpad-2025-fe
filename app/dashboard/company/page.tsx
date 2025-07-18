@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
@@ -30,18 +31,24 @@ import {
   Search,
   Eye,
   MessageSquare,
+  Briefcase,
+  Calendar,
+  Plus,
 } from "lucide-react";
 import { useLocalStorage } from "@/hooks/misc";
 import { useGetCompany } from "@/hooks/auth";
 import { VerificationPending } from "@/components/verification-pending";
+import { JobOffersTab } from "@/components/recruiter/JobOffersTab";
+import { HireRequestsTab } from "@/components/recruiter/HireRequestsTab";
+import { AnalyticsTab } from "@/components/recruiter/AnalyticsTab";
+import { CreateJobOfferModal } from "@/components/recruiter/CreateJobOfferModal";
+import { JobOfferDetailsModal } from "@/components/recruiter/JobOfferDetailsModal";
+import { ScheduleInterviewModal } from "@/components/recruiter/ScheduleInterviewModal";
+import { CandidateDetailsModal } from "@/components/recruiter/CandidateDetailsModal";
+import { useAddJob, useListJobOffers, useListEligibleCandidates } from "@/hooks/recuiter";
+import { JobOffer, JobInvite, Candidate, InterviewDetails } from "@/types/recruiter";
 
-// Mock data for demonstration
-const mockRecruiters = [
-  { id: "1", name: "Alice Recruiter" },
-  { id: "2", name: "Bob Recruiter" },
-  { id: "3", name: "Charlie Recruiter" },
-];
-
+// Mock data for demonstration - keeping only for approved candidates tab
 const mockApprovedCandidates = [
   {
     id: "1",
@@ -72,28 +79,135 @@ const mockApprovedCandidates = [
   },
 ];
 
-const hiringRate =
-  mockApprovedCandidates.length > 0
-    ? Math.round((mockApprovedCandidates.length / 10) * 100) // Assume 10 total candidates for demo
-    : 0;
-
 export default function CompanyDashboard() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [userEmail, setUserEmail] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("job-offers");
   const [accessToken, setAccessToken] = useLocalStorage("accessToken", "");
   const [userId, setUserId] = useLocalStorage("userId", "");
+  const [hireRequests, setHireRequests] = useState<JobInvite[]>([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isCandidateModalOpen, setIsCandidateModalOpen] = useState(false);
+  const [selectedJobOffer, setSelectedJobOffer] = useState<JobOffer | null>(null);
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [scheduleInviteId, setScheduleInviteId] = useState<number | null>(null);
+  const [newJobOffer, setNewJobOffer] = useState<JobOffer>({
+    id: "",
+    title: "",
+    company_id: "",
+    salaryRange: null,
+    location: null,
+    experience: null,
+    skills: null,
+    jobType: null,
+    interestGroups: "",
+    minKarma: 0,
+    task_id: null,
+    task_description: null,
+    task_hashtag: null,
+    task_verified: null,
+    createdAt: new Date().toISOString().split("T")[0],
+    openingType: null,
+  });
+
   const company = useGetCompany(userId, accessToken);
+  const addJobMutation = useAddJob(accessToken);
+  const { interestGroups, isLoading: isInterestGroupsLoading, error: interestGroupsError } = useGetInterestGroups(accessToken);
+  const { data: jobOffers, isLoading: isJobOffersLoading, error: jobOffersError } = useListJobOffers(company.data?.id || "", accessToken);
+  const { data: eligibleCandidatesData, isLoading: isEligibleCandidatesLoading, error: eligibleCandidatesError } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
+
+  useEffect(() => {
+    if (company.data?.id) {
+      setNewJobOffer((prev) => ({ ...prev, company_id: company.data!.id }));
+    }
+  }, [company.data]);
+
+  if (company.isLoading || isJobOffersLoading) {
+    return <div className="text-white">Loading...</div>;
+  }
+
   if (!company.data) {
-    return <div>Loading...</div>;
+    router.push("/login");
+    return null;
+  }
+
+  if (jobOffersError) {
+    return <div className="text-red-400">Error loading job offers: {jobOffersError.message}</div>;
   }
   const handleLogout = () => {
     // Clear all authentication data
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userId");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userEmail");
 
     // Force a page reload to clear any cached state
     window.location.href = "/login";
+  };
+
+  const handleInviteSent = (newInvite: JobInvite) => {
+    setHireRequests((prev) => [...prev, newInvite]);
+  };
+
+  const handleScheduleInterview = (inviteId: number) => {
+    const invite = hireRequests.find((req) => req.id === inviteId);
+    if (invite && invite.application_id) {
+      setScheduleInviteId(inviteId);
+      setIsScheduleModalOpen(true);
+    } else {
+      console.error("No application_id found for invite:", inviteId);
+    }
+  };
+
+  const handleScheduleSubmit = (details: InterviewDetails) => {
+    if (scheduleInviteId !== null) {
+      setHireRequests((prev) =>
+        prev.map((invite) =>
+          invite.id === scheduleInviteId
+            ? {
+                ...invite,
+                status: "interview",
+                interviewDate: details.interview_date,
+                interviewTime: details.interview_time,
+                interviewPlatform: details.interview_platform,
+                interviewLink: details.interview_link,
+                updatedAt: new Date().toISOString().split("T")[0],
+              }
+            : invite
+        )
+      );
+    }
+    setIsScheduleModalOpen(false);
+    setScheduleInviteId(null);
+  };
+
+  const handleHireCandidate = (inviteId: number) => {
+    setHireRequests((prev) =>
+      prev.map((invite) =>
+        invite.id === inviteId
+          ? { ...invite, status: "hired", updatedAt: new Date().toISOString().split("T")[0] }
+          : invite
+      )
+    );
+  };
+
+  const handleViewJobDetails = (jobId: string) => {
+    const jobOffer = jobOffers?.response?.find((offer: JobOffer) => offer.id === jobId);
+    if (jobOffer) {
+      setSelectedJobOffer(jobOffer);
+      setIsDetailsModalOpen(true);
+    } else {
+      console.error("Job offer not found for jobId:", jobId);
+    }
+  };
+
+  const handleViewCandidate = (candidate: Candidate) => {
+    setSelectedCandidate(candidate);
+    setIsCandidateModalOpen(true);
   };
 
   const filteredCandidates = mockApprovedCandidates.filter(
@@ -104,6 +218,11 @@ export default function CompanyDashboard() {
         skill.toLowerCase().includes(searchQuery.toLowerCase())
       )
   );
+
+  const hiringRate = hireRequests.length > 0
+    ? Math.round((hireRequests.filter(req => req.status === "hired").length / hireRequests.length) * 100)
+    : 0;
+
   // return <VerificationPending />;
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 p-6">
@@ -127,17 +246,23 @@ export default function CompanyDashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-3 mb-8">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
           <StatCard
-            title="Recruiters"
-            value={mockRecruiters.length}
+            title="Total Candidates"
+            value={eligibleCandidatesData?.response?.data?.length || 0}
             icon={<Users className="h-5 w-5 text-primary-500" />}
             color="bg-primary-500/10"
           />
           <StatCard
-            title="Approved Candidates"
-            value={mockApprovedCandidates.length}
-            icon={<CheckCircle className="h-5 w-5 text-green-400" />}
+            title="Job Offers"
+            value={jobOffers?.response?.length || 0}
+            icon={<Briefcase className="h-5 w-5 text-blue-400" />}
+            color="bg-blue-500/10"
+          />
+          <StatCard
+            title="Hire Requests Sent"
+            value={hireRequests.length}
+            icon={<Calendar className="h-5 w-5 text-green-400" />}
             color="bg-green-500/10"
           />
           <StatCard
@@ -148,14 +273,32 @@ export default function CompanyDashboard() {
           />
         </div>
 
-        <Tabs defaultValue="approved" className="space-y-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
           <div className="flex items-center justify-between mb-4">
             <TabsList className="bg-secondary-800/50 backdrop-blur-sm border border-primary-500/20">
-              <TabsTrigger
+              {/* <TabsTrigger
                 value="approved"
                 className="text-white data-[state=active]:bg-primary-500"
               >
                 Approved Candidates
+              </TabsTrigger> */}
+              <TabsTrigger
+                value="job-offers"
+                className="text-white data-[state=active]:bg-primary-500"
+              >
+                Job Offers
+              </TabsTrigger>
+              <TabsTrigger
+                value="requests"
+                className="text-white data-[state=active]:bg-primary-500"
+              >
+                Hire Requests
+              </TabsTrigger>
+              <TabsTrigger
+                value="analytics"
+                className="text-white data-[state=active]:bg-primary-500"
+              >
+                Analytics
               </TabsTrigger>
             </TabsList>
             <Button
@@ -166,7 +309,7 @@ export default function CompanyDashboard() {
             </Button>
           </div>
 
-          <TabsContent value="approved" className="space-y-4">
+          {/* <TabsContent value="approved" className="space-y-4">
             <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20">
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -270,8 +413,77 @@ export default function CompanyDashboard() {
                 </Table>
               </CardContent>
             </Card>
-          </TabsContent>
+          </TabsContent> */}
+
+          {activeTab === "job-offers" && (
+            <JobOffersTab
+              jobOffers={jobOffers}
+              isLoading={isJobOffersLoading}
+              error={jobOffersError}
+              onCreateJobOffer={() => setIsCreateModalOpen(true)}
+              onViewDetails={(offer) => {
+                setSelectedJobOffer(offer);
+                setIsDetailsModalOpen(true);
+              }}
+            />
+          )}
+
+          {activeTab === "requests" && (
+            <HireRequestsTab 
+              hireRequests={hireRequests} 
+              onViewJobDetails={handleViewJobDetails} 
+            />
+          )}
+
+          {activeTab === "analytics" && <AnalyticsTab />}
         </Tabs>
+
+        {/* Modals */}
+        <CreateJobOfferModal
+          isOpen={isCreateModalOpen}
+          onOpenChange={setIsCreateModalOpen}
+          newJobOffer={newJobOffer}
+          setNewJobOffer={setNewJobOffer}
+          interestGroups={interestGroups}
+          isInterestGroupsLoading={isInterestGroupsLoading}
+          interestGroupsError={interestGroupsError}
+          addJobMutation={addJobMutation as any}
+          companyId={company.data?.id}
+          userId={userId}
+          queryClient={queryClient}
+        />
+        
+        <JobOfferDetailsModal
+          isOpen={isDetailsModalOpen}
+          onOpenChange={setIsDetailsModalOpen}
+          selectedJobOffer={selectedJobOffer}
+          eligibleCandidatesData={eligibleCandidatesData}
+          isEligibleCandidatesLoading={isEligibleCandidatesLoading}
+          eligibleCandidatesError={eligibleCandidatesError}
+          hireRequests={hireRequests}
+          accessToken={accessToken}
+          onScheduleInterview={handleScheduleInterview}
+          onHireCandidate={handleHireCandidate}
+          onInviteSent={handleInviteSent}
+        />
+        
+        <ScheduleInterviewModal
+          isOpen={isScheduleModalOpen}
+          onOpenChange={setIsScheduleModalOpen}
+          onScheduleSubmit={handleScheduleSubmit}
+          accessToken={accessToken}
+          applicationId={
+            scheduleInviteId !== null
+              ? hireRequests.find((req) => req.id === scheduleInviteId)?.application_id || ""
+              : ""
+          }
+        />
+        
+        <CandidateDetailsModal
+          isOpen={isCandidateModalOpen}
+          onOpenChange={setIsCandidateModalOpen}
+          candidate={selectedCandidate}
+        />
       </div>
     </div>
   );
@@ -304,3 +516,31 @@ function StatCard({
     </Card>
   );
 }
+
+const useGetInterestGroups = (accessToken: string) => {
+  const [interestGroups, setInterestGroups] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchInterestGroups = async () => {
+      try {
+        const response = await fetch("https://mulearn.org/api/v1/dashboard/ig/list/", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (!response.ok) throw new Error("Failed to fetch interest groups");
+        const data = await response.json();
+        if (data.hasError) throw new Error(data.message || "Error fetching interest groups");
+        setInterestGroups(data.response.interestGroup);
+        setIsLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+        setIsLoading(false);
+      }
+    };
+
+    if (accessToken) fetchInterestGroups();
+  }, [accessToken]);
+
+  return { interestGroups, isLoading, error };
+};
