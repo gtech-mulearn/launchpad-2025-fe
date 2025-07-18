@@ -24,6 +24,7 @@ import { ScrollReveal } from "./scroll-reveal";
 import { useSignupCompany } from "@/hooks/auth";
 import { VerificationPending } from "./verification-pending";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 interface FormData {
   email: string;
@@ -140,9 +141,18 @@ export function CompanyRegistration() {
             { id: t }
           );
         },
-        onError: () => {
+        onError: (err: any) => {
+          if (
+            err.response?.data?.message &&
+            (
+              Object.values(err.response?.data?.message).flat() as string[]
+            ).some((m) => m.includes("already exists"))
+          )
+            toast.error("Another company exists with same details.", {
+              id: t,
+            });
+          else toast.error("Registration failed. Please try again.", { id: t });
           setIsSubmitting(false);
-          toast.error("Registration failed. Please try again.", { id: t });
         },
       }
     );
