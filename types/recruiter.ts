@@ -37,10 +37,11 @@ export interface JobOffer {
 
 export interface JobInvite {
   id: number;
-  candidateId?: string; 
+  candidateId?: string;
   jobId?: string;
   application_id?: string;
   candidateName: string;
+  candidateEmail?: string;
   title: string;
   company_id: string;
   salaryRange: string | null;
@@ -61,11 +62,11 @@ export interface JobInvite {
   interviewTime?: string;
   interviewPlatform?: string;
   interviewLink?: string;
-   resume_link?: string; 
-  linkedin_link?: string; 
-  portfolio_link?: string; 
-  cover_letter?: string; 
-  other_link?: string; 
+  resume_link?: string;
+  linkedin_link?: string;
+  portfolio_link?: string;
+  cover_letter?: string;
+  other_link?: string;
   openingType: 'General' | 'Task' | null;
 }
 
@@ -82,13 +83,24 @@ export interface Candidate {
   roles: string[];
   rank: number;
   karma_distribution: KarmaDistribution[];
+  application_status?: string; // e.g., "not_invited", "invited", "interview_scheduled"
+  application_timeline?: {
+    invited_at?: string;
+    applied_at?: string;
+  };
+  application_details?: {
+    resume_link?: string;
+    linkedin_link?: string;
+    portfolio_link?: string;
+    cover_letter?: string;
+    other_link?: string;
+  };
 }
 
-
 export interface InterviewDetails {
-  application_id: string; 
-  interview_date: string; 
-  interview_time: string; 
-  interview_platform: string; 
-  interview_link: string; 
+  application_id: string;
+  interview_date: string;
+  interview_time: string;
+  interview_platform: string;
+  interview_link: string;
 }

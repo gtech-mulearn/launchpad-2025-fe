@@ -48,8 +48,8 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
             <TableHeader>
               <TableRow className="border-gray-700">
                 <TableHead className="text-gray-300">Title</TableHead>
-                <TableHead className="text-gray-300">Company ID</TableHead>
                 <TableHead className="text-gray-300">Location</TableHead>
+                <TableHead className="text-gray-300">Job Type</TableHead>
                 <TableHead className="text-gray-300">Job Type</TableHead>
                 <TableHead className="text-gray-300">Actions</TableHead>
               </TableRow>
@@ -59,8 +59,10 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
                 jobOffers.map((offer) => (
                   <TableRow key={offer.id} className="border-gray-700">
                     <TableCell className="text-white font-medium">{offer.title}</TableCell>
-                    <TableCell className="text-gray-300">{offer.company_id}</TableCell>
                     <TableCell className="text-gray-300">{offer.location || "N/A"}</TableCell>
+                    <TableCell className="text-gray-300">
+                      {offer.jobType || "N/A"}
+                    </TableCell>
                     <TableCell className="text-gray-300">{offer.jobType || "N/A"}</TableCell>
                     <TableCell>
                       <Button

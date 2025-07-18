@@ -9,13 +9,13 @@ export const TabsNavigation: React.FC<TabsNavigationProps> = ({ activeTab, onTab
   return (
     <Tabs value={activeTab} onValueChange={onTabChange} className="space-y-4">
       <TabsList className="bg-secondary-800/50 backdrop-blur-sm border border-primary-500/20">
-        <TabsTrigger
+        {/* <TabsTrigger
           value="candidates"
           className="text-white data-[state=active]:bg-primary-500"
           aria-label="Candidates Tab"
         >
           Candidates
-        </TabsTrigger>
+        </TabsTrigger> */}
         <TabsTrigger
           value="job-offers"
           className="text-white data-[state=active]:bg-primary-500"
