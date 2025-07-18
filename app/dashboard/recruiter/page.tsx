@@ -20,6 +20,7 @@ import {
   useAddJob,
   useListJobOffers,
   useListEligibleCandidates,
+  useGetAcceptedStudents,
 } from "@/hooks/recuiter";
 import {
   JobOffer,
@@ -29,7 +30,7 @@ import {
   InterestGroup,
 } from "@/types/recruiter";
 
-// Mock data for candidates (for candidates tab)
+// Mock data for candidates (unchanged)
 const mockCandidates: Candidate[] = [
   {
     id: "1",
@@ -84,11 +85,14 @@ const mockCandidates: Candidate[] = [
   },
 ];
 
-// Mock data for hire requests
+// Mock data for hire requests with candidateId, jobId, application_id, and links
 const mockHireRequests: JobInvite[] = [
   {
     id: 1,
-    candidateName: "Sreenandan K M",
+    candidateId: "c22ccdf2-5c7f-4964-ac7a-50973d7718b5",
+    jobId: "7db7e5ca-bac9-40be-be16-61641367f932",
+    application_id: "5fb6736e-1b4c-4458-b712-647f97cd2a70",
+    candidateName: "Awin R",
     title: "FullStack dev",
     company_id: "e34fb4f2-cff2-4be1-8444-a02967e09020",
     salaryRange: "$80,000 - $120,000",
@@ -96,7 +100,7 @@ const mockHireRequests: JobInvite[] = [
     experience: "3-5 years",
     skills: "Join our team to build cutting-edge React applications...",
     jobType: "Full-time",
-    status: "pending",
+    status: "accepted",
     interestGroups: "Web Development",
     minKarma: 500,
     task_id: null,
@@ -105,12 +109,20 @@ const mockHireRequests: JobInvite[] = [
     task_verified: null,
     sentDate: "2024-01-15",
     updatedAt: "2024-01-20",
-    openingType: "General",
+    resume_link: "http://localhost:5173/dashboard/launchpad",
+    linkedin_link: "http://localhost:5173/dashboard/launchpad",
+    portfolio_link: "http://localhost:5173/dashboard/launchpad",
+    cover_letter: "http://localhost:5173/dashboard/launchpad",
+    other_link: "http://localhost:5173/dashboard/launchpad",
+    openingType: "Task",
   },
   {
     id: 2,
-    candidateName: "Aryan C",
-    title: "Backend Developer",
+    candidateId: "c22ccdf2-5c7f-4964-ac7a-50973d7718b5",
+    jobId: "07f058d8-90e6-4440-b4a5-826a9a25dc05",
+    application_id: "94df39a4-eef4-43a4-815a-342df87092f4",
+    candidateName: "Awin R",
+    title: "React Js",
     company_id: "e34fb4f2-cff2-4be1-8444-a02967e09020",
     salaryRange: "$90,000 - $140,000",
     location: "New York",
@@ -126,11 +138,19 @@ const mockHireRequests: JobInvite[] = [
     task_verified: null,
     sentDate: "2024-01-14",
     updatedAt: "2024-01-18",
+    resume_link: "http://localhost:5173/dashboard/launchpad",
+    linkedin_link: "http://localhost:5173/dashboard/launchpad",
+    portfolio_link: "http://localhost:5173/dashboard/launchpad",
+    cover_letter: "http://localhost:5173/dashboard/launchpad",
+    other_link: "http://localhost:5173/dashboard/launchpad",
     openingType: "Task",
   },
   {
     id: 3,
-    candidateName: "AKSHAY KRISHNA",
+    candidateId: "c22ccdf2-5c7f-4964-ac7a-50973d7718b5",
+    jobId: "77ea2701-c17c-48b9-a739-e2377f9e0ada",
+    application_id: "77ea2701-c17c-48b9-a739-e2377f9e0ada",
+    candidateName: "Awin R",
     title: "test task type",
     company_id: "56c8a2ce-e3e2-4611-ba71-5b780a944180",
     salaryRange: "$8000 - $90000",
@@ -151,6 +171,11 @@ const mockHireRequests: JobInvite[] = [
     interviewTime: "10:00 AM",
     interviewPlatform: "Zoom",
     interviewLink: "https://zoom.us/j/123456789",
+    resume_link: "http://localhost:5173/dashboard/launchpad",
+    linkedin_link: "http://localhost:5173/dashboard/launchpad",
+    portfolio_link: "http://localhost:5173/dashboard/launchpad",
+    cover_letter: "http://localhost:5173/dashboard/launchpad",
+    other_link: "http://localhost:5173/dashboard/launchpad",
     openingType: "Task",
   },
 ];
@@ -162,13 +187,10 @@ export default function RecruiterDashboard() {
   const [activeTab, setActiveTab] = useState("candidates");
   const [accessToken] = useLocalStorage("accessToken", "");
   const [userId] = useLocalStorage("userId", "");
-  const [hireRequests, setHireRequests] =
-    useState<JobInvite[]>(mockHireRequests);
+  const [hireRequests, setHireRequests] = useState<JobInvite[]>(mockHireRequests);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [selectedJobOffer, setSelectedJobOffer] = useState<JobOffer | null>(
-    null
-  );
+  const [selectedJobOffer, setSelectedJobOffer] = useState<JobOffer | null>(null);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [scheduleInviteId, setScheduleInviteId] = useState<number | null>(null);
   const [newJobOffer, setNewJobOffer] = useState<JobOffer>({
@@ -207,6 +229,11 @@ export default function RecruiterDashboard() {
     isLoading: isEligibleCandidatesLoading,
     error: eligibleCandidatesError,
   } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
+  const {
+    data: acceptedStudentsData,
+    isLoading: isAcceptedStudentsLoading,
+    error: acceptedStudentsError,
+  } = useGetAcceptedStudents(accessToken);
 
   useEffect(() => {
     if (recruiter.data?.company_id) {
@@ -217,7 +244,38 @@ export default function RecruiterDashboard() {
     }
   }, [recruiter.data]);
 
-  if (recruiter.isLoading || isJobOffersLoading) {
+  useEffect(() => {
+    if (acceptedStudentsData && !acceptedStudentsData.hasError) {
+      const accepted = acceptedStudentsData.response.data.accepted_students;
+      console.log("acceptedStudentsData:", accepted); // Debug
+      setHireRequests((prev) =>
+        prev.map((invite) => {
+          const acceptedStudent = accepted.find(
+            (student: any) =>
+              student.student_info.id === invite.candidateId &&
+              student.job_info.id === invite.jobId &&
+              student.timeline.applied_at
+          );
+          const updatedInvite = acceptedStudent
+            ? {
+                ...invite,
+                status: "accepted" as const,
+                application_id: acceptedStudent.application_id,
+                resume_link: acceptedStudent.application_details.resume_link,
+                linkedin_link: acceptedStudent.application_details.linkedin_link,
+                portfolio_link: acceptedStudent.application_details.portfolio_link,
+                cover_letter: acceptedStudent.application_details.cover_letter,
+                other_link: acceptedStudent.application_details.other_link,
+              }
+            : invite;
+          console.log("Updated invite:", updatedInvite); // Debug
+          return updatedInvite;
+        })
+      );
+    }
+  }, [acceptedStudentsData]);
+
+  if (recruiter.isLoading || isJobOffersLoading || isAcceptedStudentsLoading) {
     return <div className="text-white">Loading...</div>;
   }
 
@@ -230,6 +288,14 @@ export default function RecruiterDashboard() {
     return (
       <div className="text-red-400">
         Error loading job offers: {jobOffersError.message}
+      </div>
+    );
+  }
+
+  if (acceptedStudentsError) {
+    return (
+      <div className="text-red-400">
+        Error loading accepted students: {acceptedStudentsError.message}
       </div>
     );
   }
@@ -259,8 +325,14 @@ export default function RecruiterDashboard() {
   };
 
   const handleScheduleInterview = (inviteId: number) => {
-    setScheduleInviteId(inviteId);
-    setIsScheduleModalOpen(true);
+    const invite = hireRequests.find((req) => req.id === inviteId);
+    console.log("Scheduling invite:", invite); // Debug
+    if (invite && invite.application_id) {
+      setScheduleInviteId(inviteId);
+      setIsScheduleModalOpen(true);
+    } else {
+      console.error("No application_id found for invite:", inviteId);
+    }
   };
 
   const handleScheduleSubmit = (details: InterviewDetails) => {
@@ -271,10 +343,10 @@ export default function RecruiterDashboard() {
             ? {
                 ...invite,
                 status: "interview",
-                interviewDate: details.interviewDate,
-                interviewTime: details.interviewTime,
-                interviewPlatform: details.interviewPlatform,
-                interviewLink: details.interviewLink,
+                interviewDate: details.interview_date,
+                interviewTime: details.interview_time,
+                interviewPlatform: details.interview_platform,
+                interviewLink: details.interview_link,
                 updatedAt: new Date().toISOString().split("T")[0],
               }
             : invite
@@ -318,9 +390,7 @@ export default function RecruiterDashboard() {
           />
           <StatCard
             title="Interviews Scheduled"
-            value={
-              hireRequests.filter((req) => req.status === "interview").length
-            }
+            value={hireRequests.filter((req) => req.status === "interview").length}
             icon={<Calendar className="h-5 w-5 text-green-400" />}
             color="bg-green-500/10"
           />
@@ -385,13 +455,19 @@ export default function RecruiterDashboard() {
           isOpen={isScheduleModalOpen}
           onOpenChange={setIsScheduleModalOpen}
           onScheduleSubmit={handleScheduleSubmit}
+          accessToken={accessToken}
+          applicationId={
+            scheduleInviteId !== null
+              ? hireRequests.find((req) => req.id === scheduleInviteId)?.application_id || ""
+              : ""
+          }
         />
       </div>
     </div>
   );
 }
 
-// Custom hook to fetch interest groups (unchanged, included for completeness)
+// Custom hook to fetch interest groups (unchanged)
 const useGetInterestGroups = (accessToken: string) => {
   const [interestGroups, setInterestGroups] = useState<InterestGroup[]>([]);
   const [isLoading, setIsLoading] = useState(true);

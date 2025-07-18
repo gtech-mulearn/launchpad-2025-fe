@@ -1,6 +1,63 @@
 import { apiHandler } from "@/lib/axios"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
+interface AcceptedStudent {
+  application_id: string;
+  student_info: {
+    id: string;
+    full_name: string;
+    email: string;
+    muid: string;
+    profile_pic: string;
+    karma: number;
+    college_name: string;
+    interest_groups: Array<{ id: string; name: string }>;
+  };
+  job_info: {
+    id: string;
+    title: string;
+    company_name: string;
+    opening_type: string;
+    domain: string;
+    skills: string;
+    location: string;
+    salary_range: string;
+  };
+  application_details: {
+    resume_link: string;
+    linkedin_link: string;
+    portfolio_link: string;
+    cover_letter: string;
+    other_link: string;
+  };
+  timeline: {
+    invited_at: string;
+    applied_at: string;
+  };
+}
+
+interface AcceptedStudentsResponse {
+  hasError: boolean;
+  statusCode: number;
+  message: { general: string[] };
+  response: {
+    data: {
+      accepted_students: AcceptedStudent[];
+      statistics: {
+        total_accepted_across_jobs: number;
+        total_jobs: number;
+        jobs_with_accepted_candidates: number;
+      };
+    };
+    pagination: {
+      count: number;
+      totalPages: number;
+      isNext: boolean;
+      isPrev: boolean;
+      nextPage: number | null;
+    };
+  };
+}
 
 
 // Interface for interest group
@@ -72,11 +129,14 @@ type AddJobDto = {
     opening_type: "General" | "Task",
 }
 
+
+
 interface ScheduleInterviewDto {
-  jobId: string;
-  studentId: string;
-  date: string; // format: "YYYY-MM-DD"
-  time: string; // format: "HH:mm"
+  application_id: string;
+  interview_date: string;
+  interview_time: string;
+  interview_platform: string;
+  interview_link: string;
 }
 
 interface ScheduleInterviewResponse {
@@ -195,6 +255,59 @@ const useSendJobInvitations = (accessToken: string) => {
   });
 };
 
+export const useGetAcceptedStudents = (accessToken: string) => {
+  return useQuery<AcceptedStudentsResponse, Error>({
+    queryKey: ['acceptedStudents'],
+    queryFn: async () => {
+      const { data } = await apiHandler.get<AcceptedStudentsResponse>("/launchpad/accepted-students/", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (data.hasError) {
+        throw new Error(data.message?.general?.join(", ") || "Error fetching accepted students");
+      }
+      return data;
+    },
+    enabled: !!accessToken, // Only fetch if accessToken is present
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    gcTime: 1000 * 60 * 10, // Keep in cache for 10 minutes
+  });
+};
+
+
+export const useScheduleInterview = (accessToken: string) => {
+  const queryClient = useQueryClient();
+  return useMutation<ScheduleInterviewResponse, Error, ScheduleInterviewDto>({
+    mutationFn: async (dto) => {
+      const { data } = await apiHandler.post<ScheduleInterviewResponse>(
+        "/launchpad/schedule-interview/",
+        dto,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return data;
+    },
+    onSuccess: () => {
+      // Invalidate accepted students query to refresh related data if needed
+      queryClient.invalidateQueries({ queryKey: ['acceptedStudents'] });
+    },
+    onError: (error) => {
+      console.error("Failed to schedule interview:", error);
+    },
+  });
+};
+
+// // {
+//   "application_id": "d456ec7a-55a1-4c4e-b9c3-12abfa1a3456",
+//   "interview_date": "2025-07-20",
+//   "interview_time": "15:00:00",
+//   "interview_platform": "Google Meet",
+//   "interview_link": "https://meet.google.com/xyz-abcd-efg"
+// }
 
 export {
     useAddJob,

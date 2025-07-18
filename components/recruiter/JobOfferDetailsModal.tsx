@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Calendar, Briefcase, ExternalLink } from "lucide-react";
+import { CheckCircle, Calendar, Briefcase, ExternalLink, Clock, FileText } from "lucide-react";
 import { JobOffer, Candidate, JobInvite } from "@/types/recruiter";
 import { useSendJobInvitations } from "@/hooks/recuiter";
 
@@ -19,7 +19,7 @@ interface JobOfferDetailsModalProps {
   onAcceptInvite: (inviteId: number) => void;
   onScheduleInterview: (inviteId: number) => void;
   onHireCandidate: (inviteId: number) => void;
-  onInviteSent: (invite: JobInvite) => void; // New callback to update hireRequests
+  onInviteSent: (invite: JobInvite) => void;
 }
 
 export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
@@ -36,7 +36,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
   onHireCandidate,
   onInviteSent,
 }) => {
-  const sendJobInvitationsMutation = useSendJobInvitations(accessToken, );
+  const sendJobInvitationsMutation = useSendJobInvitations(accessToken);
 
   const handleSendInvite = async (candidate: Candidate, offer: JobOffer) => {
     try {
@@ -45,9 +45,10 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
         studentIds: [candidate.id],
       });
 
-      // Create a new invite object to update local state
       const newInvite: JobInvite = {
         id: hireRequests.length + 1,
+        candidateId: candidate.id,
+        jobId: offer.id,
         candidateName: candidate.full_name,
         title: offer.title,
         company_id: offer.company_id,
@@ -68,6 +69,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
         openingType: offer.openingType,
       };
 
+      console.log("New invite created:", newInvite); // Debug
       onInviteSent(newInvite);
     } catch (error) {
       console.error("Failed to send invitation:", error);
@@ -85,7 +87,6 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
         </DialogHeader>
         {selectedJobOffer && (
           <div className="flex flex-col gap-6">
-            {/* Job Offer Details */}
             <Card className="bg-secondary-700/50 border-primary-500/30">
               <CardHeader>
                 <CardTitle className="text-white">Job Offer Information</CardTitle>
@@ -158,8 +159,6 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                 )}
               </CardContent>
             </Card>
-
-            {/* Eligible Candidates */}
             <Card className="bg-secondary-700/50 border-primary-500/30">
               <CardHeader>
                 <CardTitle className="text-white">Eligible Candidates</CardTitle>
@@ -184,14 +183,17 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                         <TableHead className="text-gray-300">Karma</TableHead>
                         <TableHead className="text-gray-300">Level</TableHead>
                         <TableHead className="text-gray-300">Rank</TableHead>
-                        <TableHead className="text-gray-300">Actions</TableHead>
+                        <TableHead className="text-gray-300">Application Details</TableHead>
+                        <TableHead className="text-gray-300">Status/Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {eligibleCandidatesData.response.data.map((candidate: Candidate) => {
                         const invite = hireRequests.find(
-                          (req) => req.candidateName === candidate.full_name && req.title === selectedJobOffer.title
+                          (req) => req.candidateId === candidate.id && req.jobId === selectedJobOffer.id
                         );
+                        const status = invite ? invite.status : "no_invite";
+
                         return (
                           <TableRow key={candidate.id} className="border-gray-700">
                             <TableCell>
@@ -218,8 +220,86 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                             <TableCell className="text-gray-300">{candidate.level}</TableCell>
                             <TableCell className="text-gray-300">{candidate.rank}</TableCell>
                             <TableCell>
-                              <div className="flex gap-2">
-                                {!invite && (
+                              {status === "accepted" || status === "interview" ? (
+                                <div className="flex flex-col gap-2">
+                                  {invite?.resume_link && (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="bg-button-secondary-500/30 border-primary-500/30 text-white"
+                                      asChild
+                                      aria-label={`View resume of ${candidate.full_name}`}
+                                    >
+                                      <a href={invite.resume_link} target="_blank" rel="noopener noreferrer">
+                                        <FileText className="h-4 w-4 mr-1" />
+                                        Resume
+                                      </a>
+                                    </Button>
+                                  )}
+                                  {invite?.linkedin_link && (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="bg-button-secondary-500/30 border-primary-500/30 text-white"
+                                      asChild
+                                      aria-label={`View LinkedIn of ${candidate.full_name}`}
+                                    >
+                                      <a href={invite.linkedin_link} target="_blank" rel="noopener noreferrer">
+                                        <ExternalLink className="h-4 w-4 mr-1" />
+                                        LinkedIn
+                                      </a>
+                                    </Button>
+                                  )}
+                                  {invite?.portfolio_link && (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="bg-button-secondary-500/30 border-primary-500/30 text-white"
+                                      asChild
+                                      aria-label={`View portfolio of ${candidate.full_name}`}
+                                    >
+                                      <a href={invite.portfolio_link} target="_blank" rel="noopener noreferrer">
+                                        <ExternalLink className="h-4 w-4 mr-1" />
+                                        Portfolio
+                                      </a>
+                                    </Button>
+                                  )}
+                                  {invite?.cover_letter && (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="bg-button-secondary-500/30 border-primary-500/30 text-white"
+                                      asChild
+                                      aria-label={`View cover letter of ${candidate.full_name}`}
+                                    >
+                                      <a href={invite.cover_letter} target="_blank" rel="noopener noreferrer">
+                                        <FileText className="h-4 w-4 mr-1" />
+                                        Cover Letter
+                                      </a>
+                                    </Button>
+                                  )}
+                                  {invite?.other_link && (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="bg-button-secondary-500/30 border-primary-500/30 text-white"
+                                      asChild
+                                      aria-label={`View other link of ${candidate.full_name}`}
+                                    >
+                                      <a href={invite.other_link} target="_blank" rel="noopener noreferrer">
+                                        <ExternalLink className="h-4 w-4 mr-1" />
+                                        Other Link
+                                      </a>
+                                    </Button>
+                                  )}
+                                </div>
+                              ) : (
+                                <span className="text-gray-400">N/A</span>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-2 items-center">
+                                {status === "no_invite" && (
                                   <Button
                                     size="sm"
                                     className="bg-primary-500 hover:bg-primary-600"
@@ -230,19 +310,18 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                                     {sendJobInvitationsMutation.isPending ? "Sending..." : "Send Invite"}
                                   </Button>
                                 )}
-                                {invite && invite.status === "pending" && (
-                                  <Button
-                                    size="sm"
-                                    className="bg-green-500 hover:bg-green-600"
-                                    onClick={() => onAcceptInvite(invite.id)}
-                                    aria-label={`Accept invite for ${candidate.full_name}`}
-                                  >
-                                    <CheckCircle className="h-4 w-4 mr-1" />
-                                    Accept (Test)
-                                  </Button>
+                                {status === "pending" && (
+                                  <Badge variant="outline" className="border-yellow-500/30 text-yellow-400">
+                                    <Clock className="h-3 w-3 mr-1" />
+                                    Pending
+                                  </Badge>
                                 )}
-                                {invite && invite.status === "accepted" && (
+                                {status === "accepted" && invite && (
                                   <>
+                                    <Badge variant="outline" className="border-green-500/30 text-green-400">
+                                      <CheckCircle className="h-3 w-3 mr-1" />
+                                      Accepted
+                                    </Badge>
                                     {candidate.muid && (
                                       <Button
                                         size="sm"
@@ -261,6 +340,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                                       size="sm"
                                       className="bg-blue-500 hover:bg-blue-600"
                                       onClick={() => onScheduleInterview(invite.id)}
+                                      disabled={!invite.application_id}
                                       aria-label={`Schedule interview for ${candidate.full_name}`}
                                     >
                                       <Calendar className="h-4 w-4 mr-1" />
@@ -268,16 +348,28 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                                     </Button>
                                   </>
                                 )}
-                                {invite && invite.status === "interview" && (
-                                  <Button
-                                    size="sm"
-                                    className="bg-purple-500 hover:bg-purple-600"
-                                    onClick={() => onHireCandidate(invite.id)}
-                                    aria-label={`Mark ${candidate.full_name} as hired`}
-                                  >
-                                    <Briefcase className="h-4 w-4 mr-1" />
-                                    Mark as Hired
-                                  </Button>
+                                {status === "interview" && invite && (
+                                  <>
+                                    <Badge variant="outline" className="border-blue-500/30 text-blue-400">
+                                      <Calendar className="h-3 w-3 mr-1" />
+                                      Interview Scheduled
+                                    </Badge>
+                                    <Button
+                                      size="sm"
+                                      className="bg-purple-500 hover:bg-purple-600"
+                                      onClick={() => onHireCandidate(invite.id)}
+                                      aria-label={`Mark ${candidate.full_name} as hired`}
+                                    >
+                                      <Briefcase className="h-4 w-4 mr-1" />
+                                      Mark as Hired
+                                    </Button>
+                                  </>
+                                )}
+                                {status === "hired" && (
+                                  <Badge variant="outline" className="border-purple-500/30 text-purple-400">
+                                    <Briefcase className="h-3 w-3 mr-1" />
+                                    Hired
+                                  </Badge>
                                 )}
                               </div>
                             </TableCell>

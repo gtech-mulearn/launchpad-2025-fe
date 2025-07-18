@@ -37,6 +37,9 @@ export interface JobOffer {
 
 export interface JobInvite {
   id: number;
+  candidateId?: string; 
+  jobId?: string;
+  application_id?: string;
   candidateName: string;
   title: string;
   company_id: string;
@@ -58,6 +61,11 @@ export interface JobInvite {
   interviewTime?: string;
   interviewPlatform?: string;
   interviewLink?: string;
+   resume_link?: string; 
+  linkedin_link?: string; 
+  portfolio_link?: string; 
+  cover_letter?: string; 
+  other_link?: string; 
   openingType: 'General' | 'Task' | null;
 }
 
@@ -78,8 +86,9 @@ export interface Candidate {
 
 
 export interface InterviewDetails {
-  interviewDate: string;
-    interviewTime: string;
-    interviewPlatform: string;
-    interviewLink: string;
+  application_id: string; 
+  interview_date: string; 
+  interview_time: string; 
+  interview_platform: string; 
+  interview_link: string; 
 }
