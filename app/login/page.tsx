@@ -54,7 +54,7 @@ export default function LoginPage() {
       router.push(`dashboard/${role}/`);
     };
     const onError = (err: any) => {
-      toast.error("Login failed", { id: t });
+      toast.error("Invalid credentials", { id: t });
       //setError(err.response?.data?.detail || "Login failed");
       setIsLoading(false);
     };

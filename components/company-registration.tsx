@@ -142,14 +142,16 @@ export function CompanyRegistration() {
           );
         },
         onError: (err: any) => {
+          const errs = Object.values(
+            err.response?.data?.message
+          ).flat() as string[];
           if (
             err.response?.data?.message &&
-            (
-              Object.values(err.response?.data?.message).flat() as string[]
-            ).some((m) => m.includes("already exists"))
+            errs.some((m) => m.includes("already exists"))
           )
             toast.error("Another company exists with same details.", {
               id: t,
+              description: errs.slice(1).join(", "),
             });
           else toast.error("Registration failed. Please try again.", { id: t });
           setIsSubmitting(false);

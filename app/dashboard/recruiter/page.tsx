@@ -17,13 +17,22 @@ import { CandidateDetailsModal } from "@/components/recruiter/CandidateDetailsMo
 import { Users, Briefcase, Calendar, TrendingUp } from "lucide-react";
 import { useLocalStorage } from "@/hooks/misc";
 import { useGetRecruiter } from "@/hooks/auth";
-import { useAddJob, useListJobOffers, useListEligibleCandidates } from "@/hooks/recuiter";
-import { JobOffer, JobInvite, Candidate, InterviewDetails } from "@/types/recruiter";
+import {
+  useAddJob,
+  useListJobOffers,
+  useListEligibleCandidates,
+} from "@/hooks/recuiter";
+import {
+  JobOffer,
+  JobInvite,
+  Candidate,
+  InterviewDetails,
+} from "@/types/recruiter";
+import { toast } from "sonner";
 
 export default function RecruiterDashboard() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [userEmail, setUserEmail] = useState("");
   const [activeTab, setActiveTab] = useState("job-offers");
   const [accessToken] = useLocalStorage("accessToken", "");
   const [userId] = useLocalStorage("userId", "");
@@ -31,8 +40,12 @@ export default function RecruiterDashboard() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isCandidateModalOpen, setIsCandidateModalOpen] = useState(false);
-  const [selectedJobOffer, setSelectedJobOffer] = useState<JobOffer | null>(null);
-  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [selectedJobOffer, setSelectedJobOffer] = useState<JobOffer | null>(
+    null
+  );
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
+    null
+  );
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [scheduleInviteId, setScheduleInviteId] = useState<number | null>(null);
   const [newJobOffer, setNewJobOffer] = useState<JobOffer>({
@@ -56,18 +69,37 @@ export default function RecruiterDashboard() {
 
   const recruiter = useGetRecruiter(userId, accessToken);
   const addJobMutation = useAddJob(accessToken);
-  const { interestGroups, isLoading: isInterestGroupsLoading, error: interestGroupsError } = useGetInterestGroups(accessToken);
-  const { data: jobOffers, isLoading: isJobOffersLoading, error: jobOffersError } = useListJobOffers(recruiter.data?.company_id || "", accessToken);
-  const { data: eligibleCandidatesData, isLoading: isEligibleCandidatesLoading, error: eligibleCandidatesError } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
+  const {
+    interestGroups,
+    isLoading: isInterestGroupsLoading,
+    error: interestGroupsError,
+  } = useGetInterestGroups(accessToken);
+  const {
+    data: jobOffers,
+    isLoading: isJobOffersLoading,
+    error: jobOffersError,
+  } = useListJobOffers(recruiter.data?.company_id || "", accessToken);
+  const {
+    data: eligibleCandidatesData,
+    isLoading: isEligibleCandidatesLoading,
+    error: eligibleCandidatesError,
+  } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
 
   useEffect(() => {
     if (recruiter.data?.company_id) {
-      setNewJobOffer((prev) => ({ ...prev, company_id: recruiter.data!.company_id }));
+      setNewJobOffer((prev) => ({
+        ...prev,
+        company_id: recruiter.data!.company_id,
+      }));
     }
   }, [recruiter.data]);
 
   if (recruiter.isLoading || isJobOffersLoading) {
-    return <div className="text-white">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center">
+        <h3>Loading...</h3>
+      </div>
+    );
   }
 
   if (!recruiter.data) {
@@ -76,14 +108,19 @@ export default function RecruiterDashboard() {
   }
 
   if (jobOffersError) {
-    return <div className="text-red-400">Error loading job offers: {jobOffersError.message}</div>;
+    return (
+      <div className="text-red-400">
+        Error loading job offers: {jobOffersError.message}
+      </div>
+    );
   }
 
- 
   const handleLogout = () => {
-    localStorage.removeItem("userRole");
-    localStorage.removeItem("userEmail");
-    window.location.href = "/login";
+    const t = toast.loading("Logging out...");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("userId");
+    toast.success("Logged out successfully", { id: t });
+    router.push("/login");
   };
 
   const handleInviteSent = (newInvite: JobInvite) => {
@@ -102,6 +139,7 @@ export default function RecruiterDashboard() {
 
   const handleScheduleSubmit = (details: InterviewDetails) => {
     if (scheduleInviteId !== null) {
+      const t = toast.loading("Scheduling interview...");
       setHireRequests((prev) =>
         prev.map((invite) =>
           invite.id === scheduleInviteId
@@ -117,6 +155,7 @@ export default function RecruiterDashboard() {
             : invite
         )
       );
+      toast.success("Interview scheduled successfully", { id: t });
     }
     setIsScheduleModalOpen(false);
     setScheduleInviteId(null);
@@ -126,14 +165,20 @@ export default function RecruiterDashboard() {
     setHireRequests((prev) =>
       prev.map((invite) =>
         invite.id === inviteId
-          ? { ...invite, status: "hired", updatedAt: new Date().toISOString().split("T")[0] }
+          ? {
+              ...invite,
+              status: "hired",
+              updatedAt: new Date().toISOString().split("T")[0],
+            }
           : invite
       )
     );
   };
 
   const handleViewJobDetails = (jobId: string) => {
-    const jobOffer = jobOffers?.response?.find((offer: JobOffer) => offer.id === jobId);
+    const jobOffer = jobOffers?.response?.find(
+      (offer: JobOffer) => offer.id === jobId
+    );
     if (jobOffer) {
       setSelectedJobOffer(jobOffer);
       setIsDetailsModalOpen(true);
@@ -150,7 +195,7 @@ export default function RecruiterDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 p-6">
       <div className="max-w-7xl mx-auto">
-        <Header userEmail={userEmail} onLogout={handleLogout} />
+        <Header userEmail={recruiter.data.name} onLogout={handleLogout} />
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
           <StatCard
             title="Total Candidates"
@@ -166,7 +211,9 @@ export default function RecruiterDashboard() {
           />
           <StatCard
             title="Interviews Scheduled"
-            value={hireRequests.filter((req) => req.status === "interview").length}
+            value={
+              hireRequests.filter((req) => req.status === "interview").length
+            }
             icon={<Calendar className="h-5 w-5 text-green-400" />}
             color="bg-green-500/10"
           />
@@ -198,7 +245,10 @@ export default function RecruiterDashboard() {
             />
           )}
           {activeTab === "requests" && (
-            <HireRequestsTab hireRequests={hireRequests} onViewJobDetails={handleViewJobDetails} />
+            <HireRequestsTab
+              hireRequests={hireRequests}
+              onViewJobDetails={handleViewJobDetails}
+            />
           )}
           {activeTab === "analytics" && <AnalyticsTab />}
         </div>
@@ -235,7 +285,8 @@ export default function RecruiterDashboard() {
           accessToken={accessToken}
           applicationId={
             scheduleInviteId !== null
-              ? hireRequests.find((req) => req.id === scheduleInviteId)?.application_id || ""
+              ? hireRequests.find((req) => req.id === scheduleInviteId)
+                  ?.application_id || ""
               : ""
           }
         />
@@ -257,12 +308,16 @@ const useGetInterestGroups = (accessToken: string) => {
   useEffect(() => {
     const fetchInterestGroups = async () => {
       try {
-        const response = await fetch("https://mulearn.org/api/v1/dashboard/ig/list/", {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
+        const response = await fetch(
+          "https://mulearn.org/api/v1/dashboard/ig/list/",
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
         if (!response.ok) throw new Error("Failed to fetch interest groups");
         const data = await response.json();
-        if (data.hasError) throw new Error(data.message || "Error fetching interest groups");
+        if (data.hasError)
+          throw new Error(data.message || "Error fetching interest groups");
         setInterestGroups(data.response.interestGroup);
         setIsLoading(false);
       } catch (err) {
