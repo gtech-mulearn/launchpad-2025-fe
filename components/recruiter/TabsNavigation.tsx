@@ -23,13 +23,13 @@ export const TabsNavigation: React.FC<TabsNavigationProps> = ({ activeTab, onTab
         >
           Job Offers
         </TabsTrigger>
-        <TabsTrigger
+        {/* <TabsTrigger
           value="requests"
           className="text-white data-[state=active]:bg-primary-500"
           aria-label="Hire Requests Tab"
         >
           Hire Requests
-        </TabsTrigger>
+        </TabsTrigger> */}
         <TabsTrigger
           value="leaderboard"
           className="text-white data-[state=active]:bg-primary-500"

@@ -375,12 +375,12 @@ export default function CompanyDashboard() {
               >
                 Job Offers
               </TabsTrigger>
-              <TabsTrigger
+              {/* <TabsTrigger
                 value="requests"
                 className="text-white data-[state=active]:bg-primary-500"
               >
                 Hire Requests
-              </TabsTrigger>
+              </TabsTrigger> */}
               <TabsTrigger
                 value="analytics"
                 className="text-white data-[state=active]:bg-primary-500"
