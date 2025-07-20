@@ -38,6 +38,7 @@ import {
 import { useLocalStorage } from "@/hooks/misc";
 import { useGetCompany } from "@/hooks/auth";
 import { VerificationPending } from "@/components/verification-pending";
+import { LoadingSpinner } from "@/components/loading-spinner";
 import { JobOffersTab } from "@/components/recruiter/JobOffersTab";
 import { HireRequestsTab } from "@/components/recruiter/HireRequestsTab";
 import { AnalyticsTab } from "@/components/recruiter/AnalyticsTab";
@@ -168,7 +169,11 @@ export default function CompanyDashboard() {
   }, [company.data]);
 
   if (company.isLoading || isJobOffersLoading) {
-    return <div className="text-white">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (!company.data) {

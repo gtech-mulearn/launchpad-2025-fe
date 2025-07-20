@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Header } from "@/components/recruiter/Header";
+import { LoadingSpinner } from "@/components/loading-spinner";
 import { StatCard } from "@/components/recruiter/StatCard";
 import { TabsNavigation } from "@/components/recruiter/TabsNavigation";
 import { CandidatesTab } from "@/components/recruiter/CandidatesTab";
@@ -113,8 +114,8 @@ export default function RecruiterDashboard() {
 
   if (recruiter.isLoading || isJobOffersLoading) {
     return (
-      <div className="flex items-center justify-center">
-        <h3>Loading...</h3>
+      <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 flex items-center justify-center">
+        <LoadingSpinner />
       </div>
     );
   }
