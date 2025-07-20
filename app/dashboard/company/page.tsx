@@ -343,6 +343,12 @@ export default function CompanyDashboard() {
               >
                 Analytics
               </TabsTrigger>
+              <TabsTrigger
+                value="recruiters"
+                className="text-white data-[state=active]:bg-primary-500"
+              >
+                Recruiters
+              </TabsTrigger>
             </TabsList>
             <Button
               asChild
@@ -479,6 +485,53 @@ export default function CompanyDashboard() {
           )}
 
           {activeTab === "analytics" && <AnalyticsTab />}
+          {activeTab === "recruiters" && (
+            <TabsContent value="recruiters" className="space-y-4">
+              <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-white">Recruiters</CardTitle>
+                      <CardDescription className="text-gray-400">
+                        Manage your recruiters and their access
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-gray-700">
+                        <TableHead className="text-gray-300">Name</TableHead>
+                        <TableHead className="text-gray-300">Email</TableHead>
+                        <TableHead className="text-gray-300">Role</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {company.data.recruiters.map((recruiter: any) => (
+                        <TableRow
+                          key={recruiter.id}
+                          className="border-gray-700"
+                        >
+                          <TableCell>
+                            <div className="font-medium text-white">
+                              {recruiter.name}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-gray-400">
+                            {recruiter.email}
+                          </TableCell>
+                          <TableCell className="text-gray-400">
+                            {recruiter.role}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
         </Tabs>
 
         {/* Modals */}
