@@ -95,6 +95,7 @@ export interface Candidate {
     cover_letter?: string;
     other_link?: string;
   };
+  application_id?: string; // Unique identifier for the application
 }
 
 export interface InterviewDetails {
@@ -103,15 +104,4 @@ export interface InterviewDetails {
   interview_time: string;
   interview_platform: string;
   interview_link: string;
-}
-
-export interface LeaderboardStudent {
-  rank: number;
-  full_name: string;
-  actual_karma: number;
-  karma: number;
-  org: string;
-  district_name: string;
-  state: string;
-  launchpad_id: string;
 }

@@ -34,7 +34,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [role, setRole] = useState<"recruiter" | "company">("recruiter");
+  const [role, setRole] = useState<"admin" | "recruiter" | "company">("admin");
   const [accessToken, setAccessToken] = useLocalStorageQuery("accessToken", "");
   const [userId, setUserId] = useLocalStorageQuery("userId", "");
   const clogin = useLoginCompany();
@@ -54,7 +54,7 @@ export default function LoginPage() {
       router.push(`dashboard/${role}/`);
     };
     const onError = (err: any) => {
-      toast.error("Invalid credentials", { id: t });
+      toast.error("Login failed", { id: t });
       //setError(err.response?.data?.detail || "Login failed");
       setIsLoading(false);
     };
@@ -67,7 +67,9 @@ export default function LoginPage() {
       return;
     }
     //console.log("Role:", role);
-    if (role === "recruiter") {
+    if (role === "admin") {
+      toast.error("Login Failed", { id: t });
+    } else if (role === "recruiter") {
       await rlogin.mutateAsync(
         { email, pass: password },
         {
@@ -119,13 +121,14 @@ export default function LoginPage() {
                 <Select
                   defaultValue={role}
                   onValueChange={(value) =>
-                    setRole(value as "recruiter" | "company")
+                    setRole(value as "admin" | "recruiter" | "company")
                   }
                 >
                   <SelectTrigger className="bg-secondary-700/50 border-primary-500/30 text-white placeholder:text-gray-400 focus:border-primary-500">
-                    <SelectValue placeholder={"Recruiter"} />
+                    <SelectValue placeholder={"Admin"} />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="admin">Admin</SelectItem>
                     <SelectItem value="recruiter">Recruiter</SelectItem>
                     <SelectItem value="company">Company</SelectItem>
                   </SelectContent>

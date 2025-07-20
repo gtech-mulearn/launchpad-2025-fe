@@ -42,7 +42,7 @@ interface AcceptedStudentsResponse {
   message: { general: string[] };
   response: {
     data: {
-      applications: AcceptedStudent[];
+      accepted_students: AcceptedStudent[];
       statistics: {
         total_accepted_across_jobs: number;
         total_jobs: number;
@@ -169,24 +169,21 @@ const useListJobOffers = (companyId: string, accessToken: string) => {
           company_id: companyId,
         },
       });
-      return {
-        jobs: data.response.jobs.map((offer: any) => ({
-          id: offer.id,
-          title: offer.title,
-          company_id: offer.company_id,
-          salaryRange: offer.salary_range || null,
-          location: offer.location || null,
-          experience: offer.experience || null,
-          skills: offer.skills || null,
-          jobType: offer.job_type as "Full-time" | "Part-time" | "Internship" | "Contract",
-          interestGroups: offer.interest_groups || "",
-          minKarma: offer.minimum_karma || 0,
-          task: offer.task_title ? { title: offer.task_title, description: offer.task_description || "" } : null,
-          createdAt: offer.created_at,
-          openingType: offer.opening_type === "General" ? "General" : "Task",
-        })),
-        general: data.response.summary
-      }
+      return data.response.jobs.map((offer: any) => ({
+        id: offer.id,
+        title: offer.title,
+        company_id: offer.company_id,
+        salaryRange: offer.salary_range || null,
+        location: offer.location || null,
+        experience: offer.experience || null,
+        skills: offer.skills || null,
+        jobType: offer.job_type as "Full-time" | "Part-time" | "Internship" | "Contract",
+        interestGroups: offer.interest_groups || "",
+        minKarma: offer.minimum_karma || 0,
+        task: offer.task_title ? { title: offer.task_title, description: offer.task_description || "" } : null,
+        createdAt: offer.created_at,
+        openingType: offer.opening_type === "General" ? "General" : "Task",
+      }));
     },
     enabled: !!companyId && !!accessToken,
   });
@@ -279,37 +276,6 @@ export const useGetAcceptedStudents = (accessToken: string) => {
 };
 
 
-interface LeaderboardParams {
-  page?: number;
-  perPage?: number;
-  search?: string;
-}
-
-export const useGetLaunchpadLeaderboard = (params: LeaderboardParams = {}) => {
-  const { page = 1, perPage = 10, search } = params;
-
-  return useQuery({
-    queryKey: ['launchpad-leaderboard', page, perPage, search],
-    queryFn: async () => {
-      const queryParams: Record<string, any> = {
-        page,
-        perPage
-      };
-
-      if (search && search.trim().length >= 3) queryParams.search = search.trim();
-
-      const { data } = await apiHandler.get('/launchpad/leaderboard/', {
-        params: queryParams
-      });
-      console.log("Launchpad Leaderboard Data:", data.response);
-      return data.response;
-    },
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-    gcTime: 1000 * 60 * 10, // Keep in cache for 10 minutes
-  });
-}
-
-
 export const useScheduleInterview = (accessToken: string) => {
   const queryClient = useQueryClient();
   return useMutation<ScheduleInterviewResponse, Error, ScheduleInterviewDto>({
@@ -334,7 +300,27 @@ export const useScheduleInterview = (accessToken: string) => {
     },
   });
 };
-
+export const useHireCandidate = (accessToken: string) => {
+  return useMutation({
+    mutationFn: async ({ application_id, decision }: { application_id: string; decision: "accepted" | "rejected" }) => {
+      const response = await apiHandler.post(
+        "launchpad/application-final-decision/",
+        {
+          application_id,
+          decision,
+        },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      return response.data;
+    },
+    onError: (error) => {
+      console.error("Error making hiring decision:", error);
+      throw error;
+    },
+  });
+};
 // // {
 //   "application_id": "d456ec7a-55a1-4c4e-b9c3-12abfa1a3456",
 //   "interview_date": "2025-07-20",

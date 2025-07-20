@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { JobOffer, InterestGroup } from "@/types/recruiter";
 import { UseMutationResult } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 interface CreateJobOfferModalProps {
   isOpen: boolean;
@@ -73,7 +72,6 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
   };
 
   const handleCreateSubmit = async () => {
-    const t = toast.loading("Creating job offer...");
     try {
       const addJobDto = {
         company_id: companyId,
@@ -112,10 +110,8 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
         createdAt: new Date().toISOString().split('T')[0],
         openingType: null,
       });
-      toast.success("Job offer created successfully", { id: t });
       onOpenChange(false);
     } catch (error) {
-      toast.error("Failed to create job offer", { id: t });
       console.error("Failed to create job offer:", error);
     }
   };

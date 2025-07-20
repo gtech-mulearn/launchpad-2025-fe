@@ -1,36 +1,9 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardDescription,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableHeader,
-} from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  CheckCircle,
-  Calendar,
-  Briefcase,
-  ExternalLink,
-  Clock,
-  FileText,
-} from "lucide-react";
+import { CheckCircle, Calendar, Briefcase, ExternalLink, Clock, FileText } from "lucide-react";
 import { JobOffer, Candidate, JobInvite } from "@/types/recruiter";
 import { useSendJobInvitations } from "@/hooks/recuiter";
 import { useEffect } from "react";
@@ -45,11 +18,7 @@ interface JobOfferDetailsModalProps {
   hireRequests: JobInvite[];
   accessToken: string;
   onScheduleInterview: (inviteId: number) => void;
-  onHireCandidate: (
-    inviteId: number,
-    candidateId: string,
-    jobId: string
-  ) => void;
+  onHireCandidate: (inviteId: number, application_id: string) => void;
   onInviteSent: (invite: JobInvite) => void;
 }
 
@@ -68,17 +37,15 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
 }) => {
   const sendJobInvitationsMutation = useSendJobInvitations(accessToken);
 
+  console.log("eligibleCandidatesData:", eligibleCandidatesData);
   useEffect(() => {
     if (eligibleCandidatesData && selectedJobOffer) {
       eligibleCandidatesData.response.data.forEach((candidate: Candidate) => {
         const existingRequest = hireRequests.find(
-          (req) =>
-            req.candidateId === candidate.id &&
-            req.jobId === selectedJobOffer.id
+          (req) => req.candidateId === candidate.id && req.jobId === selectedJobOffer.id
         );
         if (
-          (candidate.application_status === "invited" ||
-            candidate.application_status === "interview_scheduled") &&
+          (candidate.application_status === "invited" || candidate.application_status === "interview_scheduled" || candidate.application_status === "applied") &&
           !existingRequest
         ) {
           const newInvite: JobInvite = {
@@ -105,19 +72,16 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
             task_description: selectedJobOffer.task_description,
             task_hashtag: selectedJobOffer.task_hashtag,
             task_verified: selectedJobOffer.task_verified,
-            sentDate:
-              candidate.application_timeline?.invited_at ||
-              new Date().toISOString().split("T")[0],
+            sentDate: candidate.application_timeline?.invited_at || new Date().toISOString().split("T")[0],
             updatedAt: new Date().toISOString().split("T")[0],
             openingType: selectedJobOffer.openingType,
-            application_id: `${candidate.id}-${
-              selectedJobOffer.id
-            }-${Date.now()}`,
             resume_link: candidate.application_details?.resume_link,
             linkedin_link: candidate.application_details?.linkedin_link,
             portfolio_link: candidate.application_details?.portfolio_link,
             cover_letter: candidate.application_details?.cover_letter,
             other_link: candidate.application_details?.other_link,
+            // Only include application_id if candidate has applied (has application_id)
+            ...(candidate.application_id && { application_id: candidate.application_id }),
           };
           onInviteSent(newInvite);
         }
@@ -125,20 +89,12 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
     }
   }, [eligibleCandidatesData, selectedJobOffer, hireRequests, onInviteSent]);
 
-  const getCandidateStatus = (
-    candidate: Candidate,
-    hireRequest?: JobInvite
-  ) => {
-    if (hireRequest?.status === "hired") return "hired";
+  const getCandidateStatus = (candidate: Candidate, hireRequest?: JobInvite) => {
     if (hireRequest?.status === "rejected") return "rejected";
-    if (candidate.application_status === "interview_scheduled")
-      return "interview";
-    if (
-      candidate.application_status === "invited" &&
-      candidate.application_timeline?.applied_at
-    )
-      return "accepted";
+    if (candidate.application_status === "interview_scheduled") return "interview";
+    if (candidate.application_status === "applied" && candidate.application_timeline?.applied_at) return "accepted";
     if (candidate.application_status === "invited") return "pending";
+    if (candidate.application_status === "accepted") return "hired";
     return "no_invite";
   };
 
@@ -171,7 +127,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
         sentDate: new Date().toISOString().split("T")[0],
         updatedAt: new Date().toISOString().split("T")[0],
         openingType: offer.openingType,
-        application_id: `${candidate.id}-${offer.id}-${Date.now()}`, // Placeholder; ideally from API
+        // Don't include application_id for new invites - it doesn't exist yet
       };
 
       onInviteSent(newInvite);
@@ -184,9 +140,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[90vw] h-[90vh] bg-secondary-800/50 backdrop-blur-md border border-primary-500/20 text-white overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>
-            {selectedJobOffer?.title} - Job Offer Details
-          </DialogTitle>
+          <DialogTitle>{selectedJobOffer?.title} - Job Offer Details</DialogTitle>
           <DialogDescription className="text-gray-400">
             View job offer details and manage eligible candidates.
           </DialogDescription>
@@ -195,102 +149,29 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
           <div className="flex flex-col gap-6">
             <Card className="bg-secondary-700/50 border-primary-500/30">
               <CardHeader>
-                <CardTitle className="text-white">
-                  Job Offer Information
-                </CardTitle>
+                <CardTitle className="text-white">Job Offer Information</CardTitle>
               </CardHeader>
               <CardContent className="grid gap-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-gray-400 font-medium">Title</p>
-                    <p className="text-white">{selectedJobOffer.title}</p>
-                  </div>
+                  <div><p className="text-gray-400 font-medium">Title</p><p className="text-white">{selectedJobOffer.title}</p></div>
                   {/* <div><p className="text-gray-400 font-medium">Company ID</p><p className="text-white">{selectedJobOffer.company_id}</p></div> */}
-                  <div>
-                    <p className="text-gray-400 font-medium">Salary Range</p>
-                    <p className="text-white">
-                      {selectedJobOffer.salaryRange || "N/A"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-400 font-medium">Location</p>
-                    <p className="text-white">
-                      {selectedJobOffer.location || "N/A"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-400 font-medium">Experience</p>
-                    <p className="text-white">
-                      {selectedJobOffer.experience || "N/A"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-400 font-medium">Job Type</p>
-                    <p className="text-white">
-                      {selectedJobOffer.jobType || "N/A"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-400 font-medium">Interest Group</p>
-                    <p className="text-white">
-                      {selectedJobOffer.interestGroups || "N/A"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-400 font-medium">Minimum Karma</p>
-                    <p className="text-white">{selectedJobOffer.minKarma}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-400 font-medium">Opening Type</p>
-                    <p className="text-white">
-                      {selectedJobOffer.openingType || "N/A"}
-                    </p>
-                  </div>
+                  <div><p className="text-gray-400 font-medium">Salary Range</p><p className="text-white">{selectedJobOffer.salaryRange || "N/A"}</p></div>
+                  <div><p className="text-gray-400 font-medium">Location</p><p className="text-white">{selectedJobOffer.location || "N/A"}</p></div>
+                  <div><p className="text-gray-400 font-medium">Experience</p><p className="text-white">{selectedJobOffer.experience || "N/A"}</p></div>
+                  <div><p className="text-gray-400 font-medium">Job Type</p><p className="text-white">{selectedJobOffer.jobType || "N/A"}</p></div>
+                  <div><p className="text-gray-400 font-medium">Interest Group</p><p className="text-white">{selectedJobOffer.interestGroups || "N/A"}</p></div>
+                  <div><p className="text-gray-400 font-medium">Minimum Karma</p><p className="text-white">{selectedJobOffer.minKarma}</p></div>
+                  <div><p className="text-gray-400 font-medium">Opening Type</p><p className="text-white">{selectedJobOffer.openingType || "N/A"}</p></div>
                 </div>
-                <div>
-                  <p className="text-gray-400 font-medium">
-                    Skills/Description
-                  </p>
-                  <p className="text-white">
-                    {selectedJobOffer.skills || "N/A"}
-                  </p>
-                </div>
+                <div><p className="text-gray-400 font-medium">Skills/Description</p><p className="text-white">{selectedJobOffer.skills || "N/A"}</p></div>
                 {selectedJobOffer.openingType === "Task" && (
                   <div className="border-t border-primary-500/20 pt-4">
-                    <p className="text-gray-400 font-medium text-lg mb-2">
-                      Task Details
-                    </p>
+                    <p className="text-gray-400 font-medium text-lg mb-2">Task Details</p>
                     <div className="grid gap-2">
-                      <div>
-                        <p className="text-gray-400 font-medium">Task ID</p>
-                        <p className="text-white font-semibold">
-                          {selectedJobOffer.task_id || "N/A"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-gray-400 font-medium">
-                          Task Description
-                        </p>
-                        <p className="text-white">
-                          {selectedJobOffer.task_description || "N/A"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-gray-400 font-medium">
-                          Task Hashtag
-                        </p>
-                        <p className="text-white">
-                          {selectedJobOffer.task_hashtag || "N/A"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-gray-400 font-medium">
-                          Task Verified
-                        </p>
-                        <p className="text-white">
-                          {selectedJobOffer.task_verified ? "Yes" : "No"}
-                        </p>
-                      </div>
+                      <div><p className="text-gray-400 font-medium">Task ID</p><p className="text-white font-semibold">{selectedJobOffer.task_id || "N/A"}</p></div>
+                      <div><p className="text-gray-400 font-medium">Task Description</p><p className="text-white">{selectedJobOffer.task_description || "N/A"}</p></div>
+                      <div><p className="text-gray-400 font-medium">Task Hashtag</p><p className="text-white">{selectedJobOffer.task_hashtag || "N/A"}</p></div>
+                      <div><p className="text-gray-400 font-medium">Task Verified</p><p className="text-white">{selectedJobOffer.task_verified ? "Yes" : "No"}</p></div>
                     </div>
                   </div>
                 )}
@@ -298,316 +179,170 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
             </Card>
             <Card className="bg-secondary-700/50 border-primary-500/30">
               <CardHeader>
-                <CardTitle className="text-white">
-                  Eligible Candidates
-                </CardTitle>
-                <CardDescription className="text-gray-400">
-                  Candidates matching the job offer's requirements
-                </CardDescription>
+                <CardTitle className="text-white">Eligible Candidates</CardTitle>
+                <CardDescription className="text-gray-400">Candidates matching the job offer's requirements</CardDescription>
               </CardHeader>
               <CardContent>
                 {isEligibleCandidatesLoading ? (
-                  <div className="text-gray-400 text-center">
-                    Loading eligible candidates...
-                  </div>
+                  <div className="text-gray-400 text-center">Loading eligible candidates...</div>
                 ) : eligibleCandidatesError ? (
-                  <div className="text-red-400 text-center">
-                    Error: {eligibleCandidatesError.message}
-                  </div>
+                  <div className="text-red-400 text-center">Error: {eligibleCandidatesError.message}</div>
                 ) : !eligibleCandidatesData?.response?.data?.length ? (
-                  <div className="text-gray-400 text-center">
-                    No eligible candidates found.
-                  </div>
+                  <div className="text-gray-400 text-center">No eligible candidates found.</div>
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow className="border-gray-700">
-                        <TableHead className="text-gray-300">
-                          Candidate
-                        </TableHead>
-                        <TableHead className="text-gray-300">
-                          Interest Groups
-                        </TableHead>
+                        <TableHead className="text-gray-300">Candidate</TableHead>
+                        <TableHead className="text-gray-300">Interest Groups</TableHead>
                         <TableHead className="text-gray-300">College</TableHead>
                         <TableHead className="text-gray-300">Karma</TableHead>
                         <TableHead className="text-gray-300">Level</TableHead>
                         <TableHead className="text-gray-300">Rank</TableHead>
-                        <TableHead className="text-gray-300">
-                          Application Details
-                        </TableHead>
-                        <TableHead className="text-gray-300">
-                          Status/Actions
-                        </TableHead>
+                        <TableHead className="text-gray-300">Application Details</TableHead>
+                        <TableHead className="text-gray-300">Status/Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {eligibleCandidatesData.response.data.map(
-                        (candidate: Candidate) => {
-                          const hireRequest = hireRequests.find(
-                            (req) =>
-                              req.candidateId === candidate.id &&
-                              req.jobId === selectedJobOffer.id
-                          );
-                          const status = getCandidateStatus(
-                            candidate,
-                            hireRequest
-                          );
+                      {eligibleCandidatesData.response.data.map((candidate: Candidate) => {
+                        const hireRequest = hireRequests.find(
+                          (req) => req.candidateId === candidate.id && req.jobId === selectedJobOffer.id
+                        );
+                        const status = getCandidateStatus(candidate, hireRequest);
 
-                          return (
-                            <TableRow
-                              key={candidate.id}
-                              className="border-gray-700"
-                            >
-                              <TableCell>
-                                <div>
-                                  <div className="font-medium text-white">
-                                    {candidate.full_name}
-                                  </div>
-                                  <div className="text-sm text-gray-400">
-                                    {candidate.email}
-                                  </div>
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex flex-wrap gap-1">
-                                  {candidate.interest_groups.map(
-                                    (ig, index) => (
-                                      <Badge
-                                        key={index}
-                                        variant="outline"
-                                        className="text-xs border-primary-500/30 text-primary-400"
-                                      >
-                                        {ig.name}
-                                      </Badge>
-                                    )
-                                  )}
-                                </div>
-                              </TableCell>
-                              <TableCell className="text-gray-300">
-                                {candidate.college_name}
-                              </TableCell>
-                              <TableCell className="text-gray-300">
-                                {candidate.karma}
-                              </TableCell>
-                              <TableCell className="text-gray-300">
-                                {candidate.level}
-                              </TableCell>
-                              <TableCell className="text-gray-300">
-                                {candidate.rank}
-                              </TableCell>
-                              <TableCell>
-                                {(status === "accepted" ||
-                                  status === "interview" ||
-                                  status === "hired") &&
-                                hireRequest ? (
-                                  <div className="flex flex-col gap-2">
-                                    {hireRequest.resume_link && (
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="bg-button-secondary-500/30 border-primary-500/30 text-white"
-                                        asChild
-                                      >
-                                        <a
-                                          href={hireRequest.resume_link}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                        >
-                                          <FileText className="h-4 w-4 mr-1" />{" "}
-                                          Resume
-                                        </a>
-                                      </Button>
-                                    )}
-                                    {hireRequest.linkedin_link && (
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="bg-button-secondary-500/30 border-primary-500/30 text-white"
-                                        asChild
-                                      >
-                                        <a
-                                          href={hireRequest.linkedin_link}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                        >
-                                          <ExternalLink className="h-4 w-4 mr-1" />{" "}
-                                          LinkedIn
-                                        </a>
-                                      </Button>
-                                    )}
-                                    {hireRequest.portfolio_link && (
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="bg-button-secondary-500/30 border-primary-500/30 text-white"
-                                        asChild
-                                      >
-                                        <a
-                                          href={hireRequest.portfolio_link}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                        >
-                                          <ExternalLink className="h-4 w-4 mr-1" />{" "}
-                                          Portfolio
-                                        </a>
-                                      </Button>
-                                    )}
-                                    {hireRequest.cover_letter && (
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="bg-button-secondary-500/30 border-primary-500/30 text-white"
-                                        asChild
-                                      >
-                                        <a
-                                          href={hireRequest.cover_letter}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                        >
-                                          <FileText className="h-4 w-4 mr-1" />{" "}
-                                          Cover Letter
-                                        </a>
-                                      </Button>
-                                    )}
-                                    {hireRequest.other_link && (
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="bg-button-secondary-500/30 border-primary-500/30 text-white"
-                                        asChild
-                                      >
-                                        <a
-                                          href={hireRequest.other_link}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                        >
-                                          <ExternalLink className="h-4 w-4 mr-1" />{" "}
-                                          Other Link
-                                        </a>
-                                      </Button>
-                                    )}
-                                  </div>
-                                ) : (
-                                  <span className="text-gray-400">N/A</span>
-                                )}
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex gap-2 items-center">
-                                  {status === "no_invite" && (
-                                    <Button
-                                      size="sm"
-                                      className="bg-primary-500 hover:bg-primary-600"
-                                      onClick={() =>
-                                        handleSendInvite(
-                                          candidate,
-                                          selectedJobOffer
-                                        )
-                                      }
-                                      disabled={
-                                        sendJobInvitationsMutation.isPending
-                                      }
-                                    >
-                                      {sendJobInvitationsMutation.isPending
-                                        ? "Sending..."
-                                        : "Send Invite"}
+                        return (
+                          <TableRow key={candidate.id} className="border-gray-700">
+                            <TableCell>
+                              <div>
+                                <div className="font-medium text-white">{candidate.full_name}</div>
+                                <div className="text-sm text-gray-400">{candidate.email}</div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-wrap gap-1">
+                                {candidate.interest_groups.map((ig, index) => (
+                                  <Badge key={index} variant="outline" className="text-xs border-primary-500/30 text-primary-400">
+                                    {ig.name}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-gray-300">{candidate.college_name}</TableCell>
+                            <TableCell className="text-gray-300">{candidate.karma}</TableCell>
+                            <TableCell className="text-gray-300">{candidate.level}</TableCell>
+                            <TableCell className="text-gray-300">{candidate.rank}</TableCell>
+                            <TableCell>
+                              {(status === "accepted" || status === "interview" || status === "hired") && hireRequest ? (
+                                <div className="flex flex-col gap-2">
+                                  {hireRequest.resume_link && (
+                                    <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white" asChild>
+                                      <a href={hireRequest.resume_link} target="_blank" rel="noopener noreferrer">
+                                        <FileText className="h-4 w-4 mr-1" /> Resume
+                                      </a>
                                     </Button>
                                   )}
-                                  {status === "pending" && (
-                                    <Badge
-                                      variant="outline"
-                                      className="border-yellow-500/30 text-yellow-400"
-                                    >
-                                      <Clock className="h-3 w-3 mr-1" /> Pending
-                                    </Badge>
+                                  {hireRequest.linkedin_link && (
+                                    <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white" asChild>
+                                      <a href={hireRequest.linkedin_link} target="_blank" rel="noopener noreferrer">
+                                        <ExternalLink className="h-4 w-4 mr-1" /> LinkedIn
+                                      </a>
+                                    </Button>
                                   )}
-                                  {status === "accepted" && hireRequest && (
-                                    <>
-                                      <Badge
-                                        variant="outline"
-                                        className="border-green-500/30 text-green-400"
-                                      >
-                                        <CheckCircle className="h-3 w-3 mr-1" />{" "}
-                                        Accepted
-                                      </Badge>
-                                      {candidate.muid && (
-                                        <Button
-                                          size="sm"
-                                          variant="outline"
-                                          className="bg-button-secondary-500/30 border-primary-500/30 text-white"
-                                          asChild
-                                        >
-                                          <a
-                                            href={`https://mulearn.org/${candidate.muid}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                          >
-                                            <ExternalLink className="h-4 w-4 mr-1" />{" "}
-                                            MUID
-                                          </a>
-                                        </Button>
-                                      )}
-                                      <Button
-                                        size="sm"
-                                        className="bg-blue-500 hover:bg-blue-600"
-                                        onClick={() =>
-                                          onScheduleInterview(hireRequest.id)
-                                        }
-                                        disabled={!hireRequest.application_id}
-                                      >
-                                        <Calendar className="h-4 w-4 mr-1" />{" "}
-                                        Schedule Interview
-                                      </Button>
-                                    </>
+                                  {hireRequest.portfolio_link && (
+                                    <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white" asChild>
+                                      <a href={hireRequest.portfolio_link} target="_blank" rel="noopener noreferrer">
+                                        <ExternalLink className="h-4 w-4 mr-1" /> Portfolio
+                                      </a>
+                                    </Button>
                                   )}
-                                  {status === "interview" && hireRequest && (
-                                    <>
-                                      <Badge
-                                        variant="outline"
-                                        className="border-blue-500/30 text-blue-400"
-                                      >
-                                        <Calendar className="h-3 w-3 mr-1" />{" "}
-                                        Interviewing
-                                      </Badge>
-                                      <Button
-                                        size="sm"
-                                        className="bg-purple-500 hover:bg-purple-600"
-                                        onClick={() =>
-                                          onHireCandidate(
-                                            hireRequest.id,
-                                            hireRequest.candidateId as string,
-                                            hireRequest.jobId as string
-                                          )
-                                        }
-                                      >
-                                        <Briefcase className="h-4 w-4 mr-1" />{" "}
-                                        Mark as Hired
-                                      </Button>
-                                    </>
+                                  {hireRequest.cover_letter && (
+                                    <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white" asChild>
+                                      <a href={hireRequest.cover_letter} target="_blank" rel="noopener noreferrer">
+                                        <FileText className="h-4 w-4 mr-1" /> Cover Letter
+                                      </a>
+                                    </Button>
                                   )}
-                                  {status === "hired" && (
-                                    <Badge
-                                      variant="outline"
-                                      className="border-purple-500/30 text-purple-400"
-                                    >
-                                      <Briefcase className="h-3 w-3 mr-1" />{" "}
-                                      Hired
-                                    </Badge>
-                                  )}
-                                  {status === "rejected" && (
-                                    <Badge
-                                      variant="outline"
-                                      className="border-red-500/30 text-red-400"
-                                    >
-                                      <Briefcase className="h-3 w-3 mr-1" />{" "}
-                                      Rejected
-                                    </Badge>
+                                  {hireRequest.other_link && (
+                                    <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white" asChild>
+                                      <a href={hireRequest.other_link} target="_blank" rel="noopener noreferrer">
+                                        <ExternalLink className="h-4 w-4 mr-1" /> Other Link
+                                      </a>
+                                    </Button>
                                   )}
                                 </div>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        }
-                      )}
+                              ) : (
+                                <span className="text-gray-400">N/A</span>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-2 items-center">
+                                {status === "no_invite" && (
+                                  <Button
+                                    size="sm"
+                                    className="bg-primary-500 hover:bg-primary-600"
+                                    onClick={() => handleSendInvite(candidate, selectedJobOffer)}
+                                    disabled={sendJobInvitationsMutation.isPending}
+                                  >
+                                    {sendJobInvitationsMutation.isPending ? "Sending..." : "Send Invite"}
+                                  </Button>
+                                )}
+                                {status === "pending" && (
+                                  <Badge variant="outline" className="border-yellow-500/30 text-yellow-400">
+                                    <Clock className="h-3 w-3 mr-1" /> Pending
+                                  </Badge>
+                                )}
+                                {status === "accepted" && hireRequest && (
+                                  <>
+                                    <Badge variant="outline" className="border-green-500/30 text-green-400">
+                                      <CheckCircle className="h-3 w-3 mr-1" /> Accepted
+                                    </Badge>
+                                    {candidate.muid && (
+                                      <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white" asChild>
+                                        <a href={`https://mulearn.org/${candidate.muid}`} target="_blank" rel="noopener noreferrer">
+                                          <ExternalLink className="h-4 w-4 mr-1" /> MUID
+                                        </a>
+                                      </Button>
+                                    )}
+                                    <Button
+                                      size="sm"
+                                      className="bg-blue-500 hover:bg-blue-600"
+                                      onClick={() => onScheduleInterview(hireRequest.id)}
+                                      disabled={!hireRequest.application_id}
+                                    >
+                                      <Calendar className="h-4 w-4 mr-1" /> Schedule Interview
+                                    </Button>
+                                  </>
+                                )}
+                                {status === "interview" && hireRequest && (
+                                  <>
+                                    <Badge variant="outline" className="border-blue-500/30 text-blue-400">
+                                      <Calendar className="h-3 w-3 mr-1" /> Interviewing
+                                    </Badge>
+                                    <Button
+                                      size="sm"
+                                      className="bg-purple-500 hover:bg-purple-600"
+                                      onClick={() => onHireCandidate(hireRequest.id, candidate.application_id!)}
+                                      disabled={!candidate.application_id}
+                                    >
+                                      <Briefcase className="h-4 w-4 mr-1" /> Mark as Hired
+                                    </Button>
+                                  </>
+                                )}
+                                {status === "hired" && (
+                                  <Badge variant="outline" className="border-purple-500/30 text-purple-400">
+                                    <Briefcase className="h-3 w-3 mr-1" /> Hired
+                                  </Badge>
+                                )}
+                                {status === "rejected" && (
+                                  <Badge variant="outline" className="border-red-500/30 text-red-400">
+                                    <Briefcase className="h-3 w-3 mr-1" /> Rejected
+                                  </Badge>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                     </TableBody>
                   </Table>
                 )}
@@ -616,11 +351,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
           </div>
         )}
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="bg-button-secondary-500/30 border-primary-500/30 text-white"
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="bg-button-secondary-500/30 border-primary-500/30 text-white">
             Close
           </Button>
         </DialogFooter>
