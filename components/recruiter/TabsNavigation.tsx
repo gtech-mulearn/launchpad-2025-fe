@@ -31,6 +31,13 @@ export const TabsNavigation: React.FC<TabsNavigationProps> = ({ activeTab, onTab
           Hire Requests
         </TabsTrigger>
         <TabsTrigger
+          value="leaderboard"
+          className="text-white data-[state=active]:bg-primary-500"
+          aria-label="Leaderboard Tab"
+        >
+          Leaderboard
+        </TabsTrigger>
+        <TabsTrigger
           value="analytics"
           className="text-white data-[state=active]:bg-primary-500"
           aria-label="Analytics Tab"

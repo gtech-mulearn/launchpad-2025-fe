@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Header } from "@/components/recruiter/Header";
@@ -10,6 +10,7 @@ import { CandidatesTab } from "@/components/recruiter/CandidatesTab";
 import { JobOffersTab } from "@/components/recruiter/JobOffersTab";
 import { HireRequestsTab } from "@/components/recruiter/HireRequestsTab";
 import { AnalyticsTab } from "@/components/recruiter/AnalyticsTab";
+import { LeaderboardTab } from "@/components/recruiter/LeaderboardTab";
 import { CreateJobOfferModal } from "@/components/recruiter/CreateJobOfferModal";
 import { JobOfferDetailsModal } from "@/components/recruiter/JobOfferDetailsModal";
 import { ScheduleInterviewModal } from "@/components/recruiter/ScheduleInterviewModal";
@@ -21,12 +22,14 @@ import {
   useAddJob,
   useListJobOffers,
   useListEligibleCandidates,
+  useGetLaunchpadLeaderboard,
 } from "@/hooks/recuiter";
 import {
   JobOffer,
   JobInvite,
   Candidate,
   InterviewDetails,
+  LeaderboardStudent,
 } from "@/types/recruiter";
 import { toast } from "sonner";
 
@@ -48,6 +51,9 @@ export default function RecruiterDashboard() {
   );
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [scheduleInviteId, setScheduleInviteId] = useState<number | null>(null);
+  const [leaderboardPage, setLeaderboardPage] = useState(1);
+  const [leaderboardPerPage, setLeaderboardPerPage] = useState(10);
+  const [leaderboardSearch, setLeaderboardSearch] = useState("");
   const [newJobOffer, setNewJobOffer] = useState<JobOffer>({
     id: "",
     title: "",
@@ -84,6 +90,16 @@ export default function RecruiterDashboard() {
     isLoading: isEligibleCandidatesLoading,
     error: eligibleCandidatesError,
   } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
+  
+  const {
+    data: leaderboardData,
+    isLoading: isLeaderboardLoading,
+    error: leaderboardError,
+  } = useGetLaunchpadLeaderboard({
+    page: leaderboardPage,
+    perPage: leaderboardPerPage,
+    search: leaderboardSearch || undefined,
+  });
 
   useEffect(() => {
     if (recruiter.data?.company_id) {
@@ -192,6 +208,25 @@ export default function RecruiterDashboard() {
     setIsCandidateModalOpen(true);
   };
 
+  const handleLeaderboardPageChange = (pageIndex: number) => {
+    setLeaderboardPage(pageIndex);
+  };
+
+  const handleLeaderboardPerPageChange = (perPage: number) => {
+    setLeaderboardPerPage(perPage);
+    setLeaderboardPage(1); // Reset to first page when changing per page
+  };
+
+  const handleLeaderboardSearchSubmit = (search: string) => {
+    setLeaderboardSearch(search);
+    setLeaderboardPage(1); // Reset to first page when searching
+  };
+
+  const handleLeaderboardSearchClear = () => {
+    setLeaderboardSearch("");
+    setLeaderboardPage(1); // Reset to first page when clearing
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 p-6">
       <div className="max-w-7xl mx-auto">
@@ -224,7 +259,19 @@ export default function RecruiterDashboard() {
             color="bg-purple-500/10"
           />
         </div>
-        <TabsNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+        <TabsNavigation 
+          activeTab={activeTab} 
+          onTabChange={(tab) => {
+            setActiveTab(tab);
+            // Reset leaderboard filters when switching to leaderboard tab
+            if (tab === "leaderboard") {
+              if (leaderboardPage !== 1) setLeaderboardPage(1);
+              if (leaderboardSearch) {
+                setLeaderboardSearch("");
+              }
+            }
+          }} 
+        />
         <div className="mt-4">
           {/* {activeTab === "candidates" && (
             <CandidatesTab
@@ -248,6 +295,24 @@ export default function RecruiterDashboard() {
             <HireRequestsTab
               hireRequests={hireRequests}
               onViewJobDetails={handleViewJobDetails}
+            />
+          )}
+          {activeTab === "leaderboard" && (
+            <LeaderboardTab
+              students={leaderboardData?.data || []}
+              isLoading={isLeaderboardLoading}
+              error={leaderboardError}
+              currentPage={leaderboardPage}
+              totalPages={leaderboardData?.pagination?.totalPages || 1}
+              totalCount={leaderboardData?.pagination?.count || 0}
+              hasNext={leaderboardData?.pagination?.isNext || false}
+              hasPrev={leaderboardData?.pagination?.isPrev || false}
+              perPage={leaderboardPerPage}
+              searchQuery={leaderboardSearch}
+              onPageChange={handleLeaderboardPageChange}
+              onPerPageChange={handleLeaderboardPerPageChange}
+              onSearchSubmit={handleLeaderboardSearchSubmit}
+              onSearchClear={handleLeaderboardSearchClear}
             />
           )}
           {activeTab === "analytics" && <AnalyticsTab />}
