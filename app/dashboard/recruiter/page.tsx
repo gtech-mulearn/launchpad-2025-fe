@@ -29,6 +29,7 @@ import {
   InterviewDetails,
 } from "@/types/recruiter";
 import { toast } from "sonner";
+import { apiHandler } from "@/lib/axios";
 
 export default function RecruiterDashboard() {
   const router = useRouter();
@@ -161,7 +162,26 @@ export default function RecruiterDashboard() {
     setScheduleInviteId(null);
   };
 
-  const handleHireCandidate = (inviteId: number) => {
+  const handleHireCandidate = async (
+    inviteId: number,
+    application_id: string
+  ) => {
+    const t = toast.loading("Hiring candidate...");
+    try {
+      await apiHandler.post(
+        "launchpad/application-final-decision/",
+        {
+          application_id: application_id,
+          decision: "accepted",
+        },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      toast.success("Candidate hired successfully", { id: t });
+    } catch (error) {
+      toast.error(`Error hiring candidate.`, { id: t });
+    }
     setHireRequests((prev) =>
       prev.map((invite) =>
         invite.id === inviteId
@@ -176,7 +196,7 @@ export default function RecruiterDashboard() {
   };
 
   const handleViewJobDetails = (jobId: string) => {
-    const jobOffer = jobOffers?.response?.find(
+    const jobOffer = jobOffers?.jobs?.response?.find(
       (offer: JobOffer) => offer.id === jobId
     );
     if (jobOffer) {
@@ -234,7 +254,7 @@ export default function RecruiterDashboard() {
           )} */}
           {activeTab === "job-offers" && (
             <JobOffersTab
-              jobOffers={jobOffers}
+              jobOffers={jobOffers?.jobs}
               isLoading={isJobOffersLoading}
               error={jobOffersError}
               onCreateJobOffer={() => setIsCreateModalOpen(true)}

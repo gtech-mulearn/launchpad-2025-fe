@@ -115,18 +115,18 @@ interface EligibleCandidatesResponse {
 }
 
 type AddJobDto = {
-    company: string,
-    recruiter: string,
-    title: string,
-    skills: string,
-    experience: string,
-    domain: string,
-    location: string,
-    salary_range: string,
-    job_type: string,
-    minimum_karma: number,
-    interest_groups: string[],
-    opening_type: "General" | "Task",
+  company: string,
+  recruiter: string,
+  title: string,
+  skills: string,
+  experience: string,
+  domain: string,
+  location: string,
+  salary_range: string,
+  job_type: string,
+  minimum_karma: number,
+  interest_groups: string[],
+  opening_type: "General" | "Task",
 }
 
 
@@ -147,14 +147,14 @@ interface ScheduleInterviewResponse {
 
 
 const useAddJob = (accessToken: string) => {
-    return useMutation<{}, {}, AddJobDto>({
-        mutationFn: async (addJobDto) => {
-            const { data } = await apiHandler.post("/launchpad/add-job/",
-                addJobDto, { headers: { Authorization: `Bearer ${accessToken}` } }
-            )
-            return data
-        },
-    })
+  return useMutation<{}, {}, AddJobDto>({
+    mutationFn: async (addJobDto) => {
+      const { data } = await apiHandler.post("/launchpad/add-job/",
+        addJobDto, { headers: { Authorization: `Bearer ${accessToken}` } }
+      )
+      return data
+    },
+  })
 }
 
 const useListJobOffers = (companyId: string, accessToken: string) => {
@@ -169,28 +169,31 @@ const useListJobOffers = (companyId: string, accessToken: string) => {
           company_id: companyId,
         },
       });
-      return data.response.map((offer: any) => ({
-        id: offer.id,
-        title: offer.title,
-        company_id: offer.company_id,
-        salaryRange: offer.salary_range || null,
-        location: offer.location || null,
-        experience: offer.experience || null,
-        skills: offer.skills || null,
-        jobType: offer.job_type as "Full-time" | "Part-time" | "Internship" | "Contract",
-        interestGroups: offer.interest_groups || "",
-        minKarma: offer.minimum_karma || 0,
-        task: offer.task_title ? { title: offer.task_title, description: offer.task_description || "" } : null,
-        createdAt: offer.created_at,
-        openingType: offer.opening_type === "General" ? "General" : "Task",
-      }));
+      return {
+        jobs: data.response.jobs.map((offer: any) => ({
+          id: offer.id,
+          title: offer.title,
+          company_id: offer.company_id,
+          salaryRange: offer.salary_range || null,
+          location: offer.location || null,
+          experience: offer.experience || null,
+          skills: offer.skills || null,
+          jobType: offer.job_type as "Full-time" | "Part-time" | "Internship" | "Contract",
+          interestGroups: offer.interest_groups || "",
+          minKarma: offer.minimum_karma || 0,
+          task: offer.task_title ? { title: offer.task_title, description: offer.task_description || "" } : null,
+          createdAt: offer.created_at,
+          openingType: offer.opening_type === "General" ? "General" : "Task",
+        })),
+        general: data.response.summary
+      }
     },
     enabled: !!companyId && !!accessToken,
   });
 };
 
 
- const useListEligibleCandidates = (jobId: string, accessToken: string) => {
+const useListEligibleCandidates = (jobId: string, accessToken: string) => {
   return useQuery<EligibleCandidatesResponse, Error>({
     queryKey: ["eligible-candidates", jobId],
     queryFn: async () => {
@@ -200,9 +203,9 @@ const useListJobOffers = (companyId: string, accessToken: string) => {
 
       const { data } = await apiHandler.get<EligibleCandidatesResponse>(`/launchpad/list-launchpad-students/${jobId}/`, {
         headers: {
-            Authorization: `Bearer ${accessToken}`,
-            },
-        });
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       if (data.hasError) {
         throw new Error(data.message?.general?.[0] || "Error fetching eligible candidates");
       }
@@ -217,7 +220,7 @@ const useListJobOffers = (companyId: string, accessToken: string) => {
 
 
 const useSendJobInvitations = (accessToken: string) => {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ jobId, studentIds }: { jobId: string; studentIds: string[] }) => {
@@ -310,12 +313,12 @@ export const useScheduleInterview = (accessToken: string) => {
 // }
 
 export {
-    useAddJob,
-    useListJobOffers,
-    useSendJobInvitations,
-    useListEligibleCandidates,
-    
-    
+  useAddJob,
+  useListJobOffers,
+  useSendJobInvitations,
+  useListEligibleCandidates,
+
+
 }
 
 
