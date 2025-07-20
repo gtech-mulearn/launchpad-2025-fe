@@ -320,7 +320,7 @@ export default function CompanyDashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
           <StatCard
             title="Total Candidates"
             value={eligibleCandidatesData?.response?.data?.length || 0}
@@ -345,7 +345,7 @@ export default function CompanyDashboard() {
             icon={<TrendingUp className="h-5 w-5 text-purple-400" />}
             color="bg-purple-500/10"
           />
-        </div>
+        </div> */}
 
         <Tabs
           value={activeTab}
@@ -392,6 +392,12 @@ export default function CompanyDashboard() {
                 className="text-white data-[state=active]:bg-primary-500"
               >
                 Leaderboard
+              </TabsTrigger>
+              <TabsTrigger
+                value="recruiters"
+                className="text-white data-[state=active]:bg-primary-500"
+              >
+                Recruiters
               </TabsTrigger>
             </TabsList>
             <Button
@@ -529,6 +535,53 @@ export default function CompanyDashboard() {
           )}
 
           {activeTab === "analytics" && <AnalyticsTab />}
+           {activeTab === "recruiters" && (
+            <TabsContent value="recruiters" className="space-y-4">
+              <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-white">Recruiters</CardTitle>
+                      <CardDescription className="text-gray-400">
+                        Manage your recruiters and their access
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-gray-700">
+                        <TableHead className="text-gray-300">Name</TableHead>
+                        <TableHead className="text-gray-300">Email</TableHead>
+                        <TableHead className="text-gray-300">Role</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {company.data.recruiters.map((recruiter: any) => (
+                        <TableRow
+                          key={recruiter.id}
+                          className="border-gray-700"
+                        >
+                          <TableCell>
+                            <div className="font-medium text-white">
+                              {recruiter.name}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-gray-400">
+                            {recruiter.email}
+                          </TableCell>
+                          <TableCell className="text-gray-400">
+                            {recruiter.role}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
 
           {activeTab === "leaderboard" && (
             <LeaderboardTab
