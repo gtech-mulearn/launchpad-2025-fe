@@ -41,6 +41,7 @@ import { VerificationPending } from "@/components/verification-pending";
 import { JobOffersTab } from "@/components/recruiter/JobOffersTab";
 import { HireRequestsTab } from "@/components/recruiter/HireRequestsTab";
 import { AnalyticsTab } from "@/components/recruiter/AnalyticsTab";
+import { LeaderboardTab } from "@/components/recruiter/LeaderboardTab";
 import { CreateJobOfferModal } from "@/components/recruiter/CreateJobOfferModal";
 import { JobOfferDetailsModal } from "@/components/recruiter/JobOfferDetailsModal";
 import { ScheduleInterviewModal } from "@/components/recruiter/ScheduleInterviewModal";
@@ -49,12 +50,14 @@ import {
   useAddJob,
   useListJobOffers,
   useListEligibleCandidates,
+  useGetLaunchpadLeaderboard,
 } from "@/hooks/recuiter";
 import {
   JobOffer,
   JobInvite,
   Candidate,
   InterviewDetails,
+  LeaderboardStudent,
 } from "@/types/recruiter";
 
 // Mock data for demonstration - keeping only for approved candidates tab
@@ -108,6 +111,9 @@ export default function CompanyDashboard() {
   );
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [scheduleInviteId, setScheduleInviteId] = useState<number | null>(null);
+  const [leaderboardPage, setLeaderboardPage] = useState(1);
+  const [leaderboardPerPage, setLeaderboardPerPage] = useState(10);
+  const [leaderboardSearch, setLeaderboardSearch] = useState("");
   const [newJobOffer, setNewJobOffer] = useState<JobOffer>({
     id: "",
     title: "",
@@ -144,6 +150,16 @@ export default function CompanyDashboard() {
     isLoading: isEligibleCandidatesLoading,
     error: eligibleCandidatesError,
   } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
+
+  const {
+    data: leaderboardData,
+    isLoading: isLeaderboardLoading,
+    error: leaderboardError,
+  } = useGetLaunchpadLeaderboard({
+    page: leaderboardPage,
+    perPage: leaderboardPerPage,
+    search: leaderboardSearch || undefined,
+  });
 
   useEffect(() => {
     if (company.data?.id) {
@@ -245,6 +261,25 @@ export default function CompanyDashboard() {
     setIsCandidateModalOpen(true);
   };
 
+  const handleLeaderboardPageChange = (pageIndex: number) => {
+    setLeaderboardPage(pageIndex);
+  };
+
+  const handleLeaderboardPerPageChange = (perPage: number) => {
+    setLeaderboardPerPage(perPage);
+    setLeaderboardPage(1); // Reset to first page when changing per page
+  };
+
+  const handleLeaderboardSearchSubmit = (search: string) => {
+    setLeaderboardSearch(search);
+    setLeaderboardPage(1); // Reset to first page when searching
+  };
+
+  const handleLeaderboardSearchClear = () => {
+    setLeaderboardSearch("");
+    setLeaderboardPage(1); // Reset to first page when clearing
+  };
+
   const filteredCandidates = mockApprovedCandidates.filter(
     (candidate) =>
       candidate.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -314,7 +349,16 @@ export default function CompanyDashboard() {
 
         <Tabs
           value={activeTab}
-          onValueChange={setActiveTab}
+          onValueChange={(tab) => {
+            setActiveTab(tab);
+            // Reset leaderboard filters when switching to leaderboard tab
+            if (tab === "leaderboard") {
+              if (leaderboardPage !== 1) setLeaderboardPage(1);
+              if (leaderboardSearch) {
+                setLeaderboardSearch("");
+              }
+            }
+          }}
           className="space-y-4"
         >
           <div className="flex items-center justify-between mb-4">
@@ -342,6 +386,12 @@ export default function CompanyDashboard() {
                 className="text-white data-[state=active]:bg-primary-500"
               >
                 Analytics
+              </TabsTrigger>
+              <TabsTrigger
+                value="leaderboard"
+                className="text-white data-[state=active]:bg-primary-500"
+              >
+                Leaderboard
               </TabsTrigger>
             </TabsList>
             <Button
@@ -479,6 +529,25 @@ export default function CompanyDashboard() {
           )}
 
           {activeTab === "analytics" && <AnalyticsTab />}
+
+          {activeTab === "leaderboard" && (
+            <LeaderboardTab
+              students={leaderboardData?.data || []}
+              isLoading={isLeaderboardLoading}
+              error={leaderboardError}
+              currentPage={leaderboardPage}
+              totalPages={leaderboardData?.pagination?.totalPages || 1}
+              totalCount={leaderboardData?.pagination?.count || 0}
+              hasNext={leaderboardData?.pagination?.isNext || false}
+              hasPrev={leaderboardData?.pagination?.isPrev || false}
+              perPage={leaderboardPerPage}
+              searchQuery={leaderboardSearch}
+              onPageChange={handleLeaderboardPageChange}
+              onPerPageChange={handleLeaderboardPerPageChange}
+              onSearchSubmit={handleLeaderboardSearchSubmit}
+              onSearchClear={handleLeaderboardSearchClear}
+            />
+          )}
         </Tabs>
 
         {/* Modals */}

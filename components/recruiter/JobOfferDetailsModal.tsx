@@ -108,7 +108,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
             openingType: selectedJobOffer.openingType,
             application_id: `${candidate.id}-${
               selectedJobOffer.id
-            }-${Date.now()}`, // Placeholder; ideally from API
+            }-${Date.now()}`,
             resume_link: candidate.application_details?.resume_link,
             linkedin_link: candidate.application_details?.linkedin_link,
             portfolio_link: candidate.application_details?.portfolio_link,
