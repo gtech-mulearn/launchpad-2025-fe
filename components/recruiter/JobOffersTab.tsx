@@ -10,6 +10,7 @@ interface JobOffersTabProps {
   error: Error | null;
   onCreateJobOffer: () => void;
   onViewDetails: (offer: JobOffer) => void;
+  showCreateButton?: boolean;
 }
 
 export const JobOffersTab: React.FC<JobOffersTabProps> = ({
@@ -18,6 +19,7 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
   error,
   onCreateJobOffer,
   onViewDetails,
+  showCreateButton = true,
 }) => {
   return (
     <Card className="bg-secondary-800/50 backdrop-blur-md border border-primary-500/20">
@@ -27,15 +29,17 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
             <CardTitle className="text-white">Job Offers</CardTitle>
             <CardDescription className="text-gray-400">Manage your job offers</CardDescription>
           </div>
-          <Button
-            size="sm"
-            className="bg-primary-500 hover:bg-primary-600"
-            onClick={onCreateJobOffer}
-            aria-label="Create new job offer"
-          >
-            <PlusCircle className="h-4 w-4 mr-1" />
-            Create Job Offer
-          </Button>
+          {
+            showCreateButton && (
+              <Button
+                size="sm"
+                className="bg-primary-500 hover:bg-primary-600"
+                onClick={onCreateJobOffer}
+              >
+                Create Job Offer
+              </Button>
+            )
+          }
         </div>
       </CardHeader>
       <CardContent>

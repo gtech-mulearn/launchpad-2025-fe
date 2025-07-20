@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Calendar, Briefcase, ExternalLink, Clock, FileText } from "lucide-react";
+import { CheckCircle, Calendar, Briefcase, ExternalLink, Clock, FileText, X } from "lucide-react";
 import { JobOffer, Candidate, JobInvite } from "@/types/recruiter";
 import { useSendJobInvitations } from "@/hooks/recuiter";
 import { useEffect } from "react";
@@ -20,6 +20,7 @@ interface JobOfferDetailsModalProps {
   onScheduleInterview: (inviteId: number) => void;
   onHireCandidate: (inviteId: number, application_id: string) => void;
   onInviteSent: (invite: JobInvite) => void;
+  showActions?: boolean; // Add this new prop
 }
 
 export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
@@ -34,6 +35,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
   onScheduleInterview,
   onHireCandidate,
   onInviteSent,
+  showActions = true, // Default to true for backward compatibility
 }) => {
   const sendJobInvitationsMutation = useSendJobInvitations(accessToken);
 
@@ -200,7 +202,8 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                         <TableHead className="text-gray-300">Level</TableHead>
                         <TableHead className="text-gray-300">Rank</TableHead>
                         <TableHead className="text-gray-300">Application Details</TableHead>
-                        <TableHead className="text-gray-300">Status/Actions</TableHead>
+                        <TableHead className="text-gray-300">Status</TableHead>
+                        {showActions && <TableHead className="text-gray-300">Actions</TableHead>}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -275,34 +278,58 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                               )}
                             </TableCell>
                             <TableCell>
-                              <div className="flex gap-2 items-center">
-                                {status === "no_invite" && (
-                                  <Button
-                                    size="sm"
-                                    className="bg-primary-500 hover:bg-primary-600"
-                                    onClick={() => handleSendInvite(candidate, selectedJobOffer)}
-                                    disabled={sendJobInvitationsMutation.isPending}
-                                  >
-                                    {sendJobInvitationsMutation.isPending ? "Sending..." : "Send Invite"}
-                                  </Button>
-                                )}
-                                {status === "pending" && (
-                                  <Badge variant="outline" className="border-yellow-500/30 text-yellow-400">
-                                    <Clock className="h-3 w-3 mr-1" /> Pending
-                                  </Badge>
-                                )}
-                                {status === "accepted" && hireRequest && (
-                                  <>
-                                    <Badge variant="outline" className="border-green-500/30 text-green-400">
-                                      <CheckCircle className="h-3 w-3 mr-1" /> Accepted
-                                    </Badge>
-                                    {candidate.muid && (
-                                      <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white" asChild>
-                                        <a href={`https://app.mulearn.org/profile/${candidate.muid}`} target="_blank" rel="noopener noreferrer">
-                                          <ExternalLink className="h-4 w-4 mr-1" /> MUID
-                                        </a>
-                                      </Button>
-                                    )}
+                              {status === "no_invite" && (
+                                <Badge variant="outline" className="border-gray-500/30 text-gray-400">
+                                  No Invite
+                                </Badge>
+                              )}
+                              {status === "pending" && (
+                                <Badge variant="outline" className="border-yellow-500/30 text-yellow-400">
+                                  <Clock className="h-3 w-3 mr-1" /> Pending
+                                </Badge>
+                              )}
+                              {status === "accepted" && (
+                                <Badge variant="outline" className="border-green-500/30 text-green-400">
+                                  <CheckCircle className="h-3 w-3 mr-1" /> Accepted
+                                </Badge>
+                              )}
+                              {status === "interview" && (
+                                <Badge variant="outline" className="border-blue-500/30 text-blue-400">
+                                  <Calendar className="h-3 w-3 mr-1" /> Interviewing
+                                </Badge>
+                              )}
+                              {status === "hired" && (
+                                <Badge variant="outline" className="border-purple-500/30 text-purple-400">
+                                  <Briefcase className="h-3 w-3 mr-1" /> Hired
+                                </Badge>
+                              )}
+                              {status === "rejected" && (
+                                <Badge variant="outline" className="border-red-500/30 text-red-400">
+                                  <X className="h-3 w-3 mr-1" /> Rejected
+                                </Badge>
+                              )}
+                            </TableCell>
+                            {showActions && (
+                              <TableCell>
+                                <div className="flex gap-2 items-center">
+                                  {status === "no_invite" && (
+                                    <Button
+                                      size="sm"
+                                      className="bg-primary-500 hover:bg-primary-600"
+                                      onClick={() => handleSendInvite(candidate, selectedJobOffer)}
+                                      disabled={sendJobInvitationsMutation.isPending}
+                                    >
+                                      {sendJobInvitationsMutation.isPending ? "Sending..." : "Send Invite"}
+                                    </Button>
+                                  )}
+                                  {status === "accepted" && hireRequest && candidate.muid && (
+                                    <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white" asChild>
+                                      <a href={`https://app.mulearn.org/profile/${candidate.muid}`} target="_blank" rel="noopener noreferrer">
+                                        <ExternalLink className="h-4 w-4 mr-1" /> MUID
+                                      </a>
+                                    </Button>
+                                  )}
+                                  {status === "accepted" && hireRequest && (
                                     <Button
                                       size="sm"
                                       className="bg-blue-500 hover:bg-blue-600"
@@ -311,13 +338,8 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                                     >
                                       <Calendar className="h-4 w-4 mr-1" /> Schedule Interview
                                     </Button>
-                                  </>
-                                )}
-                                {status === "interview" && hireRequest && (
-                                  <>
-                                    <Badge variant="outline" className="border-blue-500/30 text-blue-400">
-                                      <Calendar className="h-3 w-3 mr-1" /> Interviewing
-                                    </Badge>
+                                  )}
+                                  {status === "interview" && hireRequest && (
                                     <Button
                                       size="sm"
                                       className="bg-purple-500 hover:bg-purple-600"
@@ -326,20 +348,10 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                                     >
                                       <Briefcase className="h-4 w-4 mr-1" /> Mark as Hired
                                     </Button>
-                                  </>
-                                )}
-                                {status === "hired" && (
-                                  <Badge variant="outline" className="border-purple-500/30 text-purple-400">
-                                    <Briefcase className="h-3 w-3 mr-1" /> Hired
-                                  </Badge>
-                                )}
-                                {status === "rejected" && (
-                                  <Badge variant="outline" className="border-red-500/30 text-red-400">
-                                    <Briefcase className="h-3 w-3 mr-1" /> Rejected
-                                  </Badge>
-                                )}
-                              </div>
-                            </TableCell>
+                                  )}
+                                </div>
+                              </TableCell>
+                            )}
                           </TableRow>
                         );
                       })}

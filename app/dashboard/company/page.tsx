@@ -224,6 +224,7 @@ export default function CompanyDashboard() {
     : 0;
 
   // return <VerificationPending />;
+   if (!company.data.is_verified) return <VerificationPending />;
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 p-6">
       <div className="max-w-7xl mx-auto">
@@ -473,6 +474,7 @@ export default function CompanyDashboard() {
               jobOffers={jobOffers}
               isLoading={isJobOffersLoading}
               error={jobOffersError}
+              showCreateButton={false}
               onCreateJobOffer={() => setIsCreateModalOpen(true)}
               onViewDetails={(offer) => {
                 setSelectedJobOffer(offer);
@@ -492,7 +494,7 @@ export default function CompanyDashboard() {
         </Tabs>
 
         {/* Modals */}
-        <CreateJobOfferModal
+        {/* <CreateJobOfferModal
           isOpen={isCreateModalOpen}
           onOpenChange={setIsCreateModalOpen}
           newJobOffer={newJobOffer}
@@ -504,7 +506,7 @@ export default function CompanyDashboard() {
           companyId={company.data?.id}
           userId={userId}
           queryClient={queryClient}
-        />
+        /> */}
 
         <JobOfferDetailsModal
           isOpen={isDetailsModalOpen}
@@ -518,6 +520,7 @@ export default function CompanyDashboard() {
           onScheduleInterview={handleScheduleInterview}
           onHireCandidate={handleHireCandidate}
           onInviteSent={handleInviteSent}
+          showActions={false}
         />
 
         <ScheduleInterviewModal
