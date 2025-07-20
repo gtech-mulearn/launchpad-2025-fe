@@ -389,7 +389,7 @@ export default function RecruiterDashboard() {
           candidate={selectedCandidate}
         />
       </div>
-    </div>
+    
   );
 }
 
