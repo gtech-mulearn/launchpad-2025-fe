@@ -32,7 +32,7 @@ import {
   FileText,
 } from "lucide-react";
 import { JobOffer, Candidate, JobInvite } from "@/types/recruiter";
-import { useSendJobInvitations } from "@/hooks/recuiter";
+import { AcceptedStudent, useSendJobInvitations } from "@/hooks/recuiter";
 import { useEffect } from "react";
 
 interface JobOfferDetailsModalProps {
@@ -42,14 +42,11 @@ interface JobOfferDetailsModalProps {
   eligibleCandidatesData: any;
   isEligibleCandidatesLoading: boolean;
   eligibleCandidatesError: Error | null;
+  approvedCandidates: AcceptedStudent[];
   hireRequests: JobInvite[];
   accessToken: string;
   onScheduleInterview: (inviteId: number) => void;
-  onHireCandidate: (
-    inviteId: number,
-    candidateId: string,
-    jobId: string
-  ) => void;
+  onHireCandidate: (inviteId: number, application_id: string) => void;
   onInviteSent: (invite: JobInvite) => void;
 }
 
@@ -60,6 +57,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
   eligibleCandidatesData,
   isEligibleCandidatesLoading,
   eligibleCandidatesError,
+  approvedCandidates,
   hireRequests,
   accessToken,
   onScheduleInterview,
@@ -110,9 +108,11 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
               new Date().toISOString().split("T")[0],
             updatedAt: new Date().toISOString().split("T")[0],
             openingType: selectedJobOffer.openingType,
-            application_id: `${candidate.id}-${
-              selectedJobOffer.id
-            }-${Date.now()}`,
+            application_id: approvedCandidates.filter(
+              (app) =>
+                app.student_info.id === candidate.id &&
+                app.job_info.id === selectedJobOffer.id
+            )[0]?.application_id,
             resume_link: candidate.application_details?.resume_link,
             linkedin_link: candidate.application_details?.linkedin_link,
             portfolio_link: candidate.application_details?.portfolio_link,
@@ -574,8 +574,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                                         onClick={() =>
                                           onHireCandidate(
                                             hireRequest.id,
-                                            hireRequest.candidateId as string,
-                                            hireRequest.jobId as string
+                                            hireRequest.application_id || ""
                                           )
                                         }
                                       >

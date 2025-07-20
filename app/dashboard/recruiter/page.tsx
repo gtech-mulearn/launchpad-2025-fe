@@ -183,19 +183,14 @@ export default function RecruiterDashboard() {
 
   const handleHireCandidate = async (
     inviteId: number,
-    candidateId: string,
-    jobId: string
+    application_id: string,
   ) => {
     const t = toast.loading("Hiring candidate...");
     try {
-      const d = approvedCandidatesData?.response.data.applications.filter(
-        (app) =>
-          app.student_info.id === candidateId && app.job_info.id === jobId
-      )[0];
       await apiHandler.post(
         "launchpad/application-final-decision/",
         {
-          application_id: d?.application_id,
+          application_id: application_id,
           decision: "accepted",
         },
         {
@@ -370,6 +365,7 @@ export default function RecruiterDashboard() {
           onScheduleInterview={handleScheduleInterview}
           onHireCandidate={handleHireCandidate}
           onInviteSent={handleInviteSent}
+          approvedCandidates={approvedCandidatesData?.response.data.applications || []}
         />
         <ScheduleInterviewModal
           isOpen={isScheduleModalOpen}

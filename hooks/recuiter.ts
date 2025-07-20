@@ -1,7 +1,7 @@
 import { apiHandler } from "@/lib/axios"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
-interface AcceptedStudent {
+export interface AcceptedStudent {
   application_id: string;
   student_info: {
     id: string;
