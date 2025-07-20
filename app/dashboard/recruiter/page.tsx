@@ -24,6 +24,7 @@ import {
   useListJobOffers,
   useListEligibleCandidates,
   useGetLaunchpadLeaderboard,
+  useGetAcceptedStudents,
 } from "@/hooks/recuiter";
 import {
   JobOffer,
@@ -92,7 +93,7 @@ export default function RecruiterDashboard() {
     isLoading: isEligibleCandidatesLoading,
     error: eligibleCandidatesError,
   } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
-  
+
   const {
     data: leaderboardData,
     isLoading: isLeaderboardLoading,
@@ -102,6 +103,7 @@ export default function RecruiterDashboard() {
     perPage: leaderboardPerPage,
     search: leaderboardSearch || undefined,
   });
+  const { data: approvedCandidatesData } = useGetAcceptedStudents(accessToken);
 
   useEffect(() => {
     if (recruiter.data?.company_id) {
@@ -181,14 +183,19 @@ export default function RecruiterDashboard() {
 
   const handleHireCandidate = async (
     inviteId: number,
-    application_id: string
+    candidateId: string,
+    jobId: string
   ) => {
     const t = toast.loading("Hiring candidate...");
     try {
+      const d = approvedCandidatesData?.response.data.applications.filter(
+        (app) =>
+          app.student_info.id === candidateId && app.job_info.id === jobId
+      )[0];
       await apiHandler.post(
         "launchpad/application-final-decision/",
         {
-          application_id: application_id,
+          application_id: d?.application_id,
           decision: "accepted",
         },
         {
@@ -196,20 +203,20 @@ export default function RecruiterDashboard() {
         }
       );
       toast.success("Candidate hired successfully", { id: t });
+      setHireRequests((prev) =>
+        prev.map((invite) =>
+          invite.id === inviteId
+            ? {
+                ...invite,
+                status: "hired",
+                updatedAt: new Date().toISOString().split("T")[0],
+              }
+            : invite
+        )
+      );
     } catch (error) {
       toast.error(`Error hiring candidate.`, { id: t });
     }
-    setHireRequests((prev) =>
-      prev.map((invite) =>
-        invite.id === inviteId
-          ? {
-              ...invite,
-              status: "hired",
-              updatedAt: new Date().toISOString().split("T")[0],
-            }
-          : invite
-      )
-    );
   };
 
   const handleViewJobDetails = (jobId: string) => {
@@ -279,9 +286,9 @@ export default function RecruiterDashboard() {
             icon={<TrendingUp className="h-5 w-5 text-purple-400" />}
             color="bg-purple-500/10"
           />
-        </div> */}
-        <TabsNavigation 
-          activeTab={activeTab} 
+        </div>
+        <TabsNavigation
+          activeTab={activeTab}
           onTabChange={(tab) => {
             setActiveTab(tab);
             // Reset leaderboard filters when switching to leaderboard tab
@@ -291,7 +298,7 @@ export default function RecruiterDashboard() {
                 setLeaderboardSearch("");
               }
             }
-          }} 
+          }}
         />
         <div className="mt-4">
           {/* {activeTab === "candidates" && (

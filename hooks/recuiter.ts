@@ -42,7 +42,7 @@ interface AcceptedStudentsResponse {
   message: { general: string[] };
   response: {
     data: {
-      accepted_students: AcceptedStudent[];
+      applications: AcceptedStudent[];
       statistics: {
         total_accepted_across_jobs: number;
         total_jobs: number;
@@ -287,17 +287,17 @@ interface LeaderboardParams {
 
 export const useGetLaunchpadLeaderboard = (params: LeaderboardParams = {}) => {
   const { page = 1, perPage = 10, search } = params;
-  
+
   return useQuery({
     queryKey: ['launchpad-leaderboard', page, perPage, search],
     queryFn: async () => {
-      const queryParams: Record<string, any> = { 
+      const queryParams: Record<string, any> = {
         page,
         perPage
       };
-      
+
       if (search && search.trim().length >= 3) queryParams.search = search.trim();
-      
+
       const { data } = await apiHandler.get('/launchpad/leaderboard/', {
         params: queryParams
       });

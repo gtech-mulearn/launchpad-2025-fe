@@ -45,7 +45,11 @@ interface JobOfferDetailsModalProps {
   hireRequests: JobInvite[];
   accessToken: string;
   onScheduleInterview: (inviteId: number) => void;
-  onHireCandidate: (inviteId: number, application_id: string) => void;
+  onHireCandidate: (
+    inviteId: number,
+    candidateId: string,
+    jobId: string
+  ) => void;
   onInviteSent: (invite: JobInvite) => void;
 }
 
@@ -570,7 +574,8 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                                         onClick={() =>
                                           onHireCandidate(
                                             hireRequest.id,
-                                            hireRequest.application_id as string
+                                            hireRequest.candidateId as string,
+                                            hireRequest.jobId as string
                                           )
                                         }
                                       >
