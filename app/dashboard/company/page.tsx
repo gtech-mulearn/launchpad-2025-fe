@@ -45,8 +45,9 @@ import { CreateJobOfferModal } from "@/components/recruiter/CreateJobOfferModal"
 import { JobOfferDetailsModal } from "@/components/recruiter/JobOfferDetailsModal";
 import { ScheduleInterviewModal } from "@/components/recruiter/ScheduleInterviewModal";
 import { CandidateDetailsModal } from "@/components/recruiter/CandidateDetailsModal";
-import { useAddJob, useListJobOffers, useListEligibleCandidates } from "@/hooks/recuiter";
+import { useAddJob, useListJobOffers, useListEligibleCandidates, useGetLaunchpadLeaderboard } from "@/hooks/recuiter";
 import { JobOffer, JobInvite, Candidate, InterviewDetails } from "@/types/recruiter";
+import { LeaderboardTab } from "@/components/recruiter/LeaderboardTab";
 
 // Mock data for demonstration - keeping only for approved candidates tab
 const mockApprovedCandidates = [
@@ -92,6 +93,9 @@ export default function CompanyDashboard() {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isCandidateModalOpen, setIsCandidateModalOpen] = useState(false);
   const [selectedJobOffer, setSelectedJobOffer] = useState<JobOffer | null>(null);
+  const [leaderboardPage, setLeaderboardPage] = useState(1);
+  const [leaderboardPerPage, setLeaderboardPerPage] = useState(10);
+  const [leaderboardSearch, setLeaderboardSearch] = useState("");
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [scheduleInviteId, setScheduleInviteId] = useState<number | null>(null);
@@ -119,6 +123,18 @@ export default function CompanyDashboard() {
   const { interestGroups, isLoading: isInterestGroupsLoading, error: interestGroupsError } = useGetInterestGroups(accessToken);
   const { data: jobOffers, isLoading: isJobOffersLoading, error: jobOffersError } = useListJobOffers(company.data?.id || "", accessToken);
   const { data: eligibleCandidatesData, isLoading: isEligibleCandidatesLoading, error: eligibleCandidatesError } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
+
+
+  const {
+    data: leaderboardData,
+    isLoading: isLeaderboardLoading,
+    error: leaderboardError,
+  } = useGetLaunchpadLeaderboard({
+    pageIndex: leaderboardPage,
+    perPage: leaderboardPerPage,
+    search: leaderboardSearch || undefined,
+  });
+
 
   useEffect(() => {
     if (company.data?.id) {
@@ -149,6 +165,28 @@ export default function CompanyDashboard() {
     window.location.href = "/login";
   };
 
+
+
+
+  const handleLeaderboardPageChange = (pageIndex: number) => {
+    setLeaderboardPage(pageIndex);
+  };
+
+  const handleLeaderboardPerPageChange = (perPage: number) => {
+    setLeaderboardPerPage(perPage);
+    setLeaderboardPage(1); // Reset to first page when changing per page
+  };
+
+  const handleLeaderboardSearchSubmit = (search: string) => {
+    setLeaderboardSearch(search);
+    setLeaderboardPage(1); // Reset to first page when searching
+  };
+
+  const handleLeaderboardSearchClear = () => {
+    setLeaderboardSearch("");
+    setLeaderboardPage(1); // Reset to first page when clearing
+  };
+
   const handleInviteSent = (newInvite: JobInvite) => {
     setHireRequests((prev) => [...prev, newInvite]);
   };
@@ -162,6 +200,8 @@ export default function CompanyDashboard() {
       console.error("No application_id found for invite:", inviteId);
     }
   };
+
+
 
   const handleScheduleSubmit = (details: InterviewDetails) => {
     if (scheduleInviteId !== null) {
@@ -224,7 +264,7 @@ export default function CompanyDashboard() {
     : 0;
 
   // return <VerificationPending />;
-   if (!company.data.is_verified) return <VerificationPending />;
+  if (!company.data.is_verified) return <VerificationPending />;
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 p-6">
       <div className="max-w-7xl mx-auto">
@@ -295,6 +335,12 @@ export default function CompanyDashboard() {
               >
                 Hire Requests
               </TabsTrigger> */}
+              <TabsTrigger
+                value="leaderboard"
+                className="text-white data-[state=active]:bg-primary-500"
+              >
+                Leaderboard
+              </TabsTrigger>
               <TabsTrigger
                 value="recruiters"
                 className="text-white data-[state=active]:bg-primary-500"
@@ -468,7 +514,24 @@ export default function CompanyDashboard() {
               </Card>
             </TabsContent>
           )}
-
+          {activeTab === "leaderboard" && (
+            <LeaderboardTab
+              students={leaderboardData?.data || []}
+              isLoading={isLeaderboardLoading}
+              error={leaderboardError}
+              currentPage={leaderboardPage}
+              totalPages={leaderboardData?.pagination?.totalPages || 1}
+              totalCount={leaderboardData?.pagination?.count || 0}
+              hasNext={leaderboardData?.pagination?.isNext || false}
+              hasPrev={leaderboardData?.pagination?.isPrev || false}
+              perPage={leaderboardPerPage}
+              searchQuery={leaderboardSearch}
+              onPageChange={handleLeaderboardPageChange}
+              onPerPageChange={handleLeaderboardPerPageChange}
+              onSearchSubmit={handleLeaderboardSearchSubmit}
+              onSearchClear={handleLeaderboardSearchClear}
+            />
+          )}
           {activeTab === "job-offers" && (
             <JobOffersTab
               jobOffers={jobOffers}

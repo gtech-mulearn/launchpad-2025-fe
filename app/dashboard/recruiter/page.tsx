@@ -8,6 +8,7 @@ import { StatCard } from "@/components/recruiter/StatCard";
 import { TabsNavigation } from "@/components/recruiter/TabsNavigation";
 import { CandidatesTab } from "@/components/recruiter/CandidatesTab";
 import { JobOffersTab } from "@/components/recruiter/JobOffersTab";
+import { LeaderboardTab } from "@/components/recruiter/LeaderboardTab";
 import { HireRequestsTab } from "@/components/recruiter/HireRequestsTab";
 import { AnalyticsTab } from "@/components/recruiter/AnalyticsTab";
 import { CreateJobOfferModal } from "@/components/recruiter/CreateJobOfferModal";
@@ -17,8 +18,8 @@ import { CandidateDetailsModal } from "@/components/recruiter/CandidateDetailsMo
 import { Users, Briefcase, Calendar, TrendingUp } from "lucide-react";
 import { useLocalStorage } from "@/hooks/misc";
 import { useGetRecruiter } from "@/hooks/auth";
-import { useAddJob, useListJobOffers, useListEligibleCandidates, useHireCandidate } from "@/hooks/recuiter";
-import { JobOffer, JobInvite, Candidate, InterviewDetails } from "@/types/recruiter";
+import { useAddJob, useListJobOffers, useListEligibleCandidates, useHireCandidate, useGetLaunchpadLeaderboard, } from "@/hooks/recuiter";
+import { JobOffer, JobInvite, Candidate, InterviewDetails, LeaderboardStudent, } from "@/types/recruiter";
 import { toast } from "sonner";
 
 // Move this hook outside the component or to a separate file
@@ -53,7 +54,7 @@ const useGetInterestGroups = (accessToken: string) => {
 export default function RecruiterDashboard() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  
+
   // All hooks must be called at the top level, before any conditional logic
   const [accessToken] = useLocalStorage("accessToken", "");
   const [userId] = useLocalStorage("userId", "");
@@ -66,6 +67,9 @@ export default function RecruiterDashboard() {
   const [selectedJobOffer, setSelectedJobOffer] = useState<JobOffer | null>(null);
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [leaderboardPage, setLeaderboardPage] = useState(1);
+  const [leaderboardPerPage, setLeaderboardPerPage] = useState(10);
+  const [leaderboardSearch, setLeaderboardSearch] = useState("");
   const [scheduleInviteId, setScheduleInviteId] = useState<number | null>(null);
   const [newJobOffer, setNewJobOffer] = useState<JobOffer>({
     id: "",
@@ -93,6 +97,18 @@ export default function RecruiterDashboard() {
   const { data: jobOffers, isLoading: isJobOffersLoading, error: jobOffersError } = useListJobOffers(recruiter.data?.company_id || "", accessToken);
   const { data: eligibleCandidatesData, isLoading: isEligibleCandidatesLoading, error: eligibleCandidatesError } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
   const hireCandidateMutation = useHireCandidate(accessToken);
+
+
+
+  const {
+    data: leaderboardData,
+    isLoading: isLeaderboardLoading,
+    error: leaderboardError,
+  } = useGetLaunchpadLeaderboard({
+    pageIndex: leaderboardPage,
+    perPage: leaderboardPerPage,
+    search: leaderboardSearch || undefined,
+  });
 
   useEffect(() => {
     if (recruiter.data?.company_id) {
@@ -140,14 +156,14 @@ export default function RecruiterDashboard() {
         prev.map((invite) =>
           invite.id === scheduleInviteId
             ? {
-                ...invite,
-                status: "interview",
-                interview_date: details.interview_date,
-                interview_time: details.interview_time,
-                interview_platform: details.interview_platform,
-                interview_link: details.interview_link,
-                updatedAt: new Date().toISOString().split("T")[0],
-              }
+              ...invite,
+              status: "interview",
+              interview_date: details.interview_date,
+              interview_time: details.interview_time,
+              interview_platform: details.interview_platform,
+              interview_link: details.interview_link,
+              updatedAt: new Date().toISOString().split("T")[0],
+            }
             : invite
         )
       );
@@ -167,6 +183,27 @@ export default function RecruiterDashboard() {
     }
   };
 
+
+
+  const handleLeaderboardPageChange = (pageIndex: number) => {
+    setLeaderboardPage(pageIndex);
+  };
+
+  const handleLeaderboardPerPageChange = (perPage: number) => {
+    setLeaderboardPerPage(perPage);
+    setLeaderboardPage(1); // Reset to first page when changing per page
+  };
+
+  const handleLeaderboardSearchSubmit = (search: string) => {
+    setLeaderboardSearch(search);
+    setLeaderboardPage(1); // Reset to first page when searching
+  };
+
+  const handleLeaderboardSearchClear = () => {
+    setLeaderboardSearch("");
+    setLeaderboardPage(1); // Reset to first page when clearing
+  };
+
   const handleHireCandidate = async (
     inviteId: number,
     application_id: string,
@@ -177,17 +214,17 @@ export default function RecruiterDashboard() {
         application_id: application_id,
         decision: "accepted",
       });
-      
+
       toast.success("Candidate hired successfully", { id: t });
-      
+
       setHireRequests((prev) =>
         prev.map((invite) =>
           invite.id === inviteId
             ? {
-                ...invite,
-                status: "hired",
-                updatedAt: new Date().toISOString().split("T")[0],
-              }
+              ...invite,
+              status: "hired",
+              updatedAt: new Date().toISOString().split("T")[0],
+            }
             : invite
         )
       );
@@ -206,17 +243,17 @@ export default function RecruiterDashboard() {
         application_id: application_id,
         decision: "rejected",
       });
-      
+
       toast.success("Candidate rejected", { id: t });
-      
+
       setHireRequests((prev) =>
         prev.map((invite) =>
           invite.id === inviteId
             ? {
-                ...invite,
-                status: "rejected",
-                updatedAt: new Date().toISOString().split("T")[0],
-              }
+              ...invite,
+              status: "rejected",
+              updatedAt: new Date().toISOString().split("T")[0],
+            }
             : invite
         )
       );
@@ -260,7 +297,19 @@ export default function RecruiterDashboard() {
             color="bg-purple-500/10"
           />
         </div> */}
-        <TabsNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+        <TabsNavigation
+          activeTab={activeTab}
+          onTabChange={(tab) => {
+            setActiveTab(tab);
+            // Reset leaderboard filters when switching to leaderboard tab
+            if (tab === "leaderboard") {
+              if (leaderboardPage !== 1) setLeaderboardPage(1);
+              if (leaderboardSearch) {
+                setLeaderboardSearch("");
+              }
+            }
+          }}
+        />
         <div className="mt-4">
           {activeTab === "job-offers" && (
             <JobOffersTab
@@ -278,6 +327,24 @@ export default function RecruiterDashboard() {
             <HireRequestsTab hireRequests={hireRequests} onViewJobDetails={handleViewJobDetails} />
           )}
           {activeTab === "analytics" && <AnalyticsTab />}
+           {activeTab === "leaderboard" && (
+            <LeaderboardTab
+              students={leaderboardData?.data || []}
+              isLoading={isLeaderboardLoading}
+              error={leaderboardError}
+              currentPage={leaderboardPage}
+              totalPages={leaderboardData?.pagination?.totalPages || 1}
+              totalCount={leaderboardData?.pagination?.count || 0}
+              hasNext={leaderboardData?.pagination?.isNext || false}
+              hasPrev={leaderboardData?.pagination?.isPrev || false}
+              perPage={leaderboardPerPage}
+              searchQuery={leaderboardSearch}
+              onPageChange={handleLeaderboardPageChange}
+              onPerPageChange={handleLeaderboardPerPageChange}
+              onSearchSubmit={handleLeaderboardSearchSubmit}
+              onSearchClear={handleLeaderboardSearchClear}
+            />
+          )}
         </div>
         <CreateJobOfferModal
           isOpen={isCreateModalOpen}

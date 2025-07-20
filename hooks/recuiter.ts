@@ -217,19 +217,19 @@ const useListEligibleCandidates = (jobId: string, accessToken: string) => {
 
 
 interface LeaderboardParams {
-  page?: number;
+  pageIndex?: number;
   perPage?: number;
   search?: string;
 }
 
 export const useGetLaunchpadLeaderboard = (params: LeaderboardParams = {}) => {
-  const { page = 1, perPage = 10, search } = params;
+  const { pageIndex = 1, perPage = 10, search } = params;
   
   return useQuery({
-    queryKey: ['launchpad-leaderboard', page, perPage, search],
+    queryKey: ['launchpad-leaderboard', pageIndex, perPage, search],
     queryFn: async () => {
       const queryParams: Record<string, any> = { 
-        page,
+        pageIndex,
         perPage
       };
       

@@ -89,18 +89,18 @@ export const LeaderboardTab: React.FC<LeaderboardTabProps> = ({
     );
   }
 
-  if (!students || students.length === 0) {
-    return (
-      <Card className="bg-secondary-800/50 backdrop-blur-sm border-primary-500/20">
-        <CardContent className="p-8">
-          <div className="text-center text-gray-400">
-            <Trophy className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p className="text-lg">No leaderboard data available</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  // if (!students || students.length === 0) {
+  //   return (
+  //     <Card className="bg-secondary-800/50 backdrop-blur-sm border-primary-500/20">
+  //       <CardContent className="p-8">
+  //         <div className="text-center text-gray-400">
+  //           <Trophy className="h-12 w-12 mx-auto mb-4 opacity-50" />
+  //           <p className="text-lg">No leaderboard data available</p>
+  //         </div>
+  //       </CardContent>
+  //     </Card>
+  //   );
+  // }
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
