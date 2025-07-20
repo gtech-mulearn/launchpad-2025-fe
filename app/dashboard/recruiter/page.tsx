@@ -234,7 +234,7 @@ export default function RecruiterDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 p-6">
       <div className="max-w-7xl mx-auto">
         <Header userEmail={userEmail} onLogout={handleLogout} />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
           <StatCard
             title="Total Candidates"
             value={eligibleCandidatesData?.response?.data?.length || 0}
@@ -259,7 +259,7 @@ export default function RecruiterDashboard() {
             icon={<TrendingUp className="h-5 w-5 text-purple-400" />}
             color="bg-purple-500/10"
           />
-        </div>
+        </div> */}
         <TabsNavigation activeTab={activeTab} onTabChange={setActiveTab} />
         <div className="mt-4">
           {activeTab === "job-offers" && (
