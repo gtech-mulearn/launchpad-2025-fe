@@ -298,7 +298,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                                     </Badge>
                                     {candidate.muid && (
                                       <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white" asChild>
-                                        <a href={`https://mulearn.org/${candidate.muid}`} target="_blank" rel="noopener noreferrer">
+                                        <a href={`https://app.mulearn.org/profile/${candidate.muid}`} target="_blank" rel="noopener noreferrer">
                                           <ExternalLink className="h-4 w-4 mr-1" /> MUID
                                         </a>
                                       </Button>
@@ -307,7 +307,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                                       size="sm"
                                       className="bg-blue-500 hover:bg-blue-600"
                                       onClick={() => onScheduleInterview(hireRequest.id)}
-                                      disabled={!hireRequest.application_id}
+                                      disabled={!candidate.application_id}
                                     >
                                       <Calendar className="h-4 w-4 mr-1" /> Schedule Interview
                                     </Button>
