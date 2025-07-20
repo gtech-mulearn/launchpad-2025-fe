@@ -45,8 +45,17 @@ import { CreateJobOfferModal } from "@/components/recruiter/CreateJobOfferModal"
 import { JobOfferDetailsModal } from "@/components/recruiter/JobOfferDetailsModal";
 import { ScheduleInterviewModal } from "@/components/recruiter/ScheduleInterviewModal";
 import { CandidateDetailsModal } from "@/components/recruiter/CandidateDetailsModal";
-import { useAddJob, useListJobOffers, useListEligibleCandidates } from "@/hooks/recuiter";
-import { JobOffer, JobInvite, Candidate, InterviewDetails } from "@/types/recruiter";
+import {
+  useAddJob,
+  useListJobOffers,
+  useListEligibleCandidates,
+} from "@/hooks/recuiter";
+import {
+  JobOffer,
+  JobInvite,
+  Candidate,
+  InterviewDetails,
+} from "@/types/recruiter";
 
 // Mock data for demonstration - keeping only for approved candidates tab
 const mockApprovedCandidates = [
@@ -91,8 +100,12 @@ export default function CompanyDashboard() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isCandidateModalOpen, setIsCandidateModalOpen] = useState(false);
-  const [selectedJobOffer, setSelectedJobOffer] = useState<JobOffer | null>(null);
-  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [selectedJobOffer, setSelectedJobOffer] = useState<JobOffer | null>(
+    null
+  );
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
+    null
+  );
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [scheduleInviteId, setScheduleInviteId] = useState<number | null>(null);
   const [newJobOffer, setNewJobOffer] = useState<JobOffer>({
@@ -116,9 +129,21 @@ export default function CompanyDashboard() {
 
   const company = useGetCompany(userId, accessToken);
   const addJobMutation = useAddJob(accessToken);
-  const { interestGroups, isLoading: isInterestGroupsLoading, error: interestGroupsError } = useGetInterestGroups(accessToken);
-  const { data: jobOffers, isLoading: isJobOffersLoading, error: jobOffersError } = useListJobOffers(company.data?.id || "", accessToken);
-  const { data: eligibleCandidatesData, isLoading: isEligibleCandidatesLoading, error: eligibleCandidatesError } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
+  const {
+    interestGroups,
+    isLoading: isInterestGroupsLoading,
+    error: interestGroupsError,
+  } = useGetInterestGroups(accessToken);
+  const {
+    data: jobOffers,
+    isLoading: isJobOffersLoading,
+    error: jobOffersError,
+  } = useListJobOffers(company.data?.id || "", accessToken);
+  const {
+    data: eligibleCandidatesData,
+    isLoading: isEligibleCandidatesLoading,
+    error: eligibleCandidatesError,
+  } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
 
   useEffect(() => {
     if (company.data?.id) {
@@ -136,7 +161,11 @@ export default function CompanyDashboard() {
   }
 
   if (jobOffersError) {
-    return <div className="text-red-400">Error loading job offers: {jobOffersError.message}</div>;
+    return (
+      <div className="text-red-400">
+        Error loading job offers: {jobOffersError.message}
+      </div>
+    );
   }
   const handleLogout = () => {
     // Clear all authentication data
@@ -189,14 +218,20 @@ export default function CompanyDashboard() {
     setHireRequests((prev) =>
       prev.map((invite) =>
         invite.id === inviteId
-          ? { ...invite, status: "hired", updatedAt: new Date().toISOString().split("T")[0] }
+          ? {
+              ...invite,
+              status: "hired",
+              updatedAt: new Date().toISOString().split("T")[0],
+            }
           : invite
       )
     );
   };
 
   const handleViewJobDetails = (jobId: string) => {
-    const jobOffer = jobOffers?.response?.find((offer: JobOffer) => offer.id === jobId);
+    const jobOffer = jobOffers?.jobs?.response?.find(
+      (offer: JobOffer) => offer.id === jobId
+    );
     if (jobOffer) {
       setSelectedJobOffer(jobOffer);
       setIsDetailsModalOpen(true);
@@ -219,11 +254,15 @@ export default function CompanyDashboard() {
       )
   );
 
-  const hiringRate = hireRequests.length > 0
-    ? Math.round((hireRequests.filter(req => req.status === "hired").length / hireRequests.length) * 100)
-    : 0;
-
-  // return <VerificationPending />;
+  const hiringRate =
+    hireRequests.length > 0
+      ? Math.round(
+          (hireRequests.filter((req) => req.status === "hired").length /
+            hireRequests.length) *
+            100
+        )
+      : 0;
+  if (!company.data.is_verified) return <VerificationPending />;
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 p-6">
       <div className="max-w-7xl mx-auto">
@@ -233,7 +272,7 @@ export default function CompanyDashboard() {
             <h1 className="text-3xl font-bold tracking-tight text-white">
               Company Dashboard
             </h1>
-            <p className="text-gray-400">Welcome back</p>
+            <p className="text-gray-400">Welcome back {company.data.name}</p>
           </div>
           <Button
             onClick={handleLogout}
@@ -255,7 +294,7 @@ export default function CompanyDashboard() {
           />
           <StatCard
             title="Job Offers"
-            value={jobOffers?.response?.length || 0}
+            value={jobOffers?.jobs.response?.length || 0}
             icon={<Briefcase className="h-5 w-5 text-blue-400" />}
             color="bg-blue-500/10"
           />
@@ -273,7 +312,11 @@ export default function CompanyDashboard() {
           />
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-4"
+        >
           <div className="flex items-center justify-between mb-4">
             <TabsList className="bg-secondary-800/50 backdrop-blur-sm border border-primary-500/20">
               {/* <TabsTrigger
@@ -417,7 +460,7 @@ export default function CompanyDashboard() {
 
           {activeTab === "job-offers" && (
             <JobOffersTab
-              jobOffers={jobOffers}
+              jobOffers={jobOffers?.jobs}
               isLoading={isJobOffersLoading}
               error={jobOffersError}
               onCreateJobOffer={() => setIsCreateModalOpen(true)}
@@ -429,9 +472,9 @@ export default function CompanyDashboard() {
           )}
 
           {activeTab === "requests" && (
-            <HireRequestsTab 
-              hireRequests={hireRequests} 
-              onViewJobDetails={handleViewJobDetails} 
+            <HireRequestsTab
+              hireRequests={hireRequests}
+              onViewJobDetails={handleViewJobDetails}
             />
           )}
 
@@ -452,7 +495,7 @@ export default function CompanyDashboard() {
           userId={userId}
           queryClient={queryClient}
         />
-        
+
         <JobOfferDetailsModal
           isOpen={isDetailsModalOpen}
           onOpenChange={setIsDetailsModalOpen}
@@ -466,7 +509,7 @@ export default function CompanyDashboard() {
           onHireCandidate={handleHireCandidate}
           onInviteSent={handleInviteSent}
         />
-        
+
         <ScheduleInterviewModal
           isOpen={isScheduleModalOpen}
           onOpenChange={setIsScheduleModalOpen}
@@ -474,11 +517,12 @@ export default function CompanyDashboard() {
           accessToken={accessToken}
           applicationId={
             scheduleInviteId !== null
-              ? hireRequests.find((req) => req.id === scheduleInviteId)?.application_id || ""
+              ? hireRequests.find((req) => req.id === scheduleInviteId)
+                  ?.application_id || ""
               : ""
           }
         />
-        
+
         <CandidateDetailsModal
           isOpen={isCandidateModalOpen}
           onOpenChange={setIsCandidateModalOpen}
@@ -525,12 +569,16 @@ const useGetInterestGroups = (accessToken: string) => {
   useEffect(() => {
     const fetchInterestGroups = async () => {
       try {
-        const response = await fetch("https://mulearn.org/api/v1/dashboard/ig/list/", {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
+        const response = await fetch(
+          "https://mulearn.org/api/v1/dashboard/ig/list/",
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
         if (!response.ok) throw new Error("Failed to fetch interest groups");
         const data = await response.json();
-        if (data.hasError) throw new Error(data.message || "Error fetching interest groups");
+        if (data.hasError)
+          throw new Error(data.message || "Error fetching interest groups");
         setInterestGroups(data.response.interestGroup);
         setIsLoading(false);
       } catch (err) {
