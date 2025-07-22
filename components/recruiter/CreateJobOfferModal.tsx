@@ -87,7 +87,7 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
         interest_groups: newJobOffer.interestGroups,
         opening_type: newJobOffer.openingType || "",
         task_description: newJobOffer.task_description || "",
-        task_hashtag: newJobOffer.task_hashtag || "",
+        // task_hashtag: newJobOffer.task_hashtag || "",
       };
 
       await addJobMutation.mutateAsync(addJobDto);
@@ -281,17 +281,6 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
                   placeholder="Enter task description"
                   className="bg-secondary-700/50 border-primary-500/30 text-white"
                   aria-required="true"
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="task_hashtag">Task Hashtag (Optional)</Label>
-                <Input
-                  id="task_hashtag"
-                  name="task_hashtag"
-                  value={newJobOffer.task_hashtag || ""}
-                  onChange={(e) => handleTaskChange(e, "task_hashtag")}
-                  placeholder="Enter task hashtag (e.g., #BackendDev)"
-                  className="bg-secondary-700/50 border-primary-500/30 text-white"
                 />
               </div>
             </div>

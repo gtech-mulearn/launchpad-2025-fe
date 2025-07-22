@@ -180,8 +180,12 @@ const useListJobOffers = (companyId: string, accessToken: string) => {
         jobType: offer.job_type as "Full-time" | "Part-time" | "Internship" | "Contract",
         interestGroups: offer.interest_groups || "",
         minKarma: offer.minimum_karma || 0,
-        task: offer.task_title ? { title: offer.task_title, description: offer.task_description || "" } : null,
-        createdAt: offer.created_at,
+        task_id: offer.task_id || null,
+        task_description: offer.task_description || null,
+        task_hashtag: offer.task_hashtag || null,
+        task_verified: offer.task_verified || null,
+        
+        createdAt: offer.created_at,  
         openingType: offer.opening_type === "General" ? "General" : "Task",
       }));
     },
@@ -246,6 +250,28 @@ export const useGetLaunchpadLeaderboard = (params: LeaderboardParams = {}) => {
   });
 }
 
+export const useGetHireRequests = (accessToken: string, status?:string) => {
+  return useQuery({
+    queryKey: ['hire-requests'],
+    queryFn: async () => {
+      const { data } = await apiHandler.get('/launchpad/hire-requests/', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        params: {
+          status: status || null, 
+        },
+      });
+      if (data.hasError) {
+        throw new Error(data.message?.general?.join(", ") || "Error fetching hire requests");
+      }
+      return data;
+    },
+    enabled: !!accessToken,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+  });
+};
 
 const useSendJobInvitations = (accessToken: string) => {
   const queryClient = useQueryClient();

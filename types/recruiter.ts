@@ -70,6 +70,14 @@ export interface JobInvite {
   openingType: 'General' | 'Task' | null;
 }
 
+interface candidate_links {
+  resume_link?: string;
+  linkedin_link?: string;
+  portfolio_link?: string;
+  cover_letter?: string;
+  other_link?: string;
+}
+
 export interface Candidate {
   id: string;
   full_name: string;
@@ -88,13 +96,7 @@ export interface Candidate {
     invited_at?: string;
     applied_at?: string;
   };
-  application_details?: {
-    resume_link?: string;
-    linkedin_link?: string;
-    portfolio_link?: string;
-    cover_letter?: string;
-    other_link?: string;
-  };
+  candidate_links?: candidate_links; // Additional details like resume, LinkedIn, etc.
   application_id?: string; // Unique identifier for the application
 }
 

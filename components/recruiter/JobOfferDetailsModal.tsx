@@ -38,8 +38,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
   showActions = true, // Default to true for backward compatibility
 }) => {
   const sendJobInvitationsMutation = useSendJobInvitations(accessToken);
-
-  console.log("eligibleCandidatesData:", eligibleCandidatesData);
+console.log(selectedJobOffer, "Selected Job Offer");
   useEffect(() => {
     if (eligibleCandidatesData && selectedJobOffer) {
       eligibleCandidatesData.response.data.forEach((candidate: Candidate) => {
@@ -77,11 +76,11 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
             sentDate: candidate.application_timeline?.invited_at || new Date().toISOString().split("T")[0],
             updatedAt: new Date().toISOString().split("T")[0],
             openingType: selectedJobOffer.openingType,
-            resume_link: candidate.application_details?.resume_link,
-            linkedin_link: candidate.application_details?.linkedin_link,
-            portfolio_link: candidate.application_details?.portfolio_link,
-            cover_letter: candidate.application_details?.cover_letter,
-            other_link: candidate.application_details?.other_link,
+            resume_link: candidate.candidate_links?.resume_link,
+            linkedin_link: candidate.candidate_links?.linkedin_link,
+            portfolio_link: candidate.candidate_links?.portfolio_link,
+            cover_letter: candidate.candidate_links?.cover_letter,
+            other_link: candidate.candidate_links?.other_link,
             // Only include application_id if candidate has applied (has application_id)
             ...(candidate.application_id && { application_id: candidate.application_id }),
           };
@@ -138,6 +137,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
     }
   };
 
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[90vw] h-[90vh] bg-secondary-800/50 backdrop-blur-md border border-primary-500/20 text-white overflow-y-auto">
@@ -170,7 +170,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                   <div className="border-t border-primary-500/20 pt-4">
                     <p className="text-gray-400 font-medium text-lg mb-2">Task Details</p>
                     <div className="grid gap-2">
-                      <div><p className="text-gray-400 font-medium">Task ID</p><p className="text-white font-semibold">{selectedJobOffer.task_id || "N/A"}</p></div>
+                      {/* <div><p className="text-gray-400 font-medium">Task ID</p><p className="text-white font-semibold">{selectedJobOffer.task_id || "N/A"}</p></div> */}
                       <div><p className="text-gray-400 font-medium">Task Description</p><p className="text-white">{selectedJobOffer.task_description || "N/A"}</p></div>
                       <div><p className="text-gray-400 font-medium">Task Hashtag</p><p className="text-white">{selectedJobOffer.task_hashtag || "N/A"}</p></div>
                       <div><p className="text-gray-400 font-medium">Task Verified</p><p className="text-white">{selectedJobOffer.task_verified ? "Yes" : "No"}</p></div>
@@ -235,39 +235,39 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                             <TableCell className="text-gray-300">{candidate.level}</TableCell>
                             <TableCell className="text-gray-300">{candidate.rank}</TableCell>
                             <TableCell>
-                              {(status === "accepted" || status === "interview" || status === "hired") && hireRequest ? (
+                              {(status === "accepted" || status === "interview" || status === "hired") ? (
                                 <div className="flex flex-col gap-2">
-                                  {hireRequest.resume_link && (
+                                  {candidate.candidate_links?.resume_link && (
                                     <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white" asChild>
-                                      <a href={hireRequest.resume_link} target="_blank" rel="noopener noreferrer">
+                                      <a href={candidate.candidate_links?.resume_link} target="_blank" rel="noopener noreferrer">
                                         <FileText className="h-4 w-4 mr-1" /> Resume
                                       </a>
                                     </Button>
                                   )}
-                                  {hireRequest.linkedin_link && (
+                                  {candidate.candidate_links?.linkedin_link && (
                                     <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white" asChild>
-                                      <a href={hireRequest.linkedin_link} target="_blank" rel="noopener noreferrer">
+                                      <a href={candidate.candidate_links?.linkedin_link} target="_blank" rel="noopener noreferrer">
                                         <ExternalLink className="h-4 w-4 mr-1" /> LinkedIn
                                       </a>
                                     </Button>
                                   )}
-                                  {hireRequest.portfolio_link && (
+                                  {candidate.candidate_links?.portfolio_link && (
                                     <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white" asChild>
-                                      <a href={hireRequest.portfolio_link} target="_blank" rel="noopener noreferrer">
+                                      <a href={candidate.candidate_links?.portfolio_link} target="_blank" rel="noopener noreferrer">
                                         <ExternalLink className="h-4 w-4 mr-1" /> Portfolio
                                       </a>
                                     </Button>
                                   )}
-                                  {hireRequest.cover_letter && (
+                                  {candidate.candidate_links?.cover_letter && (
                                     <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white" asChild>
-                                      <a href={hireRequest.cover_letter} target="_blank" rel="noopener noreferrer">
+                                      <a href={candidate.candidate_links?.cover_letter} target="_blank" rel="noopener noreferrer">
                                         <FileText className="h-4 w-4 mr-1" /> Cover Letter
                                       </a>
                                     </Button>
                                   )}
-                                  {hireRequest.other_link && (
+                                  {candidate.candidate_links?.other_link && (
                                     <Button size="sm" variant="outline" className="bg-button-secondary-500/30 border-primary-500/30 text-white" asChild>
-                                      <a href={hireRequest.other_link} target="_blank" rel="noopener noreferrer">
+                                      <a href={candidate.candidate_links?.other_link} target="_blank" rel="noopener noreferrer">
                                         <ExternalLink className="h-4 w-4 mr-1" /> Other Link
                                       </a>
                                     </Button>
