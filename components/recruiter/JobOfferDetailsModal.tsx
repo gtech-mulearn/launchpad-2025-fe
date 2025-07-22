@@ -7,6 +7,8 @@ import { CheckCircle, Calendar, Briefcase, ExternalLink, Clock, FileText, X } fr
 import { JobOffer, Candidate, JobInvite } from "@/types/recruiter";
 import { useSendJobInvitations } from "@/hooks/recuiter";
 import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface JobOfferDetailsModalProps {
   isOpen: boolean;
@@ -20,7 +22,7 @@ interface JobOfferDetailsModalProps {
   onScheduleInterview: (inviteId: number) => void;
   onHireCandidate: (inviteId: number, application_id: string) => void;
   onInviteSent: (invite: JobInvite) => void;
-  showActions?: boolean; // Add this new prop
+  showActions?: boolean;
 }
 
 export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
@@ -35,10 +37,11 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
   onScheduleInterview,
   onHireCandidate,
   onInviteSent,
-  showActions = true, // Default to true for backward compatibility
+  showActions = true,
 }) => {
   const sendJobInvitationsMutation = useSendJobInvitations(accessToken);
-console.log(selectedJobOffer, "Selected Job Offer");
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     if (eligibleCandidatesData && selectedJobOffer) {
       eligibleCandidatesData.response.data.forEach((candidate: Candidate) => {
@@ -101,6 +104,8 @@ console.log(selectedJobOffer, "Selected Job Offer");
 
   const handleSendInvite = async (candidate: Candidate, offer: JobOffer) => {
     try {
+      const t = toast.loading("Sending invitation...");
+      
       await sendJobInvitationsMutation.mutateAsync({
         jobId: offer.id,
         studentIds: [candidate.id],
@@ -128,13 +133,39 @@ console.log(selectedJobOffer, "Selected Job Offer");
         sentDate: new Date().toISOString().split("T")[0],
         updatedAt: new Date().toISOString().split("T")[0],
         openingType: offer.openingType,
-        // Don't include application_id for new invites - it doesn't exist yet
       };
 
       onInviteSent(newInvite);
+      
+      // Invalidate and refetch relevant queries
+      queryClient.invalidateQueries({ queryKey: ["eligible-candidates", offer.id] });
+      queryClient.invalidateQueries({ queryKey: ["hire-requests"] });
+      
+      toast.success("Invitation sent successfully!", { id: t });
     } catch (error) {
       console.error("Failed to send invitation:", error);
+      toast.error("Failed to send invitation");
     }
+  };
+
+  const handleScheduleInterviewClick = (inviteId: number) => {
+    onScheduleInterview(inviteId);
+    
+    // Invalidate queries after scheduling interview
+    setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: ["eligible-candidates", selectedJobOffer?.id] });
+      queryClient.invalidateQueries({ queryKey: ["hire-requests"] });
+    }, 1000); // Small delay to allow backend to process
+  };
+
+  const handleHireCandidateClick = (inviteId: number, application_id: string) => {
+    onHireCandidate(inviteId, application_id);
+    
+    // Invalidate queries after hiring candidate
+    setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: ["eligible-candidates", selectedJobOffer?.id] });
+      queryClient.invalidateQueries({ queryKey: ["hire-requests"] });
+    }, 1000); // Small delay to allow backend to process
   };
 
 
@@ -333,8 +364,9 @@ console.log(selectedJobOffer, "Selected Job Offer");
                                     <Button
                                       size="sm"
                                       className="bg-blue-500 hover:bg-blue-600"
-                                      onClick={() => onScheduleInterview(hireRequest.id)}
+                                      onClick={() => handleScheduleInterviewClick(hireRequest.id)}
                                       disabled={!candidate.application_id}
+
                                     >
                                       <Calendar className="h-4 w-4 mr-1" /> Schedule Interview
                                     </Button>
@@ -343,7 +375,7 @@ console.log(selectedJobOffer, "Selected Job Offer");
                                     <Button
                                       size="sm"
                                       className="bg-purple-500 hover:bg-purple-600"
-                                      onClick={() => onHireCandidate(hireRequest.id, candidate.application_id!)}
+                                      onClick={() => handleHireCandidateClick(hireRequest.id, candidate.application_id!)}
                                       disabled={!candidate.application_id}
                                     >
                                       <Briefcase className="h-4 w-4 mr-1" /> Mark as Hired

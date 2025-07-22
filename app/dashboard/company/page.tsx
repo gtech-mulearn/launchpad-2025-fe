@@ -45,7 +45,7 @@ import { CreateJobOfferModal } from "@/components/recruiter/CreateJobOfferModal"
 import { JobOfferDetailsModal } from "@/components/recruiter/JobOfferDetailsModal";
 import { ScheduleInterviewModal } from "@/components/recruiter/ScheduleInterviewModal";
 import { CandidateDetailsModal } from "@/components/recruiter/CandidateDetailsModal";
-import { useAddJob, useListJobOffers, useListEligibleCandidates, useGetLaunchpadLeaderboard } from "@/hooks/recuiter";
+import { useAddJob, useListJobOffers, useListEligibleCandidates, useGetLaunchpadLeaderboard, useGetHireRequests } from "@/hooks/recuiter";
 import { JobOffer, JobInvite, Candidate, InterviewDetails } from "@/types/recruiter";
 import { LeaderboardTab } from "@/components/recruiter/LeaderboardTab";
 
@@ -89,6 +89,7 @@ export default function CompanyDashboard() {
   const [accessToken, setAccessToken] = useLocalStorage("accessToken", "");
   const [userId, setUserId] = useLocalStorage("userId", "");
   const [hireRequests, setHireRequests] = useState<JobInvite[]>([]);
+  const [hireRequestFilter, setHireRequestFilter] = useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isCandidateModalOpen, setIsCandidateModalOpen] = useState(false);
@@ -123,6 +124,42 @@ export default function CompanyDashboard() {
   const { interestGroups, isLoading: isInterestGroupsLoading, error: interestGroupsError } = useGetInterestGroups(accessToken);
   const { data: jobOffers, isLoading: isJobOffersLoading, error: jobOffersError } = useListJobOffers(company.data?.id || "", accessToken);
   const { data: eligibleCandidatesData, isLoading: isEligibleCandidatesLoading, error: eligibleCandidatesError } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
+  const {data: hireRequestsData, isLoading: isHireRequestsLoading, error: hireRequestsError} = useGetHireRequests(accessToken, hireRequestFilter || undefined);
+
+  // Transform hire requests data
+  const transformedHireRequests: JobInvite[] = hireRequestsData?.response?.data?.hire_requests?.map((request: any) => ({
+    id: request.application_id,
+    candidateId: request.student_info.id,
+    jobId: request.job_info.id,
+    candidateName: request.student_info.full_name,
+    title: request.job_info.title,
+    company_id: request.job_info.company_id,
+    salaryRange: request.job_info.salary_range || null,
+    location: request.job_info.location || null,
+    experience: request.job_info.experience || null,
+    skills: request.job_info.skills || null,
+    jobType: request.job_info.job_type || null,
+    status: request.status,
+    interestGroups: request.student_info.interest_groups?.map((ig: any) => ig.name).join(", ") || "",
+    minKarma: request.job_info.min_karma || 0,
+    task_id: request.job_info.task_id || null,
+    task_description: request.job_info.task_description || null,
+    task_hashtag: request.job_info.task_hashtag || null,
+    task_verified: request.job_info.task_verified || null,
+    sentDate: request.timeline.invited_at ? new Date(request.timeline.invited_at).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+    updatedAt: request.timeline.updated_at ? new Date(request.timeline.updated_at).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+    openingType: request.job_info.opening_type || null,
+    application_id: request.application_id,
+    resume_link: request.application_details?.resume_link || null,
+    linkedin_link: request.application_details?.linkedin_link || null,
+    portfolio_link: request.application_details?.portfolio_link || null,
+    cover_letter: request.application_details?.cover_letter || null,
+    other_link: request.application_details?.other_link || null,
+    interview_date: request.interview_details?.interview_date || null,
+    interview_time: request.interview_details?.interview_time || null,
+    interview_platform: request.interview_details?.interview_platform || null,
+    interview_link: request.interview_details?.interview_link || null,
+  })) || [];
 
 
   const {
@@ -236,12 +273,40 @@ export default function CompanyDashboard() {
   };
 
   const handleViewJobDetails = (jobId: string) => {
+    // First try to find the job in the existing jobOffers data
     const jobOffer = jobOffers?.response?.find((offer: JobOffer) => offer.id === jobId);
+    
     if (jobOffer) {
       setSelectedJobOffer(jobOffer);
       setIsDetailsModalOpen(true);
     } else {
-      console.error("Job offer not found for jobId:", jobId);
+      // If not found in jobOffers, create it from the hire request data
+      const hireRequest = transformedHireRequests.find(req => req.jobId === jobId);
+      if (hireRequest) {
+        const constructedJobOffer: JobOffer = {
+          id: hireRequest.jobId || "",
+          title: hireRequest.title,
+          company_id: hireRequest.company_id,
+          salaryRange: hireRequest.salaryRange,
+          location: hireRequest.location,
+          experience: hireRequest.experience,
+          skills: hireRequest.skills,
+          jobType: hireRequest.jobType,
+          interestGroups: hireRequest.interestGroups,
+          minKarma: hireRequest.minKarma,
+          task_id: hireRequest.task_id,
+          task_description: hireRequest.task_description,
+          task_hashtag: hireRequest.task_hashtag,
+          task_verified: hireRequest.task_verified,
+          createdAt: hireRequest.sentDate,
+          openingType: hireRequest.openingType,
+        };
+        
+        setSelectedJobOffer(constructedJobOffer);
+        setIsDetailsModalOpen(true);
+      } else {
+        console.error("Job offer not found for jobId:", jobId);
+      }
     }
   };
 
@@ -317,24 +382,18 @@ export default function CompanyDashboard() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
           <div className="flex items-center justify-between mb-4">
             <TabsList className="bg-secondary-800/50 backdrop-blur-sm border border-primary-500/20">
-              {/* <TabsTrigger
-                value="approved"
-                className="text-white data-[state=active]:bg-primary-500"
-              >
-                Approved Candidates
-              </TabsTrigger> */}
               <TabsTrigger
                 value="job-offers"
                 className="text-white data-[state=active]:bg-primary-500"
               >
                 Job Offers
               </TabsTrigger>
-              {/* <TabsTrigger
+              <TabsTrigger
                 value="requests"
                 className="text-white data-[state=active]:bg-primary-500"
               >
                 Hire Requests
-              </TabsTrigger> */}
+              </TabsTrigger>
               <TabsTrigger
                 value="leaderboard"
                 className="text-white data-[state=active]:bg-primary-500"
@@ -547,9 +606,14 @@ export default function CompanyDashboard() {
           )}
 
           {activeTab === "requests" && (
-            <HireRequestsTab
-              hireRequests={hireRequests}
+            <HireRequestsTab 
+              hireRequests={transformedHireRequests} 
               onViewJobDetails={handleViewJobDetails}
+              // error={hireRequestsError}
+              // summary={hireRequestsData?.response?.data?.summary}
+              // pagination={hireRequestsData?.response?.pagination}
+              // onFilterChange={setHireRequestFilter}
+              // currentFilter={hireRequestFilter}
             />
           )}
 

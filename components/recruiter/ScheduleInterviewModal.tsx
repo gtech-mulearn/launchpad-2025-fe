@@ -31,15 +31,12 @@ export const ScheduleInterviewModal: React.FC<ScheduleInterviewModalProps> = ({
   });
   const scheduleInterviewMutation = useScheduleInterview(accessToken);
 
-  // Debug logging
-  console.log("applicationId in ScheduleInterviewModal:", applicationId);
-  console.log("Initial interviewDetails:", interviewDetails);
+
 
   // Sync applicationId with state if it changes
   useEffect(() => {
     setInterviewDetails((prev) => {
       if (prev.application_id !== applicationId) {
-        console.log("Updating interviewDetails.application_id to:", applicationId);
         return { ...prev, application_id: applicationId };
       }
       return prev;
@@ -52,7 +49,6 @@ export const ScheduleInterviewModal: React.FC<ScheduleInterviewModalProps> = ({
       return;
     }
 
-    console.log("Submitting interviewDetails:", interviewDetails); // Debug
     scheduleInterviewMutation.mutate(
       {
         application_id: interviewDetails.application_id,
@@ -63,7 +59,6 @@ export const ScheduleInterviewModal: React.FC<ScheduleInterviewModalProps> = ({
       },
       {
         onSuccess: () => {
-          console.log("Interview scheduled successfully:", interviewDetails);
           onScheduleSubmit(interviewDetails);
           setInterviewDetails({
             application_id: applicationId,
@@ -100,7 +95,6 @@ export const ScheduleInterviewModal: React.FC<ScheduleInterviewModalProps> = ({
               onChange={(e) =>
                 setInterviewDetails((prev) => {
                   const updated = { ...prev, interview_date: e.target.value };
-                  console.log("Updated interview_date:", updated);
                   return updated;
                 })
               }
@@ -117,7 +111,6 @@ export const ScheduleInterviewModal: React.FC<ScheduleInterviewModalProps> = ({
               onChange={(e) =>
                 setInterviewDetails((prev) => {
                   const updated = { ...prev, interview_time: e.target.value };
-                  console.log("Updated interview_time:", updated);
                   return updated;
                 })
               }
@@ -131,7 +124,6 @@ export const ScheduleInterviewModal: React.FC<ScheduleInterviewModalProps> = ({
               onValueChange={(value) =>
                 setInterviewDetails((prev) => {
                   const updated = { ...prev, interview_platform: value };
-                  console.log("Updated interview_platform:", updated);
                   return updated;
                 })
               }
@@ -155,7 +147,6 @@ export const ScheduleInterviewModal: React.FC<ScheduleInterviewModalProps> = ({
               onChange={(e) =>
                 setInterviewDetails((prev) => {
                   const updated = { ...prev, interview_link: e.target.value };
-                  console.log("Updated interview_link:", updated);
                   return updated;
                 })
               }

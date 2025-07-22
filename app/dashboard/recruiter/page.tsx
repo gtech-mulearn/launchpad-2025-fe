@@ -98,11 +98,9 @@ export default function RecruiterDashboard() {
   const { data: jobOffers, isLoading: isJobOffersLoading, error: jobOffersError } = useListJobOffers(recruiter.data?.company_id || "", accessToken);
   const { data: eligibleCandidatesData, isLoading: isEligibleCandidatesLoading, error: eligibleCandidatesError } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
   const hireCandidateMutation = useHireCandidate(accessToken);
-  const {data: hireRequestsData, isLoading: isHireRequestsLoading, error: hireRequestsError} = useGetHireRequests(accessToken, hireRequestFilter || undefined);
+  const { data: hireRequestsData, isLoading: isHireRequestsLoading, error: hireRequestsError } = useGetHireRequests(accessToken, hireRequestFilter || undefined);
 
-  console.log(jobOffers, "Job Offers Data");
 
-  console.log("Hire Requests Data:", hireRequestsData);
   const {
     data: leaderboardData,
     isLoading: isLeaderboardLoading,
@@ -205,16 +203,17 @@ export default function RecruiterDashboard() {
             : invite
         )
       );
+      queryClient.invalidateQueries({ queryKey: ["eligible-candidates", selectedJobOffer?.id] });
+      queryClient.invalidateQueries({ queryKey: ["hire-requests"] });
     }
     setIsScheduleModalOpen(false);
     setScheduleInviteId(null);
   };
 
-  console.log(hireRequests, "hireRequests");
   const handleViewJobDetails = (jobId: string) => {
     // First try to find the job in the existing jobOffers data
     const jobOffer = jobOffers?.response?.find((offer: JobOffer) => offer.id === jobId);
-    
+
     if (jobOffer) {
       setSelectedJobOffer(jobOffer);
       setIsDetailsModalOpen(true);
@@ -223,7 +222,7 @@ export default function RecruiterDashboard() {
       const hireRequest = transformedHireRequests.find(req => req.jobId === jobId);
       if (hireRequest) {
         const constructedJobOffer: JobOffer = {
-          id: hireRequest.jobId,
+          id: hireRequest.jobId || "",
           title: hireRequest.title,
           company_id: hireRequest.company_id,
           salaryRange: hireRequest.salaryRange,
@@ -240,7 +239,7 @@ export default function RecruiterDashboard() {
           createdAt: hireRequest.sentDate,
           openingType: hireRequest.openingType,
         };
-        
+
         setSelectedJobOffer(constructedJobOffer);
         setIsDetailsModalOpen(true);
       } else {
@@ -296,6 +295,10 @@ export default function RecruiterDashboard() {
             : invite
         )
       );
+          // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ["eligible-candidates", selectedJobOffer?.id] });
+      queryClient.invalidateQueries({ queryKey: ["hire-requests"] });
+      toast.success("Candidate marked as hired!")
     } catch (error) {
       toast.error(`Error hiring candidate.`, { id: t });
     }
@@ -392,19 +395,19 @@ export default function RecruiterDashboard() {
             />
           )}
           {activeTab === "requests" && (
-            <HireRequestsTab 
-              hireRequests={transformedHireRequests} 
+            <HireRequestsTab
+              hireRequests={transformedHireRequests}
               onViewJobDetails={handleViewJobDetails}
-              isLoading={isHireRequestsLoading}
-              error={hireRequestsError}
-              summary={hireRequestsData?.response?.data?.summary}
-              pagination={hireRequestsData?.response?.pagination}
-              onFilterChange={setHireRequestFilter}
-              currentFilter={hireRequestFilter}
+            // isLoading={isHireRequestsLoading}
+            // error={hireRequestsError}
+            // summary={hireRequestsData?.response?.data?.summary}
+            // pagination={hireRequestsData?.response?.pagination}
+            // onFilterChange={setHireRequestFilter}
+            // currentFilter={hireRequestFilter}
             />
           )}
           {activeTab === "analytics" && <AnalyticsTab />}
-           {activeTab === "leaderboard" && (
+          {activeTab === "leaderboard" && (
             <LeaderboardTab
               students={leaderboardData?.data || []}
               isLoading={isLeaderboardLoading}

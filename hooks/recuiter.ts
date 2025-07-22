@@ -242,7 +242,6 @@ export const useGetLaunchpadLeaderboard = (params: LeaderboardParams = {}) => {
       const { data } = await apiHandler.get('/launchpad/leaderboard/', {
         params: queryParams
       });
-      console.log("Launchpad Leaderboard Data:", data.response);
       return data.response;
     },
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes

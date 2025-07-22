@@ -45,7 +45,6 @@ export default function LoginPage() {
     setIsLoading(true);
 
     const onSuccess = (data: any) => {
-      //console.log("Login successful:", data);
       toast.success("Login successful", {
         id: t,
       });
