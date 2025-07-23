@@ -1,4 +1,9 @@
+"use client";
+import { useGetVerifiedCompany } from "@/hooks/api";
+
 export function RecruitersSection() {
+  const { data: verifiedCompanies } = useGetVerifiedCompany();
+  console.log("Verified Companies:", verifiedCompanies);
   return (
     <section
       id="recruiters"
@@ -68,7 +73,39 @@ export function RecruitersSection() {
               ))}
             </div>
           </div>
+          {verifiedCompanies && (
+            <>
+              <div className="space-y-6 max-w-3xl mx-auto">
+                <h2 className="text-4xl md:text-5xl font-bold text-white uppercase tracking-tighter leading-tight">
+                  Currently Registered
+                  <span className="text-primary-500">Recruiters</span>
+                </h2>
+                <p className="text-gray-400 text-lg">
+                  Meet the companies who are registered for Launchpad Kerala
+                  2025
+                </p>
+              </div>
 
+              <div className="w-full max-w-6xl mx-auto">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  {verifiedCompanies.map((company, index) => (
+                    <div
+                      key={index}
+                      className="border border-primary-500/20 hover:border-primary-500 transition-all duration-300 p-4 flex items-center justify-center h-16 animate-scale-in"
+                      style={{ animationDelay: `${index * 20}ms` }}
+                    >
+                      <a
+                        href={company.website}
+                        className="font-medium text-center text-white text-sm uppercase tracking-wider"
+                      >
+                        {company.name}
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
           <div className="inline-flex items-center space-x-2 border border-primary-500 px-4 py-2 animate-bounce-in delay-1000">
             <span className="text-xs uppercase tracking-widest text-primary-500 font-medium">
               More companies joining soon!
