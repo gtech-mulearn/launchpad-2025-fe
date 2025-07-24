@@ -1,10 +1,23 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { JobOffer, InterestGroup } from "@/types/recruiter";
 import { UseMutationResult } from "@tanstack/react-query";
 
@@ -39,22 +52,26 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setNewJobOffer(prev => ({
+    setNewJobOffer((prev) => ({
       ...prev,
       [name]: name === "minKarma" ? parseInt(value) || 0 : value,
     }));
   };
 
   const handleJobTypeChange = (value: string) => {
-    setNewJobOffer(prev => ({ ...prev, jobType: value as JobOffer['jobType'] }));
+    setNewJobOffer((prev) => ({
+      ...prev,
+      jobType: value as JobOffer["jobType"],
+    }));
   };
 
   const handleOpeningTypeChange = (value: string) => {
-    setNewJobOffer(prev => ({
+    setNewJobOffer((prev) => ({
       ...prev,
-      openingType: value as JobOffer['openingType'],
+      openingType: value as JobOffer["openingType"],
       task_id: value === "General" ? null : prev.task_id || null,
-      task_description: value === "General" ? null : prev.task_description || "",
+      task_description:
+        value === "General" ? null : prev.task_description || "",
       task_hashtag: value === "General" ? null : prev.task_hashtag || null,
       task_verified: value === "General" ? null : prev.task_verified || false,
     }));
@@ -64,11 +81,11 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     field: keyof JobOffer
   ) => {
-    setNewJobOffer(prev => ({ ...prev, [field]: e.target.value }));
+    setNewJobOffer((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
   const handleInterestGroupsChange = (selectedGroup: string) => {
-    setNewJobOffer(prev => ({ ...prev, interestGroups: selectedGroup }));
+    setNewJobOffer((prev) => ({ ...prev, interestGroups: selectedGroup }));
   };
 
   const handleCreateSubmit = async () => {
@@ -107,7 +124,7 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
         task_description: null,
         task_hashtag: null,
         task_verified: null,
-        createdAt: new Date().toISOString().split('T')[0],
+        createdAt: new Date().toISOString().split("T")[0],
         openingType: null,
       });
       onOpenChange(false);
@@ -122,7 +139,8 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
         <DialogHeader>
           <DialogTitle>Create Job Offer</DialogTitle>
           <DialogDescription className="text-gray-400">
-            Fill in the details to create a new job offer. Select an interest group.
+            Fill in the details to create a new job offer. Select an interest
+            group.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto pr-2">
@@ -178,7 +196,10 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
             </div>
             <div className="flex-1 flex flex-col gap-2">
               <Label htmlFor="jobType">Job Type</Label>
-              <Select onValueChange={handleJobTypeChange} defaultValue={newJobOffer.jobType || undefined}>
+              <Select
+                onValueChange={handleJobTypeChange}
+                defaultValue={newJobOffer.jobType || undefined}
+              >
                 <SelectTrigger className="bg-secondary-700/50 border-primary-500/30 text-white">
                   <SelectValue placeholder="Select job type" />
                 </SelectTrigger>
@@ -257,13 +278,18 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="openingType">Opening Type</Label>
-            <Select onValueChange={handleOpeningTypeChange} defaultValue={newJobOffer.openingType || undefined}>
+            <Select
+              onValueChange={handleOpeningTypeChange}
+              defaultValue={newJobOffer.openingType || "General"}
+            >
               <SelectTrigger className="bg-secondary-700/50 border-primary-500/30 text-white">
-                <SelectValue placeholder="Select opening type" />
+                <SelectValue
+                  placeholder="Select opening type"
+                />
               </SelectTrigger>
               <SelectContent className="bg-secondary-800 border-primary-500/30 text-white">
                 <SelectItem value="General">General</SelectItem>
-                <SelectItem value="Task">Task</SelectItem>
+                {/* <SelectItem value="Task">Task</SelectItem> */}
               </SelectContent>
             </Select>
           </div>
@@ -300,7 +326,8 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
             disabled={
               !newJobOffer.title.trim() ||
               !newJobOffer.interestGroups.trim() ||
-              (newJobOffer.openingType === "Task" && !newJobOffer.task_description?.trim())
+              (newJobOffer.openingType === "Task" &&
+                !newJobOffer.task_description?.trim())
             }
             className="bg-primary-500 hover:bg-primary-600"
             aria-label="Create job offer"
