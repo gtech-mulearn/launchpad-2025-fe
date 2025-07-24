@@ -249,6 +249,7 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                             <TableCell>
                               <div>
                                 <div className="font-medium text-white">{candidate.full_name}</div>
+                                <div className="text-sm text-gray-300">{candidate.muid}</div>
                                 <div className="text-sm text-gray-400">{candidate.email}</div>
                               </div>
                             </TableCell>
