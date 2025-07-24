@@ -1,17 +1,5 @@
 import { apiHandler } from "@/lib/axios"
-import { useMutation, useQuery } from "@tanstack/react-query"
-
-const fakeCompanies = [
-    "ss",
-    "Rizz",
-    "Tech Solutions Ohio",
-    "awin",
-    "Ohio Company",
-    "Revio",
-    "Titlabs ",
-    "Not a company",
-    "Student ",
-]
+import { useQuery } from "@tanstack/react-query"
 
 const useGetVerifiedCompany = () => {
     return useQuery({
@@ -19,11 +7,22 @@ const useGetVerifiedCompany = () => {
         queryFn: async () => {
             const { data } = await apiHandler.get("/launchpad/company-list-verifed/")
             console.log("Verified Companies Data:", data)
-            return (data.response as { name: string, website: string }[]).filter(company => !fakeCompanies.includes(company.name))
+            return (data.response as { name: string, website: string }[])
+        }
+    })
+}
+
+const useGetAllIGs = () => {
+    return useQuery({
+        queryKey: ["allIGs"],
+        queryFn: async () => {
+            const { data } = await apiHandler.get("dashboard/ig/list/")
+            return (data.response as { name: string }[])
         }
     })
 }
 
 export {
     useGetVerifiedCompany,
+    useGetAllIGs
 }

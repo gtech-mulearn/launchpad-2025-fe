@@ -42,7 +42,8 @@ export function HeroSection() {
               </h1>
 
               <p className="text-gray-400 text-lg max-w-md leading-relaxed">
-               A premier job fair connecting talent in software, creative and management with leading companies across diverse industries.
+                A premier job fair connecting talent in software, creative and
+                management with leading companies across diverse industries.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -51,8 +52,13 @@ export function HeroSection() {
                   size="lg"
                   className="bg-primary-500 hover:bg-primary-600 text-white border-0 transition-all duration-300 group uppercase tracking-widest text-sm font-medium hover:scale-105"
                 >
-                  <Link href={process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" || "/register"}>
-                    Register Now
+                  <Link
+                    href={
+                      process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" ||
+                      "/register"
+                    }
+                  >
+                    Comapany Registeration
                     <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                   </Link>
                 </Button>
@@ -62,7 +68,12 @@ export function HeroSection() {
                   asChild
                   className="bg-transparent hover:bg-transparent text-white border border-white/20 hover:border-white/40 transition-all duration-300 uppercase tracking-widest text-sm font-medium hover:scale-105"
                 >
-                  <Link href="#about">Learn More</Link>
+                  <Link 
+                  href={process.env.NEXT_PUBLIC_FORM_LINK!}
+                  >
+                    Student Registration
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                  </Link>
                 </Button>
               </div>
             </StaggerContainer>
