@@ -58,7 +58,7 @@ export function HeroSection() {
                       "/register"
                     }
                   >
-                    Comapany Registeration
+                    Company Registration
                     <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                   </Link>
                 </Button>
