@@ -140,28 +140,6 @@ export const CandidateDetailsModal: React.FC<CandidateDetailsModalProps> = ({
                     ))}
                   </div>
                 </div>
-                {candidate.muid && (
-                  <div>
-                    <p className="text-gray-400 font-medium text-sm sm:text-base">
-                      MuID Profile
-                    </p>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="bg-button-secondary-500/30 border-primary-500/30 text-white mt-2 text-xs sm:text-sm"
-                      asChild
-                    >
-                      <a
-                        href={`https://mulearn.org/${candidate.muid}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />{" "}
-                        View MuID Profile
-                      </a>
-                    </Button>
-                  </div>
-                )}
                 {candidate.application_details && (
                   <div className="border-t border-primary-500/20 pt-4">
                     <p className="text-gray-400 font-medium text-base sm:text-lg mb-2">
