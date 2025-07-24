@@ -1,6 +1,7 @@
 import { apiHandler } from "@/lib/axios"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
+
 type LoginRes = {
     id: string,
     accessToken: string,
@@ -104,11 +105,14 @@ const useGetRecruiter = (recruiterId: string, accessToken: string) => {
     })
 }
 
+
+
 export {
     useLoginRecruiter,
     useLoginCompany,
     useSignupCompany,
     useSignupRecruiter,
     useGetCompany,
-    useGetRecruiter
+    useGetRecruiter,
+    
 }

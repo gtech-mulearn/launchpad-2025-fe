@@ -21,9 +21,10 @@ import {
 import Link from "next/link";
 import { LoadingSpinner } from "./loading-spinner";
 import { ScrollReveal } from "./scroll-reveal";
-import { useLocalStorage } from "@/hooks/misc";
 import { useSignupCompany } from "@/hooks/auth";
 import { VerificationPending } from "./verification-pending";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 interface FormData {
   email: string;
@@ -53,7 +54,6 @@ export function CompanyRegistration() {
     headOfficeAddress: "",
     additionalInfo: "",
   });
-
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -114,15 +114,17 @@ export function CompanyRegistration() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const t = toast.loading("Registering your company...");
+
     if (!validateForm()) {
+      toast.error("Please fix the errors in the form", { id: t });
       return;
     }
 
     setIsSubmitting(true);
 
-    // Simulate API call
-    try {
-      await signUp.mutateAsync({
+    await signUp.mutateAsync(
+      {
         name: formData.companyName,
         username: formData.email,
         password: formData.password,
@@ -130,13 +132,31 @@ export function CompanyRegistration() {
         poc_role: "Recruiter",
         poc_email: formData.email,
         poc_phone: formData.phoneNumber,
-      });
-      setIsRegistered(true);
-    } catch (error) {
-      console.error("Registration failed:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+      },
+      {
+        onSuccess: () => {
+          setIsRegistered(true);
+          toast.success(
+            "Registration successful! Please check your email for verification.",
+            { id: t }
+          );
+        },
+        onError: (err: any) => {
+          if (
+            err.response?.data?.message &&
+            (
+              Object.values(err.response?.data?.message).flat() as string[]
+            ).some((m) => m.includes("already exists"))
+          )
+            toast.error("Another company exists with same details.", {
+              id: t,
+            });
+          else toast.error("Registration failed. Please try again.", { id: t });
+          setIsSubmitting(false);
+        },
+      }
+    );
+    setIsSubmitting(false);
   };
 
   if (isRegistered) {
@@ -165,7 +185,7 @@ export function CompanyRegistration() {
               company <span className="text-primary-500">Registration</span>
             </h1>
             <p className="text-gray-400 text-lg">
-              Join Launchpad Kerala 2025 as a recruiting partner
+              Join MuCareers as a recruiting partner
             </p>
           </div>
         </ScrollReveal>
