@@ -339,7 +339,7 @@ export default function CompanyDashboard() {
             <h1 className="text-3xl font-bold tracking-tight text-white">
               Company Dashboard
             </h1>
-            <p className="text-gray-400">Welcome back</p>
+            <p className="text-gray-400">Welcome back {company.data.name}</p>
           </div>
           <Button
             onClick={handleLogout}
@@ -394,12 +394,12 @@ export default function CompanyDashboard() {
               >
                 Hire Requests
               </TabsTrigger>
-              <TabsTrigger
+              {/* <TabsTrigger
                 value="leaderboard"
                 className="text-white data-[state=active]:bg-primary-500"
               >
                 Leaderboard
-              </TabsTrigger>
+              </TabsTrigger> */}
               <TabsTrigger
                 value="recruiters"
                 className="text-white data-[state=active]:bg-primary-500"

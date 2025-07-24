@@ -54,7 +54,6 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
                 <TableHead className="text-gray-300">Title</TableHead>
                 <TableHead className="text-gray-300">Location</TableHead>
                 <TableHead className="text-gray-300">Job Type</TableHead>
-                <TableHead className="text-gray-300">Job Type</TableHead>
                 <TableHead className="text-gray-300">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -67,7 +66,6 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
                     <TableCell className="text-gray-300">
                       {offer.jobType || "N/A"}
                     </TableCell>
-                    <TableCell className="text-gray-300">{offer.jobType || "N/A"}</TableCell>
                     <TableCell>
                       <Button
                         size="sm"
