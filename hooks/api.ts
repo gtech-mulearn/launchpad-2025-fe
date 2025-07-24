@@ -7,6 +7,10 @@ const fakeCompanies = [
     "Tech Solutions Ohio",
     "awin",
     "Ohio Company",
+    "Revio",
+    "Titlabs ",
+    "Not a company",
+    "Student ",
 ]
 
 const useGetVerifiedCompany = () => {
