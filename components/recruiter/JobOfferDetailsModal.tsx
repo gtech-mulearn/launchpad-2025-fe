@@ -249,6 +249,16 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                             <TableCell>
                               <div>
                                 <div className="font-medium text-white">{candidate.full_name}</div>
+                                <div className="text-sm text-gray-300">
+                                  <a
+                                    href={`https://mulearn.org/profile/${candidate.muid}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-400 hover:underline"
+                                  >
+                                    View Profile
+                                  </a>
+                                </div>
                                 <div className="text-sm text-gray-400">{candidate.email}</div>
                               </div>
                             </TableCell>

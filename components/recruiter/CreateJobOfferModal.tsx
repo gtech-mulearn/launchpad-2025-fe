@@ -102,7 +102,7 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
         job_type: newJobOffer.jobType || "",
         minimum_karma: newJobOffer.minKarma,
         interest_groups: newJobOffer.interestGroups,
-        opening_type: newJobOffer.openingType || "",
+        opening_type: newJobOffer.openingType || "General",
         task_description: newJobOffer.task_description || "",
         // task_hashtag: newJobOffer.task_hashtag || "",
       };
@@ -283,9 +283,7 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
               defaultValue={newJobOffer.openingType || "General"}
             >
               <SelectTrigger className="bg-secondary-700/50 border-primary-500/30 text-white">
-                <SelectValue
-                  placeholder="Select opening type"
-                />
+                <SelectValue placeholder="Select opening type" />
               </SelectTrigger>
               <SelectContent className="bg-secondary-800 border-primary-500/30 text-white">
                 <SelectItem value="General">General</SelectItem>
