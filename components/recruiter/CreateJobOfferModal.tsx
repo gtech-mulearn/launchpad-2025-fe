@@ -287,7 +287,7 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
               </SelectTrigger>
               <SelectContent className="bg-secondary-800 border-primary-500/30 text-white">
                 <SelectItem value="General">General</SelectItem>
-                {/* <SelectItem value="Task">Task</SelectItem> */}
+                <SelectItem value="Task">Task</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -343,7 +343,15 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {isEligibleCandidatesLoading ? (
+                {selectedJobOffer?.openingType === "Task" && !selectedJobOffer?.task_verified ? (
+                  <div className="text-yellow-400 text-center p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <Clock className="h-5 w-5" />
+                      <span className="font-medium">Task Verification Pending</span>
+                    </div>
+                    <p>Candidate details will be shown after the task is verified by the admin.</p>
+                  </div>
+                ) : isEligibleCandidatesLoading ? (
                   <div className="text-gray-400 text-center">
                     Loading eligible candidates...
                   </div>
