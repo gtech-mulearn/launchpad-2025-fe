@@ -355,13 +355,17 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                   <div className="text-gray-400 text-center">
                     Loading eligible candidates...
                   </div>
-                ) : eligibleCandidatesError ? (
+                ) : eligibleCandidatesData?.response?.data?.general?.[0] === "No matching tasks found for this job's hashtag." ? (
                   <div className="text-red-400 text-center">
-                    Error: {eligibleCandidatesError.message}
+                    No eligible candidates found.
                   </div>
                 ) : !eligibleCandidatesData?.response?.data?.length ? (
                   <div className="text-gray-400 text-center">
                     No eligible candidates found.
+                  </div>
+                ) : eligibleCandidatesError ? (
+                  <div className="text-red-400 text-center">
+                    Error: {"Failed to load eligible candidates."}
                   </div>
                 ) : (
                   <Table>
