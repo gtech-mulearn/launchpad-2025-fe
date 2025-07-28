@@ -140,13 +140,13 @@ export const CandidateDetailsModal: React.FC<CandidateDetailsModalProps> = ({
                     ))}
                   </div>
                 </div>
-                {candidate.application_details && (
+                {candidate.candidate_links && (
                   <div className="border-t border-primary-500/20 pt-4">
                     <p className="text-gray-400 font-medium text-base sm:text-lg mb-2">
                       Application Details
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                      {candidate.application_details.resume_link && (
+                      {candidate.candidate_links.resume_link && (
                         <Button
                           size="sm"
                           variant="outline"
@@ -154,7 +154,7 @@ export const CandidateDetailsModal: React.FC<CandidateDetailsModalProps> = ({
                           asChild
                         >
                           <a
-                            href={candidate.application_details.resume_link}
+                            href={candidate.candidate_links.resume_link}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
@@ -163,7 +163,7 @@ export const CandidateDetailsModal: React.FC<CandidateDetailsModalProps> = ({
                           </a>
                         </Button>
                       )}
-                      {candidate.application_details.linkedin_link && (
+                      {candidate.candidate_links.linkedin_link && (
                         <Button
                           size="sm"
                           variant="outline"
@@ -171,7 +171,7 @@ export const CandidateDetailsModal: React.FC<CandidateDetailsModalProps> = ({
                           asChild
                         >
                           <a
-                            href={candidate.application_details.linkedin_link}
+                            href={candidate.candidate_links.linkedin_link}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
@@ -180,7 +180,7 @@ export const CandidateDetailsModal: React.FC<CandidateDetailsModalProps> = ({
                           </a>
                         </Button>
                       )}
-                      {candidate.application_details.portfolio_link && (
+                      {candidate.candidate_links.portfolio_link && (
                         <Button
                           size="sm"
                           variant="outline"
@@ -188,7 +188,7 @@ export const CandidateDetailsModal: React.FC<CandidateDetailsModalProps> = ({
                           asChild
                         >
                           <a
-                            href={candidate.application_details.portfolio_link}
+                            href={candidate.candidate_links.portfolio_link}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
@@ -197,7 +197,7 @@ export const CandidateDetailsModal: React.FC<CandidateDetailsModalProps> = ({
                           </a>
                         </Button>
                       )}
-                      {candidate.application_details.cover_letter && (
+                      {candidate.candidate_links.cover_letter && (
                         <Button
                           size="sm"
                           variant="outline"
@@ -205,7 +205,7 @@ export const CandidateDetailsModal: React.FC<CandidateDetailsModalProps> = ({
                           asChild
                         >
                           <a
-                            href={candidate.application_details.cover_letter}
+                            href={candidate.candidate_links.cover_letter}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
@@ -214,7 +214,7 @@ export const CandidateDetailsModal: React.FC<CandidateDetailsModalProps> = ({
                           </a>
                         </Button>
                       )}
-                      {candidate.application_details.other_link && (
+                      {candidate.candidate_links.other_link && (
                         <Button
                           size="sm"
                           variant="outline"
@@ -222,7 +222,7 @@ export const CandidateDetailsModal: React.FC<CandidateDetailsModalProps> = ({
                           asChild
                         >
                           <a
-                            href={candidate.application_details.other_link}
+                            href={candidate.candidate_links.other_link}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
