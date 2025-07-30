@@ -5,7 +5,7 @@ const useGetVerifiedCompany = () => {
     return useQuery({
         queryKey: ["verifiedCompanies"],
         queryFn: async () => {
-            const { data } = await apiHandler.get("/launchpad/company-list-verifed/")
+            const { data } = await apiHandler.get("/launchpad/company-list-verified/")
             console.log("Verified Companies Data:", data)
             return (data.response as { name: string, website: string }[])
         }
