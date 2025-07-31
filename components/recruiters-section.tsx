@@ -3,14 +3,12 @@ import { useGetVerifiedCompany } from "@/hooks/api";
 
 export function RecruitersSection() {
   const { data: verifiedCompanies } = useGetVerifiedCompany();
-  console.log("Verified Companies:", verifiedCompanies);
   return (
     <section
       id="recruiters"
       className="w-full py-24 md:py-32 bg-secondary-900 relative overflow-hidden"
     >
       {/* Grid overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#2a2a2a_1px,transparent_1px),linear-gradient(to_bottom,#2a2a2a_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-40"></div>
 
       <div className="container px-4 md:px-6 relative z-10">
         <div className="flex flex-col items-center justify-center space-y-12 text-center">

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export function PartnershipsSection() {
   return (
     <section className="w-full py-24 md:py-32 bg-white relative overflow-hidden">
@@ -36,9 +38,24 @@ export function PartnershipsSection() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 animate-scale-in delay-300">
             {[
-              { name: "MuLearn Foundation", abbr: "Mulearn" },
-              { name: "Kerala Knowledge Economy Mission", abbr: "KKEM" },
-              { name: "IEEE", abbr: "IEEE" },
+              {
+                name: "MuLearn Foundation",
+                abbr: "Mulearn",
+                link: "https://mulearn.org",
+                icon: "https://mulearn.org/favicon.ico",
+              },
+              {
+                name: "Kerala Knowledge Economy Mission",
+                abbr: "KKEM",
+                link: "https://knowledgemission.kerala.gov.in",
+                icon: "/images/kkem.png",
+              },
+              {
+                name: "IEEE",
+                abbr: "IEEE",
+                link: "https://ieeekerala.org",
+                icon: "https://ieeekerala.org/wp-content/uploads/2024/05/cropped-sectionLogoBlue.png",
+              },
             ].map((partner, index) => (
               <div
                 key={index}
@@ -47,7 +64,19 @@ export function PartnershipsSection() {
               >
                 <div className="w-fit h-16 flex items-center justify-center border-2 border-primary-500 mb-4">
                   <span className="text-xl font-bold text-primary-500">
-                    {partner.abbr}
+                   <a
+                   href={partner.link}
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   >
+                     <Image
+                       src={partner.icon}
+                       alt={`${partner.name} Logo`}
+                       width={64}
+                       height={64}
+                       className="h-16 w-auto object-contain mix-blend-color-burn p-1"
+                     />
+                   </a>
                   </span>
                 </div>
                 <p className="text-sm text-center text-secondary-900">
