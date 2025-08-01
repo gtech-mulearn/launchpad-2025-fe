@@ -1,5 +1,5 @@
 import { ScrollReveal } from "./scroll-reveal";
-
+import Image from "next/image";
 export function AboutSection() {
   return (
     <section
@@ -58,23 +58,82 @@ export function AboutSection() {
                     <p className="text-xs uppercase tracking-widest text-primary-400">
                       Organized by
                     </p>
-                    <p className="font-bold text-white mt-1">
+                    {/* <p className="font-bold text-white mt-1">
                       MuLearn Foundation
-                    </p>
+                    </p> */}
+                    <a
+                      href="https://mulearn.org"
+                      className="font-bold text-white mt-1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Image
+                        src={
+                          "https://s3.ap-south-1.amazonaws.com/cdn.mulearn/public/assets/%C2%B5Learn.png"
+                        }
+                        alt="μLearn Foundation Logo"
+                        width={150}
+                        height={150}
+                        className="mt-2"
+                      />
+                    </a>
                   </div>
                   <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
                     <p className="text-xs uppercase tracking-widest text-primary-400">
                       In Association with
                     </p>
-                    <p className="font-bold text-white mt-1">GTech & IEEE</p>
+                    {/* <p className="font-bold text-white mt-1">GTech & IEEE</p> */}
+                    <div className="flex items-center space-x-2 mt-1">
+                      <a
+                        href="https://ieeekerala.org"
+                        className="font-bold text-white"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Image
+                          src="https://ieeekerala.org/wp-content/uploads/2024/05/cropped-sectionLogoBlue.png"
+                          alt="IEEE Logo"
+                          width={132}
+                          height={132}
+                        />
+                      </a>
+                      &nbsp;
+                      <a
+                        href="https://gtechindia.org"
+                        className="font-bold text-white"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Image
+                          src="https://gtechindia.org/images/gtech-logo.png"
+                          alt="GTech Logo"
+                          width={50}
+                          height={50}
+                        />
+                      </a>
+                    </div>
                   </div>
                   <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
                     <p className="text-xs uppercase tracking-widest text-primary-400">
                       Supported by
                     </p>
-                    <p className="font-bold text-white mt-1">
+                    {/* <p className="font-bold text-white mt-1">
                       Kerala Knowledge Economy Mission
-                    </p>
+                    </p> */}
+                    <a
+                      href="https://knowledgemission.kerala.gov.in"
+                      className="font-bold text-white mt-1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Image
+                        src={"/images/kkem.png"}
+                        alt="Kerala Knowledge Economy Mission Logo"
+                        width={150}
+                        height={150}
+                        className="mt-2"
+                      />
+                    </a>
                   </div>
                   <div className="border border-primary-500/30 p-4 hover:border-primary-500 transition-all duration-300">
                     <p className="text-xs uppercase tracking-widest text-primary-400">
