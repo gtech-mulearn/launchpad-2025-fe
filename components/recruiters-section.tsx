@@ -89,7 +89,7 @@ export function RecruitersSection() {
                   {verifiedCompanies.map((company, index) => (
                     <div
                       key={index}
-                      className="border border-primary-500/20 hover:border-primary-500 transition-all duration-300 p-4 flex items-center justify-center h-16 animate-scale-in"
+                      className="border border-primary-500/20 hover:border-primary-500 transition-all duration-300 p-4 flex items-center justify-center h-full animate-scale-in"
                       style={{ animationDelay: `${index * 20}ms` }}
                     >
                       <a
