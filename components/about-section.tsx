@@ -32,8 +32,7 @@ export function AboutSection() {
                   work-ready talent.
                 </p>
                 <p className="text-gray-600 text-lg leading-relaxed text-justify">
-                  Organised by the μLearn Foundation in collaboration with IEEE
-                  Kerala Section, KDISC, KKEM, and GTech, Launchpad bridges the
+                  Initiave by IEEE kerala Section, Organized by μLearn Foundation and IEEE, in association with KDISC and GTech, Launchpad bridges the
                   gap between industry needs and capable professionals —
                   creating pathways for growth and innovation in Kerala’s job
                   market.
@@ -62,6 +61,19 @@ export function AboutSection() {
                       MuLearn Foundation
                     </p> */}
                     <a
+                      href="https://ieeekerala.org"
+                      className="font-bold text-white mt-1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Image
+                        src="https://ieeekerala.org/wp-content/uploads/2024/05/cropped-sectionLogoBlue.png"
+                        alt="IEEE Logo"
+                        width={132}
+                        height={132}
+                      />
+                    </a>
+                    <a
                       href="https://mulearn.org"
                       className="font-bold text-white mt-1"
                       target="_blank"
@@ -84,19 +96,6 @@ export function AboutSection() {
                     </p>
                     {/* <p className="font-bold text-white mt-1">GTech & IEEE</p> */}
                     <div className="flex items-center space-x-2 mt-1">
-                      <a
-                        href="https://ieeekerala.org"
-                        className="font-bold text-white"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Image
-                          src="https://ieeekerala.org/wp-content/uploads/2024/05/cropped-sectionLogoBlue.png"
-                          alt="IEEE Logo"
-                          width={132}
-                          height={132}
-                        />
-                      </a>
                       &nbsp;
                       <a
                         href="https://gtechindia.org"
@@ -121,14 +120,14 @@ export function AboutSection() {
                       Kerala Knowledge Economy Mission
                     </p> */}
                     <a
-                      href="https://knowledgemission.kerala.gov.in"
+                      href="https://kdisc.kerala.gov.in/en/"
                       className="font-bold text-white mt-1"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       <Image
-                        src={"/images/kkem.png"}
-                        alt="Kerala Knowledge Economy Mission Logo"
+                        src={"/images/kdisc_logo.gif"}
+                        alt="Kerala Development and Innovation Strategic Council"
                         width={150}
                         height={150}
                         className="mt-2"
