@@ -157,6 +157,18 @@ const useAddJob = (accessToken: string) => {
   })
 }
 
+const useUpdateJob = (accessToken: string) => {
+  return useMutation<{}, {}, { jobId: string; updateData: Partial<AddJobDto> }>({
+    mutationFn: async ({ jobId, updateData }) => {
+      const { data } = await apiHandler.put(`/launchpad/job/${jobId}/`,
+        updateData,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      return data;
+    },
+  })
+}
+
 const useListJobOffers = (companyId: string, accessToken: string) => {
   return useQuery({
     queryKey: ["job-offers", companyId],
@@ -184,8 +196,8 @@ const useListJobOffers = (companyId: string, accessToken: string) => {
         task_description: offer.task_description || null,
         task_hashtag: offer.task_hashtag || null,
         task_verified: offer.task_verified || null,
-        
-        createdAt: offer.created_at,  
+
+        createdAt: offer.created_at,
         openingType: offer.opening_type === "General" ? "General" : "Task",
       }));
     },
@@ -228,17 +240,17 @@ interface LeaderboardParams {
 
 export const useGetLaunchpadLeaderboard = (params: LeaderboardParams = {}) => {
   const { pageIndex = 1, perPage = 10, search } = params;
-  
+
   return useQuery({
     queryKey: ['launchpad-leaderboard', pageIndex, perPage, search],
     queryFn: async () => {
-      const queryParams: Record<string, any> = { 
+      const queryParams: Record<string, any> = {
         pageIndex,
         perPage
       };
-      
+
       if (search && search.trim().length >= 3) queryParams.search = search.trim();
-      
+
       const { data } = await apiHandler.get('/launchpad/leaderboard/', {
         params: queryParams
       });
@@ -249,7 +261,7 @@ export const useGetLaunchpadLeaderboard = (params: LeaderboardParams = {}) => {
   });
 }
 
-export const useGetHireRequests = (accessToken: string, status?:string) => {
+export const useGetHireRequests = (accessToken: string, status?: string) => {
   return useQuery({
     queryKey: ['hire-requests'],
     queryFn: async () => {
@@ -258,7 +270,7 @@ export const useGetHireRequests = (accessToken: string, status?:string) => {
           Authorization: `Bearer ${accessToken}`,
         },
         params: {
-          status: status || null, 
+          status: status || null,
         },
       });
       if (data.hasError) {
@@ -387,11 +399,10 @@ export const useHireCandidate = (accessToken: string) => {
 
 export {
   useAddJob,
+  useUpdateJob,
   useListJobOffers,
   useSendJobInvitations,
   useListEligibleCandidates,
-
-
 }
 
 

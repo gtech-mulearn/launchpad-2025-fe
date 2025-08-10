@@ -1,7 +1,20 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "@/components/ui/table";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableHeader,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { Edit, PlusCircle, Trash, Trash2 } from "lucide-react";
 import { JobOffer } from "@/types/recruiter";
 
 interface JobOffersTabProps {
@@ -10,6 +23,8 @@ interface JobOffersTabProps {
   error: Error | null;
   onCreateJobOffer: () => void;
   onViewDetails: (offer: JobOffer) => void;
+  onEditJobOffer: (offer: JobOffer) => void;
+  onDeleteJobOffer: (offer: JobOffer) => void;
   showCreateButton?: boolean;
 }
 
@@ -19,6 +34,8 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
   error,
   onCreateJobOffer,
   onViewDetails,
+  onEditJobOffer,
+  onDeleteJobOffer,
   showCreateButton = true,
 }) => {
   return (
@@ -27,19 +44,19 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-white">Job Offers</CardTitle>
-            <CardDescription className="text-gray-400">Manage your job offers</CardDescription>
+            <CardDescription className="text-gray-400">
+              Manage your job offers
+            </CardDescription>
           </div>
-          {
-            showCreateButton && (
-              <Button
-                size="sm"
-                className="bg-primary-500 hover:bg-primary-600"
-                onClick={onCreateJobOffer}
-              >
-                Create Job Offer
-              </Button>
-            )
-          }
+          {showCreateButton && (
+            <Button
+              size="sm"
+              className="bg-primary-500 hover:bg-primary-600"
+              onClick={onCreateJobOffer}
+            >
+              Create Job Offer
+            </Button>
+          )}
         </div>
       </CardHeader>
       <CardContent>
@@ -61,12 +78,16 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
               {jobOffers && jobOffers.length > 0 ? (
                 jobOffers.map((offer) => (
                   <TableRow key={offer.id} className="border-gray-700">
-                    <TableCell className="text-white font-medium">{offer.title}</TableCell>
-                    <TableCell className="text-gray-300">{offer.location || "N/A"}</TableCell>
+                    <TableCell className="text-white font-medium">
+                      {offer.title}
+                    </TableCell>
+                    <TableCell className="text-gray-300">
+                      {offer.location || "N/A"}
+                    </TableCell>
                     <TableCell className="text-gray-300">
                       {offer.jobType || "N/A"}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="flex items-center space-x-2">
                       <Button
                         size="sm"
                         className="bg-primary-500 hover:bg-primary-600"
@@ -74,6 +95,24 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
                         aria-label={`View details of ${offer.title}`}
                       >
                         View Details
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="bg-blue-500 hover:bg-blue-600 ml-2"
+                        onClick={() => onEditJobOffer(offer)}
+                        aria-label={`Edit ${offer.title}`}
+                      >
+                        <Edit className="w-3 h-3" />
+                        Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="bg-red-500 hover:bg-red-600 ml-2"
+                        onClick={() => onDeleteJobOffer(offer)}
+                        aria-label={`Delete ${offer.title}`}
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        Delete
                       </Button>
                     </TableCell>
                   </TableRow>

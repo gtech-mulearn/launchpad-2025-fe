@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -20,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { JobOffer, InterestGroup } from "@/types/recruiter";
 import { UseMutationResult } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface CreateJobOfferModalProps {
   isOpen: boolean;
@@ -30,6 +30,7 @@ interface CreateJobOfferModalProps {
   isInterestGroupsLoading: boolean;
   interestGroupsError: string | null;
   addJobMutation: UseMutationResult<void, Error, any, unknown>;
+  updateJobMutation: UseMutationResult<{}, {}, any, unknown>;
   companyId: string | undefined;
   userId: string;
   queryClient: any;
@@ -44,6 +45,7 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
   isInterestGroupsLoading,
   interestGroupsError,
   addJobMutation,
+  updateJobMutation,
   companyId,
   userId,
   queryClient,
@@ -89,6 +91,9 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
   };
 
   const handleCreateSubmit = async () => {
+    const t = toast.loading(
+      `${newJobOffer.id ? "Edit" : "Create"} Job Offer...`
+    );
     try {
       const addJobDto = {
         company_id: companyId,
@@ -107,8 +112,19 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
         // task_hashtag: newJobOffer.task_hashtag || "",
       };
 
-      await addJobMutation.mutateAsync(addJobDto);
+      if (newJobOffer.id) {
+        await updateJobMutation.mutateAsync({
+          jobId: newJobOffer.id,
+          updateData: addJobDto,
+        });
+      } else {
+        await addJobMutation.mutateAsync(addJobDto);
+      }
       queryClient.invalidateQueries({ queryKey: ["job-offers", companyId] });
+      toast.success(
+        `${newJobOffer.id ? "Edited" : "Created"} job offer successfully!`,
+        { id: t }
+      );
       setNewJobOffer({
         id: "",
         title: "",
@@ -130,6 +146,7 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
       onOpenChange(false);
     } catch (error) {
       console.error("Failed to create job offer:", error);
+      toast.error("Failed to create job offer", { id: t });
     }
   };
 
@@ -137,10 +154,12 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] bg-secondary-800/50 backdrop-blur-md border border-primary-500/20 text-white">
         <DialogHeader>
-          <DialogTitle>Create Job Offer</DialogTitle>
+          <DialogTitle>
+            {newJobOffer.id ? "Edit" : "Create"} Job Offer
+          </DialogTitle>
           <DialogDescription className="text-gray-400">
-            Fill in the details to create a new job offer. Select an interest
-            group.
+            Fill in the details to {newJobOffer.id ? "edit" : "create a new"}{" "}
+            job offer. Select an interest group.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto pr-2">
@@ -330,7 +349,7 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
             className="bg-primary-500 hover:bg-primary-600"
             aria-label="Create job offer"
           >
-            Create Offer
+            {newJobOffer.id ? "Edit" : "Create"} Offer
           </Button>
         </DialogFooter>
       </DialogContent>
