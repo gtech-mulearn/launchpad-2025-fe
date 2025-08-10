@@ -20,6 +20,7 @@ import { useLocalStorage } from "@/hooks/misc";
 import { useGetRecruiter } from "@/hooks/auth";
 import {
   useAddJob,
+  useUpdateJob,
   useListJobOffers,
   useListEligibleCandidates,
   useHireCandidate,
@@ -118,6 +119,7 @@ export default function RecruiterDashboard() {
   // All custom hooks must be called before any conditional returns
   const recruiter = useGetRecruiter(userId, accessToken);
   const addJobMutation = useAddJob(accessToken);
+  const updateJobMutation = useUpdateJob(accessToken);
   const {
     interestGroups,
     isLoading: isInterestGroupsLoading,
@@ -310,6 +312,11 @@ export default function RecruiterDashboard() {
     }
   };
 
+  const handleEditJobOffer = (job: JobOffer) => {
+    setNewJobOffer(job);
+    setIsCreateModalOpen(true);
+  };
+
   const handleDeleteJobOffer = async (job: JobOffer) => {
     if (
       confirm(
@@ -473,6 +480,7 @@ export default function RecruiterDashboard() {
                 setSelectedJobOffer(offer);
                 setIsDetailsModalOpen(true);
               }}
+              onEditJobOffer={handleEditJobOffer}
               onDeleteJobOffer={handleDeleteJobOffer}
             />
           )}
@@ -517,6 +525,7 @@ export default function RecruiterDashboard() {
           isInterestGroupsLoading={isInterestGroupsLoading}
           interestGroupsError={interestGroupsError}
           addJobMutation={addJobMutation as any}
+          updateJobMutation={updateJobMutation}
           companyId={recruiter.data?.company_id}
           userId={userId}
           queryClient={queryClient}

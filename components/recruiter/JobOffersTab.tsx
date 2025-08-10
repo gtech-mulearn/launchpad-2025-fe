@@ -14,7 +14,7 @@ import {
   TableHeader,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { Edit, PlusCircle, Trash, Trash2 } from "lucide-react";
 import { JobOffer } from "@/types/recruiter";
 
 interface JobOffersTabProps {
@@ -23,6 +23,7 @@ interface JobOffersTabProps {
   error: Error | null;
   onCreateJobOffer: () => void;
   onViewDetails: (offer: JobOffer) => void;
+  onEditJobOffer: (offer: JobOffer) => void;
   onDeleteJobOffer: (offer: JobOffer) => void;
   showCreateButton?: boolean;
 }
@@ -33,6 +34,7 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
   error,
   onCreateJobOffer,
   onViewDetails,
+  onEditJobOffer,
   onDeleteJobOffer,
   showCreateButton = true,
 }) => {
@@ -85,7 +87,7 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
                     <TableCell className="text-gray-300">
                       {offer.jobType || "N/A"}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="flex items-center space-x-2">
                       <Button
                         size="sm"
                         className="bg-primary-500 hover:bg-primary-600"
@@ -96,10 +98,20 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
                       </Button>
                       <Button
                         size="sm"
+                        className="bg-blue-500 hover:bg-blue-600 ml-2"
+                        onClick={() => onEditJobOffer(offer)}
+                        aria-label={`Edit ${offer.title}`}
+                      >
+                        <Edit className="w-3 h-3" />
+                        Edit
+                      </Button>
+                      <Button
+                        size="sm"
                         className="bg-red-500 hover:bg-red-600 ml-2"
                         onClick={() => onDeleteJobOffer(offer)}
                         aria-label={`Delete ${offer.title}`}
                       >
+                        <Trash2 className="w-3 h-3" />
                         Delete
                       </Button>
                     </TableCell>
