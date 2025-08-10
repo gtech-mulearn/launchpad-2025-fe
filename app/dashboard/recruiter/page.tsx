@@ -18,9 +18,23 @@ import { CandidateDetailsModal } from "@/components/recruiter/CandidateDetailsMo
 import { Users, Briefcase, Calendar, TrendingUp } from "lucide-react";
 import { useLocalStorage } from "@/hooks/misc";
 import { useGetRecruiter } from "@/hooks/auth";
-import { useAddJob, useListJobOffers, useListEligibleCandidates, useHireCandidate, useGetLaunchpadLeaderboard, useGetHireRequests, } from "@/hooks/recuiter";
-import { JobOffer, JobInvite, Candidate, InterviewDetails, LeaderboardStudent, } from "@/types/recruiter";
+import {
+  useAddJob,
+  useListJobOffers,
+  useListEligibleCandidates,
+  useHireCandidate,
+  useGetLaunchpadLeaderboard,
+  useGetHireRequests,
+} from "@/hooks/recuiter";
+import {
+  JobOffer,
+  JobInvite,
+  Candidate,
+  InterviewDetails,
+  LeaderboardStudent,
+} from "@/types/recruiter";
 import { toast } from "sonner";
+import { apiHandler } from "@/lib/axios";
 
 // Move this hook outside the component or to a separate file
 const useGetInterestGroups = (accessToken: string) => {
@@ -31,12 +45,16 @@ const useGetInterestGroups = (accessToken: string) => {
   useEffect(() => {
     const fetchInterestGroups = async () => {
       try {
-        const response = await fetch("https://mulearn.org/api/v1/dashboard/ig/list/", {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
+        const response = await fetch(
+          "https://mulearn.org/api/v1/dashboard/ig/list/",
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
         if (!response.ok) throw new Error("Failed to fetch interest groups");
         const data = await response.json();
-        if (data.hasError) throw new Error(data.message || "Error fetching interest groups");
+        if (data.hasError)
+          throw new Error(data.message || "Error fetching interest groups");
         setInterestGroups(data.response.interestGroup);
         setIsLoading(false);
       } catch (err) {
@@ -64,14 +82,20 @@ export default function RecruiterDashboard() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isCandidateModalOpen, setIsCandidateModalOpen] = useState(false);
-  const [selectedJobOffer, setSelectedJobOffer] = useState<JobOffer | null>(null);
-  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [selectedJobOffer, setSelectedJobOffer] = useState<JobOffer | null>(
+    null
+  );
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
+    null
+  );
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [leaderboardPage, setLeaderboardPage] = useState(1);
   const [leaderboardPerPage, setLeaderboardPerPage] = useState(10);
   const [leaderboardSearch, setLeaderboardSearch] = useState("");
   const [scheduleInviteId, setScheduleInviteId] = useState<number | null>(null);
-  const [hireRequestFilter, setHireRequestFilter] = useState<string | null>(null);
+  const [hireRequestFilter, setHireRequestFilter] = useState<string | null>(
+    null
+  );
   const [newJobOffer, setNewJobOffer] = useState<JobOffer>({
     id: "",
     title: "",
@@ -94,12 +118,28 @@ export default function RecruiterDashboard() {
   // All custom hooks must be called before any conditional returns
   const recruiter = useGetRecruiter(userId, accessToken);
   const addJobMutation = useAddJob(accessToken);
-  const { interestGroups, isLoading: isInterestGroupsLoading, error: interestGroupsError } = useGetInterestGroups(accessToken);
-  const { data: jobOffers, isLoading: isJobOffersLoading, error: jobOffersError } = useListJobOffers(recruiter.data?.company_id || "", accessToken);
-  const { data: eligibleCandidatesData, isLoading: isEligibleCandidatesLoading, error: eligibleCandidatesError } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
+  const {
+    interestGroups,
+    isLoading: isInterestGroupsLoading,
+    error: interestGroupsError,
+  } = useGetInterestGroups(accessToken);
+  const {
+    data: jobOffers,
+    isLoading: isJobOffersLoading,
+    error: jobOffersError,
+    refetch: refetchJobOffers,
+  } = useListJobOffers(recruiter.data?.company_id || "", accessToken);
+  const {
+    data: eligibleCandidatesData,
+    isLoading: isEligibleCandidatesLoading,
+    error: eligibleCandidatesError,
+  } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
   const hireCandidateMutation = useHireCandidate(accessToken);
-  const { data: hireRequestsData, isLoading: isHireRequestsLoading, error: hireRequestsError } = useGetHireRequests(accessToken, hireRequestFilter || undefined);
-
+  const {
+    data: hireRequestsData,
+    isLoading: isHireRequestsLoading,
+    error: hireRequestsError,
+  } = useGetHireRequests(accessToken, hireRequestFilter || undefined);
 
   const {
     data: leaderboardData,
@@ -111,44 +151,55 @@ export default function RecruiterDashboard() {
     search: leaderboardSearch || undefined,
   });
 
-  const transformedHireRequests: JobInvite[] = hireRequestsData?.response?.data?.hire_requests?.map((request: any) => ({
-    id: request.application_id,
-    candidateId: request.student_info.id,
-    jobId: request.job_info.id,
-    candidateName: request.student_info.full_name,
-    title: request.job_info.title,
-    company_id: request.job_info.company_id,
-    salaryRange: request.job_info.salary_range || null,
-    location: request.job_info.location || null,
-    experience: request.job_info.experience || null,
-    skills: request.job_info.skills || null,
-    jobType: request.job_info.job_type || null,
-    status: request.status,
-    interestGroups: request.student_info.interest_groups?.map((ig: any) => ig.name).join(", ") || "",
-    minKarma: request.job_info.min_karma || 0,
-    task_id: request.job_info.task_id || null,
-    task_description: request.job_info.task_description || null,
-    task_hashtag: request.job_info.task_hashtag || null,
-    task_verified: request.job_info.task_verified || null,
-    sentDate: request.timeline.invited_at ? new Date(request.timeline.invited_at).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
-    updatedAt: request.timeline.updated_at ? new Date(request.timeline.updated_at).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
-    openingType: request.job_info.opening_type || null,
-    application_id: request.application_id,
-    resume_link: request.application_details?.resume_link || null,
-    linkedin_link: request.application_details?.linkedin_link || null,
-    portfolio_link: request.application_details?.portfolio_link || null,
-    cover_letter: request.application_details?.cover_letter || null,
-    other_link: request.application_details?.other_link || null,
-    // Add interview details if available
-    interview_date: request.interview_details?.interview_date || null,
-    interview_time: request.interview_details?.interview_time || null,
-    interview_platform: request.interview_details?.interview_platform || null,
-    interview_link: request.interview_details?.interview_link || null,
-  })) || [];
+  const transformedHireRequests: JobInvite[] =
+    hireRequestsData?.response?.data?.hire_requests?.map((request: any) => ({
+      id: request.application_id,
+      candidateId: request.student_info.id,
+      jobId: request.job_info.id,
+      candidateName: request.student_info.full_name,
+      title: request.job_info.title,
+      company_id: request.job_info.company_id,
+      salaryRange: request.job_info.salary_range || null,
+      location: request.job_info.location || null,
+      experience: request.job_info.experience || null,
+      skills: request.job_info.skills || null,
+      jobType: request.job_info.job_type || null,
+      status: request.status,
+      interestGroups:
+        request.student_info.interest_groups
+          ?.map((ig: any) => ig.name)
+          .join(", ") || "",
+      minKarma: request.job_info.min_karma || 0,
+      task_id: request.job_info.task_id || null,
+      task_description: request.job_info.task_description || null,
+      task_hashtag: request.job_info.task_hashtag || null,
+      task_verified: request.job_info.task_verified || null,
+      sentDate: request.timeline.invited_at
+        ? new Date(request.timeline.invited_at).toISOString().split("T")[0]
+        : new Date().toISOString().split("T")[0],
+      updatedAt: request.timeline.updated_at
+        ? new Date(request.timeline.updated_at).toISOString().split("T")[0]
+        : new Date().toISOString().split("T")[0],
+      openingType: request.job_info.opening_type || null,
+      application_id: request.application_id,
+      resume_link: request.application_details?.resume_link || null,
+      linkedin_link: request.application_details?.linkedin_link || null,
+      portfolio_link: request.application_details?.portfolio_link || null,
+      cover_letter: request.application_details?.cover_letter || null,
+      other_link: request.application_details?.other_link || null,
+      // Add interview details if available
+      interview_date: request.interview_details?.interview_date || null,
+      interview_time: request.interview_details?.interview_time || null,
+      interview_platform: request.interview_details?.interview_platform || null,
+      interview_link: request.interview_details?.interview_link || null,
+    })) || [];
 
   useEffect(() => {
     if (recruiter.data?.company_id) {
-      setNewJobOffer((prev) => ({ ...prev, company_id: recruiter.data!.company_id }));
+      setNewJobOffer((prev) => ({
+        ...prev,
+        company_id: recruiter.data!.company_id,
+      }));
     }
   }, [recruiter.data]);
 
@@ -163,7 +214,11 @@ export default function RecruiterDashboard() {
   }
 
   if (jobOffersError) {
-    return <div className="text-red-400">Error loading job offers: {jobOffersError.message}</div>;
+    return (
+      <div className="text-red-400">
+        Error loading job offers: {jobOffersError.message}
+      </div>
+    );
   }
 
   const handleLogout = () => {
@@ -192,18 +247,20 @@ export default function RecruiterDashboard() {
         prev.map((invite) =>
           invite.id === scheduleInviteId
             ? {
-              ...invite,
-              status: "interview",
-              interview_date: details.interview_date,
-              interview_time: details.interview_time,
-              interview_platform: details.interview_platform,
-              interview_link: details.interview_link,
-              updatedAt: new Date().toISOString().split("T")[0],
-            }
+                ...invite,
+                status: "interview",
+                interview_date: details.interview_date,
+                interview_time: details.interview_time,
+                interview_platform: details.interview_platform,
+                interview_link: details.interview_link,
+                updatedAt: new Date().toISOString().split("T")[0],
+              }
             : invite
         )
       );
-      queryClient.invalidateQueries({ queryKey: ["eligible-candidates", selectedJobOffer?.id] });
+      queryClient.invalidateQueries({
+        queryKey: ["eligible-candidates", selectedJobOffer?.id],
+      });
       queryClient.invalidateQueries({ queryKey: ["hire-requests"] });
     }
     setIsScheduleModalOpen(false);
@@ -212,14 +269,18 @@ export default function RecruiterDashboard() {
 
   const handleViewJobDetails = (jobId: string) => {
     // First try to find the job in the existing jobOffers data
-    const jobOffer = jobOffers?.response?.find((offer: JobOffer) => offer.id === jobId);
+    const jobOffer = jobOffers?.response?.find(
+      (offer: JobOffer) => offer.id === jobId
+    );
 
     if (jobOffer) {
       setSelectedJobOffer(jobOffer);
       setIsDetailsModalOpen(true);
     } else {
       // If not found in jobOffers, create it from the hire request data
-      const hireRequest = transformedHireRequests.find(req => req.jobId === jobId);
+      const hireRequest = transformedHireRequests.find(
+        (req) => req.jobId === jobId
+      );
       if (hireRequest) {
         const constructedJobOffer: JobOffer = {
           id: hireRequest.jobId || "",
@@ -249,7 +310,27 @@ export default function RecruiterDashboard() {
     }
   };
 
-
+  const handleDeleteJobOffer = async (job: JobOffer) => {
+    if (
+      confirm(
+        "Are you sure you want to delete this job offer? This action cannot be undone."
+      )
+    ) {
+      const t = toast.loading("Deleting job offer...");
+      try {
+        await apiHandler.delete(`/launchpad/job/${job.id}/`,{
+          headers:{
+            "Authorization": `Bearer ${accessToken}`,
+          }
+        });
+        await refetchJobOffers();
+        toast.success("Job offer deleted successfully", { id: t });
+      } catch (error) {
+        console.error("Error deleting job offer:", error);
+        toast.error(`Error deleting job offer`, { id: t });
+      }
+    }
+  };
 
   const handleLeaderboardPageChange = (pageIndex: number) => {
     setLeaderboardPage(pageIndex);
@@ -270,10 +351,9 @@ export default function RecruiterDashboard() {
     setLeaderboardPage(1); // Reset to first page when clearing
   };
 
-
   const handleHireCandidate = async (
     inviteId: number,
-    application_id: string,
+    application_id: string
   ) => {
     const t = toast.loading("Hiring candidate...");
     try {
@@ -288,17 +368,19 @@ export default function RecruiterDashboard() {
         prev.map((invite) =>
           invite.id === inviteId
             ? {
-              ...invite,
-              status: "hired",
-              updatedAt: new Date().toISOString().split("T")[0],
-            }
+                ...invite,
+                status: "hired",
+                updatedAt: new Date().toISOString().split("T")[0],
+              }
             : invite
         )
       );
-          // Invalidate queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ["eligible-candidates", selectedJobOffer?.id] });
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({
+        queryKey: ["eligible-candidates", selectedJobOffer?.id],
+      });
       queryClient.invalidateQueries({ queryKey: ["hire-requests"] });
-      toast.success("Candidate marked as hired!")
+      toast.success("Candidate marked as hired!");
     } catch (error) {
       toast.error(`Error hiring candidate.`, { id: t });
     }
@@ -306,7 +388,7 @@ export default function RecruiterDashboard() {
 
   const handleRejectCandidate = async (
     inviteId: number,
-    application_id: string,
+    application_id: string
   ) => {
     const t = toast.loading("Rejecting candidate...");
     try {
@@ -321,10 +403,10 @@ export default function RecruiterDashboard() {
         prev.map((invite) =>
           invite.id === inviteId
             ? {
-              ...invite,
-              status: "rejected",
-              updatedAt: new Date().toISOString().split("T")[0],
-            }
+                ...invite,
+                status: "rejected",
+                updatedAt: new Date().toISOString().split("T")[0],
+              }
             : invite
         )
       );
@@ -337,7 +419,6 @@ export default function RecruiterDashboard() {
     setSelectedCandidate(candidate);
     setIsCandidateModalOpen(true);
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-900 via-secondary-800 to-secondary-900 p-6">
       <div className="max-w-7xl mx-auto">
@@ -392,18 +473,19 @@ export default function RecruiterDashboard() {
                 setSelectedJobOffer(offer);
                 setIsDetailsModalOpen(true);
               }}
+              onDeleteJobOffer={handleDeleteJobOffer}
             />
           )}
           {activeTab === "requests" && (
             <HireRequestsTab
               hireRequests={transformedHireRequests}
               onViewJobDetails={handleViewJobDetails}
-            // isLoading={isHireRequestsLoading}
-            // error={hireRequestsError}
-            // summary={hireRequestsData?.response?.data?.summary}
-            // pagination={hireRequestsData?.response?.pagination}
-            // onFilterChange={setHireRequestFilter}
-            // currentFilter={hireRequestFilter}
+              // isLoading={isHireRequestsLoading}
+              // error={hireRequestsError}
+              // summary={hireRequestsData?.response?.data?.summary}
+              // pagination={hireRequestsData?.response?.pagination}
+              // onFilterChange={setHireRequestFilter}
+              // currentFilter={hireRequestFilter}
             />
           )}
           {activeTab === "analytics" && <AnalyticsTab />}
@@ -459,7 +541,8 @@ export default function RecruiterDashboard() {
           accessToken={accessToken}
           applicationId={
             scheduleInviteId !== null
-              ? hireRequests.find((req) => req.id === scheduleInviteId)?.application_id || ""
+              ? hireRequests.find((req) => req.id === scheduleInviteId)
+                  ?.application_id || ""
               : ""
           }
         />

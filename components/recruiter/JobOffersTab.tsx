@@ -1,5 +1,18 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "@/components/ui/table";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableHeader,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { JobOffer } from "@/types/recruiter";
@@ -10,6 +23,7 @@ interface JobOffersTabProps {
   error: Error | null;
   onCreateJobOffer: () => void;
   onViewDetails: (offer: JobOffer) => void;
+  onDeleteJobOffer: (offer: JobOffer) => void;
   showCreateButton?: boolean;
 }
 
@@ -19,6 +33,7 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
   error,
   onCreateJobOffer,
   onViewDetails,
+  onDeleteJobOffer,
   showCreateButton = true,
 }) => {
   return (
@@ -27,19 +42,19 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-white">Job Offers</CardTitle>
-            <CardDescription className="text-gray-400">Manage your job offers</CardDescription>
+            <CardDescription className="text-gray-400">
+              Manage your job offers
+            </CardDescription>
           </div>
-          {
-            showCreateButton && (
-              <Button
-                size="sm"
-                className="bg-primary-500 hover:bg-primary-600"
-                onClick={onCreateJobOffer}
-              >
-                Create Job Offer
-              </Button>
-            )
-          }
+          {showCreateButton && (
+            <Button
+              size="sm"
+              className="bg-primary-500 hover:bg-primary-600"
+              onClick={onCreateJobOffer}
+            >
+              Create Job Offer
+            </Button>
+          )}
         </div>
       </CardHeader>
       <CardContent>
@@ -61,8 +76,12 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
               {jobOffers && jobOffers.length > 0 ? (
                 jobOffers.map((offer) => (
                   <TableRow key={offer.id} className="border-gray-700">
-                    <TableCell className="text-white font-medium">{offer.title}</TableCell>
-                    <TableCell className="text-gray-300">{offer.location || "N/A"}</TableCell>
+                    <TableCell className="text-white font-medium">
+                      {offer.title}
+                    </TableCell>
+                    <TableCell className="text-gray-300">
+                      {offer.location || "N/A"}
+                    </TableCell>
                     <TableCell className="text-gray-300">
                       {offer.jobType || "N/A"}
                     </TableCell>
@@ -74,6 +93,14 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
                         aria-label={`View details of ${offer.title}`}
                       >
                         View Details
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="bg-red-500 hover:bg-red-600 ml-2"
+                        onClick={() => onDeleteJobOffer(offer)}
+                        aria-label={`Delete ${offer.title}`}
+                      >
+                        Delete
                       </Button>
                     </TableCell>
                   </TableRow>
