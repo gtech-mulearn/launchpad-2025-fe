@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  CheckCircle,
   Building,
   Mail,
   Lock,
@@ -24,7 +23,16 @@ import { ScrollReveal } from "./scroll-reveal";
 import { useSignupCompany } from "@/hooks/auth";
 import { VerificationPending } from "./verification-pending";
 import { toast } from "sonner";
-import { AxiosError } from "axios";
+import { Checkbox } from "./ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogDescription,
+  DialogTitle,
+  DialogFooter,
+  DialogHeader,
+} from "./ui/dialog";
 
 interface FormData {
   email: string;
@@ -57,6 +65,8 @@ export function CompanyRegistration() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [termsVal, setTermsVal] = useState(false);
+  const [openTerms, setOpenTerms] = useState(false);
   const signUp = useSignupCompany();
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -110,11 +120,25 @@ export function CompanyRegistration() {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
+  const handleCheckboxClick = () => {
+    if (termsVal) {
+      setTermsVal(false);
+    } else {
+      setOpenTerms(true);
+    }
+  };
 
+  const handleAcceptTerms = () => {
+    setTermsVal(true);
+    setOpenTerms(false);
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const t = toast.loading("Registering your company...");
+    if (!termsVal) {
+      toast.error("You must accept the terms and conditions", { id: t });
+      return;
+    }
 
     if (!validateForm()) {
       toast.error("Please fix the errors in the form", { id: t });
@@ -450,7 +474,128 @@ export function CompanyRegistration() {
                     </div>
                   </div>
                 </ScrollReveal>
+                <ScrollReveal direction="up" delay={800}>
+                  {/* Terms and Conditions Section */}
 
+                  <div className="pt-6 border-t border-primary-500/20">
+                    <div className="flex items-center gap-4 flex-wrap">
+                      <Checkbox
+                        id="termsCheckbox"
+                        checked={termsVal}
+                        onClick={handleCheckboxClick}
+                      />
+                      <Label
+                        htmlFor="termsCheckbox"
+                        className="text-white text-sm cursor-pointer"
+                      >
+                        Accept Terms and Conditions
+                      </Label>
+                      <Dialog open={openTerms} onOpenChange={setOpenTerms}>
+                        <DialogTrigger asChild></DialogTrigger>
+                        <DialogContent className="bg-secondary-900 text-white p-6 max-w-2xl max-h-dvh overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle className="text-lg font-semibold">
+                              Terms and Conditions for Recruiters Participating
+                              in Launchpad
+                            </DialogTitle>
+                            <DialogDescription className="mt-2">
+                              Please read and accept our terms and conditions
+                              before proceeding.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <p>
+                            These Terms and Conditions govern your participation
+                            as a recruiter in the Launchpad initiative by IEEE
+                            Kerala Section, organized by μLearn Foundation and
+                            IEEE, in association with K-DISC and GTech. By
+                            participating, you acknowledge that you have read,
+                            understood, and agree to be bound by these terms.
+                          </p>
+                          <p>
+                            1. Agreement to Hire Based on Proof-of-Work By
+                            participating as a recruiter in Launchpad, you agree
+                            to evaluate and hire candidates based primarily on
+                            their proof-of-work as defined and displayed on the
+                            platform.
+                          </p>
+
+                          <p>
+                            2. Avoidance of Traditional Academic Criteria You
+                            are encouraged to refrain from making hiring
+                            decisions on the basis of traditional academic
+                            qualifications such as degrees, grade point
+                            averages, or institutional rankings, except where
+                            legally required or job-specific technical
+                            certifications are essential.
+                          </p>
+
+                          <p>
+                            3. Commitment to Fair and Unbiased Opportunities You
+                            agree to provide equal, fair, and unbiased
+                            opportunities to all candidates. Discrimination
+                            based on race, gender, age, religion, disability,
+                            nationality, or any other protected characteristic
+                            is strictly prohibited.
+                          </p>
+
+                          <p>
+                            4. Consent for Branding and Promotional Use With
+                            your consent, the Foundation may display your
+                            company’s name, logo, and other brand elements in
+                            promotional materials, marketing campaigns, and
+                            public communications related to Launchpad. Such use
+                            will be limited to purposes directly connected to
+                            the promotion of Launchpad and will not imply any
+                            unrelated endorsement.
+                          </p>
+
+                          <p>
+                            5. Confidentiality You agree to treat all candidate
+                            information accessed through the platform as
+                            confidential and to use it solely for the purposes
+                            of recruitment within Launchpad.
+                          </p>
+
+                          <p>
+                            6. Limitation of Liability The Foundation shall not
+                            be held responsible for any hiring decisions,
+                            employment disputes, or other outcomes arising from
+                            your participation as a recruiter in Launchpad.
+                          </p>
+
+                          <p>
+                            7. Amendments to Terms The Foundation reserves the
+                            right to modify these Terms and Conditions at any
+                            time. Updated terms will be communicated to all
+                            participating recruiters prior to taking effect.
+                          </p>
+
+                          <p>
+                            8. Governing Law These Terms and Conditions shall be
+                            governed by and construed in accordance with the
+                            laws applicable in the jurisdiction where the μLearn
+                            Foundation operates, without regard to conflict of
+                            law principles.
+                          </p>
+
+                          <p>
+                            9. Acceptance By confirming your participation as a
+                            recruiter in Launchpad, you acknowledge and agree to
+                            these Terms and Conditions in full.
+                          </p>
+                          <DialogFooter>
+                            <Button onClick={handleAcceptTerms}>Accept</Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+
+                      <p className="text-muted-foreground text-sm">
+                        By clicking this checkbox, you agree to the terms and
+                        conditions.
+                      </p>
+                    </div>
+                  </div>
+                </ScrollReveal>
                 {/* Submit Button */}
                 <ScrollReveal direction="up" delay={900}>
                   <div className="pt-6">
@@ -472,9 +617,9 @@ export function CompanyRegistration() {
 
                   {/* Terms */}
                   <p className="text-gray-400 text-xs text-center leading-relaxed mt-4">
-                    By submitting this form, you agree to our terms and
-                    conditions. We will review your application and contact you
-                    with further details about the recruitment process.
+                    After submitting this form, we will review your application
+                    and contact you with further details about the recruitment
+                    process.
                   </p>
                 </ScrollReveal>
               </form>
