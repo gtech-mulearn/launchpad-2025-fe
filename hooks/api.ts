@@ -1,5 +1,6 @@
 import { apiHandler } from "@/lib/axios"
 import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
 
 const useGetVerifiedCompany = () => {
     return useQuery({
@@ -22,7 +23,19 @@ const useGetAllIGs = () => {
     })
 }
 
+const useGetCompanyData = () => {
+    return useQuery({
+        queryKey: ["companyData"],
+        queryFn: async () => {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            const { data } = await axios.get("/api/cdata")
+            return data as { company_name: string, roles: string, ig: string }[]
+        }
+    })
+}
+
 export {
     useGetVerifiedCompany,
-    useGetAllIGs
+    useGetAllIGs,
+    useGetCompanyData,
 }

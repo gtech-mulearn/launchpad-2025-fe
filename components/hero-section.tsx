@@ -68,9 +68,7 @@ export function HeroSection() {
                   asChild
                   className="bg-transparent hover:bg-transparent text-white border border-white/20 hover:border-white/40 transition-all duration-300 uppercase tracking-widest text-sm font-medium hover:scale-105"
                 >
-                  <Link 
-                  href={process.env.NEXT_PUBLIC_FORM_LINK!}
-                  >
+                  <Link href={process.env.NEXT_PUBLIC_FORM_LINK!}>
                     Student Registration
                     <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                   </Link>

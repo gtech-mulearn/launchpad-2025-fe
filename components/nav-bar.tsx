@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import * as React from "react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -11,33 +11,41 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu } from "lucide-react"
+} from "@/components/ui/navigation-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
+import { ScrollReveal } from "./scroll-reveal";
+import { StaggerContainer } from "./stagger-container";
 
 export function NavBar() {
-  const [isScrolled, setIsScrolled] = React.useState(false)
+  const [isScrolled, setIsScrolled] = React.useState(false);
 
   React.useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <header
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-500 ease-in-out",
-        isScrolled ? "bg-secondary-900/95 backdrop-blur-md shadow-lg" : "bg-transparent",
+        isScrolled
+          ? "bg-secondary-900/95 backdrop-blur-md shadow-lg"
+          : "bg-transparent"
       )}
     >
       <div className="container flex h-20 items-center justify-between">
         {/* Logo: fixed width, prevent shrinking */}
         <Link href="/" className="flex items-center space-x-2 min-w-0">
           <div className="relative overflow-hidden flex items-center space-x-3 w-32 sm:w-36 flex-shrink-0">
-            <img src="/images/logo.webp" alt="Launchpad Kerala Logo" className="h-8 w-auto" />
+            <img
+              src="/images/logo.webp"
+              alt="Launchpad Kerala Logo"
+              className="h-8 w-auto"
+            />
           </div>
         </Link>
         {/* Desktop Nav: show only on lg and up */}
@@ -48,7 +56,7 @@ export function NavBar() {
                 <Link href="/" legacyBehavior passHref>
                   <NavigationMenuLink
                     className={cn(
-                      "px-4 py-2 text-white hover:text-primary-500 transition-all duration-300 text-sm uppercase tracking-widest font-medium",
+                      "px-4 py-2 text-white hover:text-primary-500 transition-all duration-300 text-sm uppercase tracking-widest font-medium"
                     )}
                   >
                     Home
@@ -59,7 +67,7 @@ export function NavBar() {
                 <Link href="#about" legacyBehavior passHref>
                   <NavigationMenuLink
                     className={cn(
-                      "px-4 py-2 text-white hover:text-primary-500 transition-all duration-300 text-sm uppercase tracking-widest font-medium",
+                      "px-4 py-2 text-white hover:text-primary-500 transition-all duration-300 text-sm uppercase tracking-widest font-medium"
                     )}
                   >
                     About
@@ -70,10 +78,21 @@ export function NavBar() {
                 <Link href="#recruiters" legacyBehavior passHref>
                   <NavigationMenuLink
                     className={cn(
-                      "px-4 py-2 text-white hover:text-primary-500 transition-all duration-300 text-sm uppercase tracking-widest font-medium",
+                      "px-4 py-2 text-white hover:text-primary-500 transition-all duration-300 text-sm uppercase tracking-widest font-medium"
                     )}
                   >
                     Recruiters
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/openings">
+                  <NavigationMenuLink
+                    className={cn(
+                      "px-4 py-2 text-white hover:text-primary-500 transition-all duration-300 text-sm uppercase tracking-widest font-medium"
+                    )}
+                  >
+                    Openings
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
@@ -92,7 +111,13 @@ export function NavBar() {
                     <ListItem href="#results" title="Results">
                       Check the latest results
                     </ListItem>
-                    <ListItem href={process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" || "/register"} title="Registration">
+                    <ListItem
+                      href={
+                        process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" ||
+                        "/register"
+                      }
+                      title="Registration"
+                    >
                       Register as a company
                     </ListItem>
                   </ul>
@@ -109,13 +134,22 @@ export function NavBar() {
               variant="ghost"
               className="bg-transparent text-white hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
             >
-              <Link href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "/login"}>Login</Link>
+              <Link href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "/login"}>
+                Login
+              </Link>
             </Button>
             <Button
               asChild
               className="bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
             >
-              <Link href={process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" || "/register"}>Register Now</Link>
+              <Link
+                href={
+                  process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" ||
+                  "/register"
+                }
+              >
+                Register Now
+              </Link>
             </Button>
           </div>
         </div>
@@ -132,7 +166,10 @@ export function NavBar() {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="bg-secondary-900 border-l border-primary-500/20">
+            <SheetContent
+              side="right"
+              className="bg-secondary-900 border-l border-primary-500/20"
+            >
               <nav className="flex flex-col gap-6 mt-12">
                 <Link
                   href="/"
@@ -177,7 +214,10 @@ export function NavBar() {
                   Login
                 </Link>
                 <Link
-                  href={process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" || "/register"}
+                  href={
+                    process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" ||
+                    "/register"
+                  }
                   className="text-sm uppercase tracking-widest font-medium text-white hover:text-primary-500 transition-colors duration-300"
                 >
                   Registration
@@ -186,7 +226,14 @@ export function NavBar() {
                   className="mt-4 bg-transparent hover:bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
                   asChild
                 >
-                  <Link href={process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" || "/register"}>Register Now</Link>
+                  <Link
+                    href={
+                      process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" ||
+                      "/register"
+                    }
+                  >
+                    Register Now
+                  </Link>
                 </Button>
               </nav>
             </SheetContent>
@@ -194,28 +241,33 @@ export function NavBar() {
         </div>
       </div>
     </header>
-  )
+  );
 }
 
-const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a">>(
-  ({ className, title, children, ...props }, ref) => {
-    return (
-      <li>
-        <NavigationMenuLink asChild>
-          <a
-            ref={ref}
-            className={cn(
-              "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-all duration-300 hover:bg-primary-500/10 hover:text-primary-500 focus:bg-primary-500/10 focus:text-primary-500 text-white",
-              className,
-            )}
-            {...props}
-          >
-            <div className="text-sm font-medium leading-none uppercase tracking-widest">{title}</div>
-            <p className="line-clamp-2 text-sm leading-snug text-gray-400 mt-2">{children}</p>
-          </a>
-        </NavigationMenuLink>
-      </li>
-    )
-  },
-)
-ListItem.displayName = "ListItem"
+const ListItem = React.forwardRef<
+  React.ElementRef<"a">,
+  React.ComponentPropsWithoutRef<"a">
+>(({ className, title, children, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <a
+          ref={ref}
+          className={cn(
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-all duration-300 hover:bg-primary-500/10 hover:text-primary-500 focus:bg-primary-500/10 focus:text-primary-500 text-white",
+            className
+          )}
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none uppercase tracking-widest">
+            {title}
+          </div>
+          <p className="line-clamp-2 text-sm leading-snug text-gray-400 mt-2">
+            {children}
+          </p>
+        </a>
+      </NavigationMenuLink>
+    </li>
+  );
+});
+ListItem.displayName = "ListItem";
