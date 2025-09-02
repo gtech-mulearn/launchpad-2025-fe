@@ -202,6 +202,12 @@ export function NavBar() {
                   Updates
                 </Link>
                 <Link
+                  href="/openings"
+                  className="text-sm uppercase tracking-widest font-medium text-white hover:text-primary-500 transition-colors duration-300"
+                >
+                  Openings
+                </Link>
+                <Link
                   href="#results"
                   className="text-sm uppercase tracking-widest font-medium text-white hover:text-primary-500 transition-colors duration-300"
                 >
