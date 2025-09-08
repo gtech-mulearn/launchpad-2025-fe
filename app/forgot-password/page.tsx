@@ -12,23 +12,42 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useForgotPassword } from "@/hooks/auth";
 import { Mail, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [userType, setUserType] = useState<"company" | "recruiter">("company");
   const [error, setError] = useState("");
+  const { mutate: forgotPassword, isPending: isLoading } = useForgotPassword();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const t = toast.loading("Sending reset link...");
-    setIsLoading(true);
+    setError("");
 
-    // TODO: Implement password reset logic here
-
-    setIsLoading(false);
-    toast.error("This feature is not implemented yet", { id: t });
+    try {
+      await forgotPassword({ email, user_type: userType }, {
+        onSuccess: () => {
+          toast.success("Reset link has been sent to your email", { id: t });
+        },
+        onError: (error: any) => {
+          const errorMessage = error?.response?.data?.general?.[0] || 
+                             error?.response?.data?.non_field_errors?.[0] || 
+                             "Failed to send reset link";
+          setError(errorMessage);
+          toast.error(errorMessage, { id: t });
+        }
+      });
+    } catch (err: any) {
+      const errorMessage = err?.response?.data?.general?.[0] || 
+                         err?.response?.data?.non_field_errors?.[0] || 
+                         "Failed to send reset link";
+      setError(errorMessage);
+      toast.error(errorMessage, { id: t });
+    }
   };
 
   return (
@@ -52,19 +71,39 @@ export default function ForgotPassword() {
           </CardHeader>
           <CardContent className="space-y-4">
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-white">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="bg-secondary-700/50 border-primary-500/30 text-white placeholder:text-gray-400 focus:border-primary-500"
-                />
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-white">
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="bg-secondary-700/50 border-primary-500/30 text-white placeholder:text-gray-400 focus:border-primary-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-white">Account Type</Label>
+                  <RadioGroup
+                    value={userType}
+                    onValueChange={(value: "company" | "recruiter") => setUserType(value)}
+                    className="flex gap-4"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="company" id="company" />
+                      <Label htmlFor="company" className="text-white">Company</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="recruiter" id="recruiter" />
+                      <Label htmlFor="recruiter" className="text-white">Recruiter</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
               </div>
 
               {error && (

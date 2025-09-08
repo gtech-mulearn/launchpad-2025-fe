@@ -107,6 +107,17 @@ const useGetRecruiter = (recruiterId: string, accessToken: string) => {
 
 
 
+const useForgotPassword = () => {
+    return useMutation<{}, {}, { email: string, user_type: 'company' | 'recruiter' }>({
+        mutationFn: async ({ email, user_type }) => {
+            const { data } = await apiHandler.post("/launchpad/forgot-password/",
+                { email, user_type }
+            )
+            return data
+        },
+    })
+}
+
 export {
     useLoginRecruiter,
     useLoginCompany,
@@ -114,5 +125,5 @@ export {
     useSignupRecruiter,
     useGetCompany,
     useGetRecruiter,
-    
+    useForgotPassword,
 }
