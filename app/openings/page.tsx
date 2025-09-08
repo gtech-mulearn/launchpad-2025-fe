@@ -214,11 +214,11 @@ export default function CompanyDirectory() {
                 </TableCaption>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-white/70 w-[40%]">
-                      Company
-                    </TableHead>
                     <TableHead className="text-white/70 w-[35%]">
                       Roles
+                    </TableHead>
+                    <TableHead className="text-white/70 w-[40%]">
+                      Company
                     </TableHead>
                     <TableHead className="text-white/70 w-[25%]">
                       Interest Groups
@@ -238,9 +238,6 @@ export default function CompanyDirectory() {
                   ) : (
                     filtered.map((c) => (
                       <TableRow key={`${c.name}-${c.roles.join("|")}`}>
-                        <TableCell className="font-semibold text-primary-500">
-                          {c.name}
-                        </TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-2">
                             {c.roles.map((r) => (
@@ -249,6 +246,9 @@ export default function CompanyDirectory() {
                               </Badge>
                             ))}
                           </div>
+                        </TableCell>
+                        <TableCell className="font-semibold text-primary-500">
+                          {c.name}
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-2">
