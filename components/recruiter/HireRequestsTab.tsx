@@ -34,7 +34,7 @@ export const HireRequestsTab: React.FC<HireRequestsTabProps> = ({ hireRequests, 
                 <TableHead className="text-gray-300">Title</TableHead>
                 <TableHead className="text-gray-300">Status</TableHead>
                 <TableHead className="text-gray-300">Sent Date</TableHead>
-                <TableHead className="text-gray-300">Actions</TableHead>
+                {/* <TableHead className="text-gray-300">Actions</TableHead> */}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -66,7 +66,7 @@ export const HireRequestsTab: React.FC<HireRequestsTabProps> = ({ hireRequests, 
                     </Badge>
                   </TableCell>
                   <TableCell className="text-gray-300">{request.sentDate}</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Button
                       size="sm"
                       className="bg-primary-500 hover:bg-primary-600"
@@ -75,7 +75,7 @@ export const HireRequestsTab: React.FC<HireRequestsTabProps> = ({ hireRequests, 
                     >
                       View Details
                     </Button>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
