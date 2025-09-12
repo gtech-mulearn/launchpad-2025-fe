@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { QueryProvider } from "@/lib/rQuery";
 import { Toaster } from "sonner";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Launchpad Kerala 2025",
@@ -31,7 +32,9 @@ export default function RootLayout({
           }}
           position="top-right"
         />
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <Suspense>{children}</Suspense>
+        </QueryProvider>
       </body>
     </html>
   );

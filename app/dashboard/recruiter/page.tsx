@@ -226,7 +226,7 @@ export default function RecruiterDashboard() {
   const handleLogout = () => {
     localStorage.removeItem("userRole");
     localStorage.removeItem("userEmail");
-    window.location.href = "/login";
+    router.push("/login");
   };
 
   const handleInviteSent = (newInvite: JobInvite) => {

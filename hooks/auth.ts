@@ -107,6 +107,39 @@ const useGetRecruiter = (recruiterId: string, accessToken: string) => {
 
 
 
+const useForgotPassword = () => {
+    return useMutation<{}, {}, { email: string, user_type: 'company' | 'recruiter' }>({
+        mutationFn: async ({ email, user_type }) => {
+            const { data } = await apiHandler.post("/launchpad/forgot-password/",
+                { email, user_type }
+            )
+            return data
+        },
+    })
+}
+
+const useVerifyResetToken = () => {
+    return useMutation<{}, {}, { token: string, user_type: 'company' | 'recruiter' }>({
+        mutationFn: async ({ token, user_type }) => {
+            const { data } = await apiHandler.post("/launchpad/verify-reset-token/",
+                { token, user_type }
+            )
+            return data
+        },
+    })
+}
+
+const useResetPassword = () => {
+    return useMutation<{}, {}, { token: string, user_type: 'company' | 'recruiter', new_password: string, confirm_password: string }>({
+        mutationFn: async ({ token, user_type, new_password, confirm_password }) => {
+            const { data } = await apiHandler.post("/launchpad/reset-password/",
+                { token, user_type, new_password, confirm_password }
+            )
+            return data
+        },
+    })
+}
+
 export {
     useLoginRecruiter,
     useLoginCompany,
@@ -114,5 +147,7 @@ export {
     useSignupRecruiter,
     useGetCompany,
     useGetRecruiter,
-    
+    useForgotPassword,
+    useVerifyResetToken,
+    useResetPassword,
 }

@@ -199,7 +199,7 @@ export default function CompanyDashboard() {
     localStorage.removeItem("userEmail");
 
     // Force a page reload to clear any cached state
-    window.location.href = "/login";
+    router.push("/login");
   };
 
 
