@@ -31,10 +31,12 @@ import {
   Clock,
   FileText,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { JobOffer, Candidate, JobInvite } from "@/types/recruiter";
 import { useSendJobInvitations } from "@/hooks/recuiter";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { CoverLetterModal } from "./coverLetterModal";
@@ -52,6 +54,8 @@ interface JobOfferDetailsModalProps {
   onHireCandidate: (inviteId: number, application_id: string) => void;
   onInviteSent: (invite: JobInvite) => void;
   showActions?: boolean;
+  currentPage?: number;
+  onPageChange?: (page: number) => void;
 }
 
 export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
@@ -67,6 +71,8 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
   onHireCandidate,
   onInviteSent,
   showActions = true,
+  currentPage = 1,
+  onPageChange,
 }) => {
   const sendJobInvitationsMutation = useSendJobInvitations(accessToken);
   const queryClient = useQueryClient();
@@ -948,6 +954,89 @@ export const JobOfferDetailsModal: React.FC<JobOfferDetailsModalProps> = ({
                           )
                         )}
                       </div>
+
+                      {/* Pagination Controls */}
+                      {eligibleCandidatesData?.response?.pagination && onPageChange && (
+                        <div className="flex items-center justify-between px-2 mt-6 border-t border-gray-600 pt-4">
+                          <div className="flex items-center text-sm text-gray-400">
+                            Showing page {eligibleCandidatesData.response.pagination.count > 0 ? currentPage : 0} of{" "}
+                            {eligibleCandidatesData.response.pagination.totalPages} ({eligibleCandidatesData.response.pagination.count} total candidates)
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => onPageChange(currentPage - 1)}
+                              disabled={!eligibleCandidatesData.response.pagination.isPrev || isEligibleCandidatesLoading}
+                              className="bg-secondary-700/50 border-primary-500/30 text-white hover:bg-secondary-600/50"
+                            >
+                              <ChevronLeft className="h-4 w-4 mr-1" />
+                              Previous
+                            </Button>
+                            
+                            {/* Page Numbers */}
+                            <div className="flex items-center space-x-1">
+                              {(() => {
+                                const totalPages = eligibleCandidatesData.response.pagination.totalPages;
+                                const current = currentPage;
+                                const delta = 2;
+                                const range = [];
+                                const rangeWithDots = [];
+                                
+                                for (let i = Math.max(2, current - delta); i <= Math.min(totalPages - 1, current + delta); i++) {
+                                  range.push(i);
+                                }
+                                
+                                if (current - delta > 2) {
+                                  rangeWithDots.push(1, '...');
+                                } else {
+                                  rangeWithDots.push(1);
+                                }
+                                
+                                rangeWithDots.push(...range);
+                                
+                                if (current + delta < totalPages - 1) {
+                                  rangeWithDots.push('...', totalPages);
+                                } else if (totalPages > 1) {
+                                  rangeWithDots.push(totalPages);
+                                }
+                                
+                                return rangeWithDots.map((page, index) => (
+                                  <div key={index}>
+                                    {page === '...' ? (
+                                      <span className="px-3 py-1 text-gray-400">...</span>
+                                    ) : (
+                                      <Button
+                                        variant={page === current ? "default" : "outline"}
+                                        size="sm"
+                                        onClick={() => onPageChange(page as number)}
+                                        disabled={isEligibleCandidatesLoading}
+                                        className={page === current 
+                                          ? "bg-primary-500 text-white" 
+                                          : "bg-secondary-700/50 border-primary-500/30 text-white hover:bg-secondary-600/50"
+                                        }
+                                      >
+                                        {page}
+                                      </Button>
+                                    )}
+                                  </div>
+                                ));
+                              })()}
+                            </div>
+
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => onPageChange(currentPage + 1)}
+                              disabled={!eligibleCandidatesData.response.pagination.isNext || isEligibleCandidatesLoading}
+                              className="bg-secondary-700/50 border-primary-500/30 text-white hover:bg-secondary-600/50"
+                            >
+                              Next
+                              <ChevronRight className="h-4 w-4 ml-1" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </>
                   )}
                 </CardContent>
