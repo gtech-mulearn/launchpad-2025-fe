@@ -21,7 +21,7 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [userType, setUserType] = useState<"company" | "recruiter">("company");
   const [error, setError] = useState("");
-  const { mutate: forgotPassword, isPending: isLoading } = useForgotPassword();
+  const { mutateAsync: forgotPassword, isPending: isLoading } = useForgotPassword();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
