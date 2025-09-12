@@ -97,6 +97,7 @@ export default function RecruiterDashboard() {
   const [hireRequestFilter, setHireRequestFilter] = useState<string | null>(
     null
   );
+  const [candidatesPage, setCandidatesPage] = useState(1);
   const [newJobOffer, setNewJobOffer] = useState<JobOffer>({
     id: "",
     title: "",
@@ -135,7 +136,7 @@ export default function RecruiterDashboard() {
     data: eligibleCandidatesData,
     isLoading: isEligibleCandidatesLoading,
     error: eligibleCandidatesError,
-  } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
+  } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken, candidatesPage);
   const hireCandidateMutation = useHireCandidate(accessToken);
   const {
     data: hireRequestsData,
@@ -277,6 +278,7 @@ export default function RecruiterDashboard() {
 
     if (jobOffer) {
       setSelectedJobOffer(jobOffer);
+      setCandidatesPage(1); // Reset to first page when viewing new job
       setIsDetailsModalOpen(true);
     } else {
       // If not found in jobOffers, create it from the hire request data
@@ -304,12 +306,17 @@ export default function RecruiterDashboard() {
         };
 
         setSelectedJobOffer(constructedJobOffer);
+        setCandidatesPage(1); // Reset to first page when viewing new job
         setIsDetailsModalOpen(true);
       } else {
         console.error("Job offer not found for jobId:", jobId);
         toast.error("Job details not found");
       }
     }
+  };
+
+  const handleCandidatesPageChange = (page: number) => {
+    setCandidatesPage(page);
   };
 
   const handleEditJobOffer = (job: JobOffer) => {
@@ -478,6 +485,7 @@ export default function RecruiterDashboard() {
               onCreateJobOffer={() => setIsCreateModalOpen(true)}
               onViewDetails={(offer) => {
                 setSelectedJobOffer(offer);
+                setCandidatesPage(1); // Reset to first page when viewing job
                 setIsDetailsModalOpen(true);
               }}
               onEditJobOffer={handleEditJobOffer}
@@ -542,6 +550,8 @@ export default function RecruiterDashboard() {
           onScheduleInterview={handleScheduleInterview}
           onHireCandidate={handleHireCandidate}
           onInviteSent={handleInviteSent}
+          currentPage={candidatesPage}
+          onPageChange={handleCandidatesPageChange}
         />
         <ScheduleInterviewModal
           isOpen={isScheduleModalOpen}

@@ -100,6 +100,7 @@ export default function CompanyDashboard() {
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [scheduleInviteId, setScheduleInviteId] = useState<number | null>(null);
+  const [candidatesPage, setCandidatesPage] = useState(1);
   const [newJobOffer, setNewJobOffer] = useState<JobOffer>({
     id: "",
     title: "",
@@ -123,7 +124,7 @@ export default function CompanyDashboard() {
   const addJobMutation = useAddJob(accessToken);
   const { interestGroups, isLoading: isInterestGroupsLoading, error: interestGroupsError } = useGetInterestGroups(accessToken);
   const { data: jobOffers, isLoading: isJobOffersLoading, error: jobOffersError } = useListJobOffers(company.data?.id || "", accessToken);
-  const { data: eligibleCandidatesData, isLoading: isEligibleCandidatesLoading, error: eligibleCandidatesError } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken);
+  const { data: eligibleCandidatesData, isLoading: isEligibleCandidatesLoading, error: eligibleCandidatesError } = useListEligibleCandidates(selectedJobOffer?.id || "", accessToken, candidatesPage);
   const {data: hireRequestsData, isLoading: isHireRequestsLoading, error: hireRequestsError} = useGetHireRequests(accessToken, hireRequestFilter || undefined);
 
   // Transform hire requests data
@@ -278,6 +279,7 @@ export default function CompanyDashboard() {
     
     if (jobOffer) {
       setSelectedJobOffer(jobOffer);
+      setCandidatesPage(1); // Reset to first page when viewing job
       setIsDetailsModalOpen(true);
     } else {
       // If not found in jobOffers, create it from the hire request data
@@ -303,11 +305,16 @@ export default function CompanyDashboard() {
         };
         
         setSelectedJobOffer(constructedJobOffer);
+        setCandidatesPage(1); // Reset to first page when viewing job
         setIsDetailsModalOpen(true);
       } else {
         console.error("Job offer not found for jobId:", jobId);
       }
     }
+  };
+
+  const handleCandidatesPageChange = (page: number) => {
+    setCandidatesPage(page);
   };
 
   const handleViewCandidate = (candidate: Candidate) => {
@@ -600,8 +607,11 @@ export default function CompanyDashboard() {
               onCreateJobOffer={() => setIsCreateModalOpen(true)}
               onViewDetails={(offer) => {
                 setSelectedJobOffer(offer);
+                setCandidatesPage(1); // Reset to first page when viewing job
                 setIsDetailsModalOpen(true);
               }}
+              onEditJobOffer={() => {}} // Placeholder - not used in company dashboard
+              onDeleteJobOffer={() => {}} // Placeholder - not used in company dashboard
             />
           )}
 
@@ -648,6 +658,8 @@ export default function CompanyDashboard() {
           onHireCandidate={handleHireCandidate}
           onInviteSent={handleInviteSent}
           showActions={false}
+          currentPage={candidatesPage}
+          onPageChange={handleCandidatesPageChange}
         />
 
         <ScheduleInterviewModal

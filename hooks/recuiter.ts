@@ -206,9 +206,9 @@ const useListJobOffers = (companyId: string, accessToken: string) => {
 };
 
 
-const useListEligibleCandidates = (jobId: string, accessToken: string) => {
+const useListEligibleCandidates = (jobId: string, accessToken: string, page: number = 1) => {
   return useQuery<EligibleCandidatesResponse, Error>({
-    queryKey: ["eligible-candidates", jobId],
+    queryKey: ["eligible-candidates", jobId, page],
     queryFn: async () => {
       if (!jobId || !accessToken) {
         throw new Error("Job ID and access token are required");
@@ -217,6 +217,9 @@ const useListEligibleCandidates = (jobId: string, accessToken: string) => {
       const { data } = await apiHandler.get<EligibleCandidatesResponse>(`/launchpad/list-launchpad-students/${jobId}/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
+        },
+        params: {
+          pageIndex: page,
         },
       });
       if (data.hasError) {
