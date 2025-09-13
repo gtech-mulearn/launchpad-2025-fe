@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Edit, PlusCircle, Trash, Trash2 } from "lucide-react";
 import { JobOffer } from "@/types/recruiter";
+import { format } from "date-fns";
 
 interface JobOffersTabProps {
   jobOffers: JobOffer[] | undefined;
@@ -71,6 +72,7 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
                 <TableHead className="text-gray-300">Title</TableHead>
                 <TableHead className="text-gray-300">Location</TableHead>
                 <TableHead className="text-gray-300">Job Type</TableHead>
+                <TableHead className="text-gray-300">Date Posted</TableHead>
                 <TableHead className="text-gray-300">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -86,6 +88,9 @@ export const JobOffersTab: React.FC<JobOffersTabProps> = ({
                     </TableCell>
                     <TableCell className="text-gray-300">
                       {offer.jobType || "N/A"}
+                    </TableCell>
+                    <TableCell className="text-gray-300">
+                      {format(new Date(offer.createdAt), "MMM dd, yyyy")}
                     </TableCell>
                     <TableCell className="flex items-center space-x-2">
                       <Button
