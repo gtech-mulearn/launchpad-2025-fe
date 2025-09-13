@@ -129,18 +129,10 @@ export function NavBar() {
         {/* Desktop Buttons: show only on lg and up */}
         <div className="hidden lg:block text-white border-dashed">
           <div className="hidden lg:flex items-center gap-4">
-            <Button
+            {/* <Button
               asChild
               variant="ghost"
               className="bg-transparent text-white hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
-            >
-              <Link href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "/login"}>
-                Login
-              </Link>
-            </Button>
-            <Button
-              asChild
-              className="bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
             >
               <Link
                 href={
@@ -149,6 +141,14 @@ export function NavBar() {
                 }
               >
                 Register Now
+              </Link>
+            </Button> */}
+            <Button
+              asChild
+              className="bg-transparent text-white border border-primary-500 hover:border-primary-400 px-6 py-2 text-sm uppercase tracking-widest font-medium transition-all duration-300"
+            >
+              <Link href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "/login"}>
+                Login
               </Link>
             </Button>
           </div>
@@ -213,12 +213,15 @@ export function NavBar() {
                 >
                   Results
                 </Link>
-                <Link
-                  href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "/login"}
-                  className="text-sm uppercase tracking-widest font-medium text-white hover:text-primary-500 transition-colors duration-300"
-                >
-                  Login
-                </Link>
+                {/* <Link
+                    href={
+                      process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" ||
+                      "/register"
+                    }
+                  >
+                    Register Now
+                  </Link> */}
+
                 <Link
                   href={
                     process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" ||
@@ -233,12 +236,10 @@ export function NavBar() {
                   asChild
                 >
                   <Link
-                    href={
-                      process.env.NEXT_PUBLIC_DASHBOARD_URL + "/register" ||
-                      "/register"
-                    }
+                    href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "/login"}
+                    className="text-sm uppercase tracking-widest font-medium text-white hover:text-primary-500 transition-colors duration-300"
                   >
-                    Register Now
+                    Login
                   </Link>
                 </Button>
               </nav>

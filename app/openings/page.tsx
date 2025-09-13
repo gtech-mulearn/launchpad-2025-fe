@@ -22,7 +22,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useGetCompanyData } from "@/hooks/api";
-
+import { differenceInDays, format, isAfter, parse } from "date-fns";
+import { Button } from "@/components/ui/button";
 type Company = {
   company_name: string;
   roles: string;
@@ -51,7 +52,8 @@ export default function CompanyDirectory() {
       const name = normalize(c.company_name);
       const roles = csvToArray(c.roles);
       const igs = csvToArray(c.ig);
-      return { name, roles, igs };
+      const closingDate = normalize(c.closing_date);
+      return { name, roles, igs, closingDate };
     });
   }, [companies]);
 
@@ -217,11 +219,14 @@ export default function CompanyDirectory() {
                     <TableHead className="text-white/70 w-[40%]">
                       Company
                     </TableHead>
-                    <TableHead className="text-white/70 w-[35%]">
+                    <TableHead className="text-white/70 w-[30%]">
                       Roles
                     </TableHead>
-                    <TableHead className="text-white/70 w-[25%]">
+                    <TableHead className="text-white/70 w-[20%]">
                       Interest Groups
+                    </TableHead>
+                    <TableHead className="text-white/70 w-[10%] ">
+                      Closing Date
                     </TableHead>
                   </TableRow>
                 </TableHeader>
@@ -258,6 +263,26 @@ export default function CompanyDirectory() {
                               </Badge>
                             ))}
                           </div>
+                        </TableCell>
+                        <TableCell className="text-right text-gray-500">
+                          {(() => {
+                            const d = parse(
+                              c.closingDate,
+                              "dd/MM/yy",
+                              new Date()
+                            );
+                            return (
+                              <Button
+                                variant={
+                                  isAfter(d, new Date())
+                                    ? "default"
+                                    : "destructive"
+                                }
+                              >
+                                {format(d, "dd MMM yy")}
+                              </Button>
+                            );
+                          })()}
                         </TableCell>
                       </TableRow>
                     ))

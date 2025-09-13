@@ -367,8 +367,7 @@ export function CompanyRegistration() {
                         htmlFor="companyWebsite"
                         className="text-white text-sm uppercase tracking-widest"
                       >
-                        Company Website{" "}
-                        <span className="text-gray-400">(Optional)</span>
+                        Company Website
                       </Label>
                       <div className="relative mt-1">
                         <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -376,6 +375,7 @@ export function CompanyRegistration() {
                           id="companyWebsite"
                           type="url"
                           value={formData.companyWebsite}
+                          required
                           onChange={(e) =>
                             handleInputChange("companyWebsite", e.target.value)
                           }
@@ -390,14 +390,14 @@ export function CompanyRegistration() {
                         htmlFor="headOfficeAddress"
                         className="text-white text-sm uppercase tracking-widest"
                       >
-                        Head Office Address{" "}
-                        <span className="text-gray-400">(Optional)</span>
+                        Head Office Address
                       </Label>
                       <div className="relative mt-1">
                         <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                         <Textarea
                           id="headOfficeAddress"
                           value={formData.headOfficeAddress}
+                          required
                           onChange={(e) =>
                             handleInputChange(
                               "headOfficeAddress",

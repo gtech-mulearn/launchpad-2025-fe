@@ -79,9 +79,9 @@ export function PartnershipsSection() {
                    </a>
                   </span>
                 </div>
-                <p className="text-sm text-center text-secondary-900">
+                {/* <p className="text-sm text-center text-secondary-900">
                   {partner.name}
-                </p>
+                </p> */}
               </div>
             ))}
           </div>

@@ -29,7 +29,7 @@ const useGetCompanyData = () => {
         queryFn: async () => {
             await new Promise(resolve => setTimeout(resolve, 2000));
             const { data } = await axios.get("/api/cdata")
-            return data as { company_name: string, roles: string, ig: string }[]
+            return data as { company_name: string, roles: string, ig: string, closing_date: string }[]
         }
     })
 }
