@@ -22,13 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useGetCompanyData } from "@/hooks/api";
-import { differenceInDays, format, isAfter, parse } from "date-fns";
-import { Button } from "@/components/ui/button";
-type Company = {
-  company_name: string;
-  roles: string;
-  ig: string;
-};
+import { addDays, isAfter, parse } from "date-fns";
 
 function csvToArray(value: string | null | undefined): string[] {
   if (!value) return [];
@@ -203,6 +197,18 @@ export default function CompanyDirectory() {
                           <span className="text-gray-500">—</span>
                         )}
                       </div>
+                      {(() => {
+                        const d = parse(c.closingDate, "dd/MM/yy", new Date());
+                        const i = isAfter(addDays(d, 1), new Date());
+                        return (
+                          <Badge
+                            variant={i ? "default" : "destructive"}
+                            className={i ? "bg-green-600" : ""}
+                          >
+                            {c.closingDate}
+                          </Badge>
+                        );
+                      })()}
                     </div>
                   </Card>
                 ))
@@ -271,16 +277,14 @@ export default function CompanyDirectory() {
                               "dd/MM/yy",
                               new Date()
                             );
+                            const i = isAfter(addDays(d, 1), new Date());
                             return (
-                              <Button
-                                variant={
-                                  isAfter(d, new Date())
-                                    ? "default"
-                                    : "destructive"
-                                }
+                              <Badge
+                                variant={i ? "default" : "destructive"}
+                                className={i ? "bg-green-600" : ""}
                               >
-                                {format(d, "dd MMM yy")}
-                              </Button>
+                                {c.closingDate}
+                              </Badge>
                             );
                           })()}
                         </TableCell>
