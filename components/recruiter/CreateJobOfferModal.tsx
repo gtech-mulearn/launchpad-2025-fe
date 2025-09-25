@@ -182,6 +182,7 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
               <Input
                 id="salaryRange"
                 name="salaryRange"
+                required
                 value={newJobOffer.salaryRange || ""}
                 onChange={handleJobOfferChange}
                 placeholder="$50,000 - $80,000"
@@ -226,7 +227,6 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
                   <SelectItem value="Full-time">Full-time</SelectItem>
                   <SelectItem value="Part-time">Part-time</SelectItem>
                   <SelectItem value="Contract">Contract</SelectItem>
-                  <SelectItem value="Freelance">Freelance</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -281,7 +281,7 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex-1 flex flex-col gap-2">
+            {/* <div className="flex-1 flex flex-col gap-2">
               <Label htmlFor="minKarma">Minimum Karma</Label>
               <Input
                 id="minKarma"
@@ -292,7 +292,7 @@ export const CreateJobOfferModal: React.FC<CreateJobOfferModalProps> = ({
                 placeholder="e.g., 500"
                 className="bg-secondary-700/50 border-primary-500/30 text-white"
               />
-            </div>
+            </div> */}
           </div>
 
           <div className="flex flex-col gap-2">
