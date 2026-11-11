@@ -185,7 +185,7 @@ export const editions2024 = [
 ];
 
 export type Clipping = {
-  /** File name in /media/press, produced by scripts/encode-media.mjs from public/images/NEWS. */
+  /** File name in /media/press, produced by scripts/encode-media.mjs from media-src/press. */
   slug: string;
   /** Pixel size of the original scan. */
   width: number;

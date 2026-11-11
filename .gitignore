@@ -25,3 +25,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# original media for scripts/encode-media.mjs (the film is over GitHub's 100 MB limit)
+/media-src/

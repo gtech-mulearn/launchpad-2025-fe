@@ -5,8 +5,11 @@
 //
 // Requires ffmpeg (with libaom-av1, libsvtav1, libx264 and libwebp) on PATH.
 //
-// Press clippings  public/images/NEWS/*.jpg  ->  public/media/press/<slug>[-640].{avif,webp}
-// Aftermovie       public/videos/*.mp4       ->  public/media/aftermovie/
+// Source files live in media-src/, which is git-ignored: the original film is ~124 MB,
+// over GitHub's 100 MB file limit, and the originals should never be served from public/.
+//
+// Press clippings  media-src/press/*.jpg                   ->  public/media/press/<slug>[-640].{avif,webp}
+// Aftermovie       media-src/launchpad aftermovie.mp4      ->  public/media/aftermovie/
 //   film-{1080,720}.{av1,h264}.mp4   full film with sound, played on demand
 //   loop-{1080,720}.{av1,h264}.mp4   14 s silent b-roll loop shown before playback
 //   poster-{1920,960}.{avif,webp}    first frame of the loop
@@ -20,9 +23,9 @@ import { basename, extname, join } from "node:path";
 
 const force = process.argv.includes("--force");
 
-const PRESS_IN = "public/images/NEWS";
+const PRESS_IN = "media-src/press";
 const PRESS_OUT = "public/media/press";
-const FILM_IN = "public/videos/launchpad aftermovie.mp4";
+const FILM_IN = "media-src/launchpad aftermovie.mp4";
 const FILM_OUT = "public/media/aftermovie";
 
 // The loop is a run of b-roll between two hard cuts in the source edit.
