@@ -20,6 +20,8 @@ const config = {
     },
     extend: {
       colors: {
+        paper: "#F4F3EF", // warm off-white used by the landing page
+        ink: "#1A1A1A", // same as secondary-900
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -6,6 +6,53 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+    interpolate-size: allow-keywords;
+  }
+
+  /* Smooth open/close for the landing page accordions where supported. */
+  .lp-details::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+      block-size 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      content-visibility 0.6s allow-discrete;
+  }
+  .lp-details[open]::details-content {
+    block-size: auto;
+  }
+}
+
+/*
+ * Aftermovie frame. --c runs from 1 (closed) to 0 (open) as the frame scrolls in.
+ * Closed, it is inset to the page gutter on phones and to the two middle grid columns
+ * from md up, so its edges sit on the column guides. Open, it is full-bleed.
+ */
+.lp-film {
+  --gutter: 1rem;
+  --inset-x: var(--gutter);
+  --inset-y: calc(var(--gutter) * 0.5625);
+  clip-path: inset(calc(var(--c, 0) * var(--inset-y)) calc(var(--c, 0) * var(--inset-x)));
+}
+@media (min-width: 640px) {
+  .lp-film {
+    --gutter: 1.5rem;
+  }
+}
+@media (min-width: 768px) {
+  .lp-film {
+    --inset-x: calc(var(--gutter) + (100% - 2 * var(--gutter)) / 4);
+    --inset-y: 25%;
+  }
+}
+@media (min-width: 1024px) {
+  .lp-film {
+    --gutter: max(2.5rem, calc((100% - 1440px) / 2 + 2.5rem));
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
