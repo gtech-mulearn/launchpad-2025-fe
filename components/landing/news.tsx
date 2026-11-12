@@ -88,10 +88,6 @@ export function News() {
             text="What the media said"
             className="text-4xl font-semibold tracking-[-0.045em] md:col-span-2 md:text-6xl"
           />
-          <p className="max-w-[34ch] text-xs leading-relaxed text-ink/50 md:justify-self-end md:text-right">
-            {press.length} clippings from English and Malayalam dailies. Select one to read it in
-            full.
-          </p>
         </div>
         <PressWall items={press} />
       </Container>
