@@ -82,10 +82,10 @@ export function News() {
 
       <Container className="relative mt-24 md:mt-36">
         <div className="grid items-end gap-6 pb-10 md:grid-cols-4 md:pb-14">
-          <p className="text-xs text-ink/50">In the press</p>
+          <p className="text-xs text-ink/50">In the media</p>
           <RevealText
             as="h3"
-            text="What the papers said"
+            text="What the media said"
             className="text-4xl font-semibold tracking-[-0.045em] md:col-span-2 md:text-6xl"
           />
           <p className="max-w-[34ch] text-xs leading-relaxed text-ink/50 md:justify-self-end md:text-right">

@@ -2,7 +2,7 @@ import { Schibsted_Grotesk } from "next/font/google";
 import { Hero } from "@/components/landing/hero";
 import { About } from "@/components/landing/about";
 import { Highlights } from "@/components/landing/highlights";
-import { Process } from "@/components/landing/process";
+import { TalentFilter } from "@/components/landing/talent-filter";
 import { Benefits } from "@/components/landing/benefits";
 import { Partners } from "@/components/landing/partners";
 import { Recruiters } from "@/components/landing/recruiters";
@@ -28,7 +28,7 @@ export default function HomePage() {
           <About />
           <Film />
           <Highlights />
-          <Process />
+          <TalentFilter />
           <Benefits />
           <News />
           <Recruiters />

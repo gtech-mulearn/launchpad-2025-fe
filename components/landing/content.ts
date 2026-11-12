@@ -4,7 +4,7 @@ export const nav = [
   { href: "#about", label: "About" },
   { href: "#film", label: "Aftermovie" },
   { href: "#highlights", label: "Highlights" },
-  { href: "#process", label: "Process" },
+  { href: "#talent-filter", label: "Talent filter" },
   { href: "#benefits", label: "Benefits" },
   { href: "#news", label: "News" },
   { href: "#recruiters", label: "Recruiters" },
@@ -37,44 +37,39 @@ export const highlights = [
   },
 ];
 
-export const process: {
-  title: string;
-  body: string;
-  points?: { label: string; text: string }[];
+/**
+ * μLearn's Seven Layer Talent Filter, widest layer first. Taken from μLearn's own
+ * "Seven Layer Talent Filter at μlearn" graphic.
+ */
+export const talentFilter: {
+  name: string;
+  /** Short label for the funnel slice, when it differs from the name. */
+  mark?: string;
+  traits?: string[];
+  body?: string;
 }[] = [
+  { name: "Attitude", traits: ["Self-determination", "Self-efficacy", "Curiosity", "Initiative"] },
+  { name: "Values", traits: ["Grit", "Adaptability", "Growth mindset"] },
+  { name: "Knowledge", body: "Keeping up to date with modern tools and technologies." },
+  { name: "Abilities", body: "Mapping the journey based on passion or abilities." },
+  { name: "Skills", body: "Active involvement in physical hackathons and bootcamps." },
+  { name: "Proof", body: "Build and ship: value creation by real-world problem solving." },
+  { name: "Access", mark: "μ", body: "Access to gigs, jobs and product funding." },
+];
+
+/** How the μLearn platform applies the filter. */
+export const filterSignals = [
   {
-    title: "Register",
-    body: "Companies sign up and onboard their recruiters to manage every hiring activity in one place.",
+    title: "μID",
+    body: "Every learner has a μID. Interest groups, tasks, karma and proof of work all sit on that one profile, so recruiters see a track record instead of a claim on a CV.",
   },
   {
-    title: "Post roles",
-    body: "Openings are created in one of two formats.",
-    points: [
-      {
-        label: "Challenge-based",
-        text: "Tasks or real-world problem statements that assess skills directly.",
-      },
-      {
-        label: "Criteria-based",
-        text: "Filters across interest groups (Web Dev, AI/ML, UI/UX), karma points, academics, location and skills.",
-      },
-    ],
+    title: "Karma points",
+    body: "Karma is earned for completed tasks and challenges and builds up over months, so it reflects consistency rather than one test. Roles can set a minimum.",
   },
   {
-    title: "Discover talent",
-    body: "Roles are matched with eligible μLearners, giving recruiters a refined shortlist of qualified candidates.",
-  },
-  {
-    title: "Send invites",
-    body: "Shortlisted candidates are invited directly. μLearners are notified instantly and can accept or decline.",
-  },
-  {
-    title: "Schedule interviews",
-    body: "Once a candidate accepts, interviews are coordinated at the company's convenience.",
-  },
-  {
-    title: "Hire",
-    body: "Selected candidates receive an official offer email with role details and next steps.",
+    title: "Vetting",
+    body: "Task submissions and project proofs are reviewed before they count, and a company’s own challenge can come before any interview. Only proven, job-ready talent moves forward.",
   },
 ];
 
